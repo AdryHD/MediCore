@@ -8,22 +8,27 @@ namespace MediCore.Controllers
 {
     public class HomeController : Controller
     {
+        // GET: Login
         public ActionResult Index()
         {
             return View();
         }
 
-        public ActionResult About()
+        // GET: Registro
+        public ActionResult Registro()
         {
-            ViewBag.Message = "Your application description page.";
-
             return View();
         }
 
-        public ActionResult Contact()
+        // GET: Recuperar Acceso
+        public ActionResult RecuperarAcceso()
         {
-            ViewBag.Message = "Your contact page.";
+            return View();
+        }
 
+        // GET: Panel principal (requiere autenticación)
+        public ActionResult Principal()
+        {
             return View();
         }
     }

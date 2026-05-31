@@ -1,39 +1,153 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <title>@ViewBag.Title - MediCore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    @Styles.Render("~/Content/css-panel")
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-        <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                </ul>
+    <div id="app">
+        <div id="sidebar" class="active">
+            <div class="sidebar-wrapper active">
+                <div class="sidebar-header">
+                    <div class="d-flex justify-content-between">
+                        <div class="logo">
+                            <a href="@Url.Action("Principal", "Home")">
+                                <img src="~/Content/images/logo.png" alt="MediCore" style="height:1.4rem;">
+                                <span class="ms-2 font-bold text-primary" style="font-size:1.1rem;">MediCore</span>
+                            </a>
+                        </div>
+                        <div class="toggler">
+                            <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-menu">
+                    <ul class="menu">
+
+                        <li class="sidebar-title">Principal</li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">
+                            <a href="@Url.Action("Principal", "Home")" class="sidebar-link">
+                                <i class="bi bi-grid-fill"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-title">Clínica</li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Citas" ? "active" : "") has-sub">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-calendar2-check-fill"></i>
+                                <span>Citas</span>
+                            </a>
+                            <ul class="submenu">
+                                <li class="submenu-item">
+                                    <a href="#">Programar Cita</a>
+                                </li>
+                                <li class="submenu-item">
+                                    <a href="#">Mis Citas</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Pacientes" ? "active" : "")">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-people-fill"></i>
+                                <span>Pacientes</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Doctores" ? "active" : "")">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-person-badge-fill"></i>
+                                <span>Doctores</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Especialidades" ? "active" : "")">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-heart-pulse-fill"></i>
+                                <span>Especialidades</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Horarios" ? "active" : "")">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-clock-fill"></i>
+                                <span>Horarios</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-title">Expedientes</li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Expedientes" ? "active" : "")">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-folder2-open"></i>
+                                <span>Expedientes</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Historial" ? "active" : "")">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-file-earmark-medical-fill"></i>
+                                <span>Historial Médico</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-title">Administración</li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Usuarios" ? "active" : "")">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-person-gear"></i>
+                                <span>Usuarios y Roles</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Bitacora" ? "active" : "")">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-journal-text"></i>
+                                <span>Bitácora</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+                <button class="sidebar-toggler btn x"><i class="bi bi-x"></i></button>
             </div>
         </div>
-    </nav>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
+
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+
+            <div class="page-heading">
+                @RenderBody()
+            </div>
+
+            <footer>
+                <div class="footer clearfix mb-0 text-muted">
+                    <div class="float-start">
+                        <p>@DateTime.Now.Year &copy; MediCore</p>
+                    </div>
+                    <div class="float-end">
+                        <p>Sistema de Gestión Médica</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/mazer")
     @RenderSection("scripts", required: false)
 </body>
+
 </html>
+

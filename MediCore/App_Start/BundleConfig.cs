@@ -14,17 +14,25 @@ namespace MediCore
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
-            // Use the development version of Modernizr to develop with and learn from. Then, when you're
-            // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
-            bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-                        "~/Scripts/modernizr-*"));
+            // Scripts del panel interno (Mazer)
+            bundles.Add(new ScriptBundle("~/bundles/mazer").Include(
+                      "~/Scripts/perfect-scrollbar.min.js",
+                      "~/Scripts/bootstrap.bundle.min.js",
+                      "~/Scripts/mazer-main.js"));
 
-            bundles.Add(new Bundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
-
-            bundles.Add(new StyleBundle("~/Content/css").Include(
+            // CSS páginas de autenticación (login, registro, recuperar acceso)
+            bundles.Add(new StyleBundle("~/Content/css-auth").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/bootstrap-icons.css",
+                      "~/Content/app.css",
+                      "~/Content/auth.css"));
+
+            // CSS panel interno
+            bundles.Add(new StyleBundle("~/Content/css-panel").Include(
+                      "~/Content/bootstrap.css",
+                      "~/Content/perfect-scrollbar.css",
+                      "~/Content/bootstrap-icons.css",
+                      "~/Content/app.css"));
         }
     }
 }
