@@ -3,6 +3,13 @@
     ViewBag.ActiveMenu = "Dashboard";
 }
 
+<div class="d-flex justify-content-end mb-3">
+    <a href="@Url.Action("Index", "Home")"
+       class="btn btn-danger">
+        Cerrar Sesión
+    </a>
+</div>
+
 <div class="page-title">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
