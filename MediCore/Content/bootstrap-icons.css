@@ -1,4 +1,4 @@
-﻿@font-face {
+@font-face {
   font-family: "bootstrap-icons";
   src: url("./fonts/bootstrap-icons.woff?4601c71fb26c9277391ec80789bfde9c") format("woff"),
 url("./fonts/bootstrap-icons.woff2?4601c71fb26c9277391ec80789bfde9c") format("woff2");
@@ -1283,4 +1283,3 @@ url("./fonts/bootstrap-icons.woff2?4601c71fb26c9277391ec80789bfde9c") format("wo
 .bi-youtube::before { content: "\f5ef"; }
 .bi-zoom-in::before { content: "\f5f0"; }
 .bi-zoom-out::before { content: "\f5f1"; }
-
