@@ -14,6 +14,13 @@ namespace MediCore.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(string correo, string contrasena)
+        {
+            return RedirectToAction("Principal");
+        }
+
         // GET: Registro
         public ActionResult Registro()
         {
@@ -30,6 +37,14 @@ namespace MediCore.Controllers
         public ActionResult Principal()
         {
             return View();
+        }
+
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            Session.Abandon();
+
+            return RedirectToAction("Index");
         }
     }
 }
