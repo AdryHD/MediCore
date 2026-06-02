@@ -168,16 +168,34 @@
 
         @* Footer *@
         <footer class="main-footer">
-            <div class="footer-inner">
-                <div class="footer-left">
-                    <img src="~/Content/images/LogoMediCore.png" alt="MediCore" class="footer-logo-img">
-                    <span class="footer-brand">MediCore</span>
-                    <span class="footer-sep">·</span>
-                    <span class="footer-desc">Sistema de Gestión Médica</span>
+            <div class="footer-top">
+                <div class="footer-col footer-col-brand">
+                    <div class="footer-brand-text">
+                        <i class="bi bi-heart-pulse-fill"></i> MediCore
+                    </div>
+                    <p class="footer-tagline">Cuidamos tu salud,<br>gestionamos tu bienestar.</p>
                 </div>
-                <div class="footer-right">
-                    <span>&copy; @DateTime.Now.Year MediCore. Todos los derechos reservados.</span>
+                <div class="footer-col">
+                    <h6 class="footer-col-title">Sistema</h6>
+                    <ul class="footer-links">
+                        <li><i class="bi bi-grid-fill"></i> Panel de control</li>
+                        <li><i class="bi bi-people-fill"></i> Gestión de pacientes</li>
+                        <li><i class="bi bi-calendar-check"></i> Citas médicas</li>
+                        <li><i class="bi bi-folder2-open"></i> Expedientes</li>
+                    </ul>
                 </div>
+                <div class="footer-col">
+                    <h6 class="footer-col-title">Contacto</h6>
+                    <ul class="footer-links">
+                        <li><i class="bi bi-telephone-fill"></i> (504) 1234-5678</li>
+                        <li><i class="bi bi-envelope-fill"></i> soporte@medicore.hn</li>
+                        <li><i class="bi bi-clock-fill"></i> Lun–Vie 7:00–17:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; @DateTime.Now.Year MediCore &mdash; Sistema de Gestión Médica. Todos los derechos reservados.</span>
+                <span class="footer-version">v1.0.0</span>
             </div>
         </footer>
 

@@ -23,6 +23,10 @@
 body {
     font-family: 'Nunito', sans-serif;
     background-color: var(--mc-bg);
+    background-image:
+        radial-gradient(circle at 5% 15%,  rgba(0, 120, 200, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 95% 80%, rgba(1, 192, 186, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(0, 80, 150, 0.08) 0%, transparent 60%);
     color: var(--mc-text);
     margin: 0;
     font-size: 0.92rem;
@@ -686,47 +690,125 @@ header .navbar {
    FOOTER
    ============================================= */
 .main-footer {
-    background: var(--mc-white);
-    border-top: 1px solid var(--mc-border);
-    padding: 0.85rem 1.25rem;
+    background: linear-gradient(135deg, #00274e 0%, #00366b 60%, #004a8c 100%) !important;
+    border-top: 3px solid var(--mc-teal);
     margin-top: auto;
+    position: relative;
+    overflow: hidden;
+    color: rgba(255,255,255,0.6);
 }
 
-.footer-inner {
+.main-footer::before {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: rgba(1,192,186,0.06);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Sección superior con columnas */
+.footer-top {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2.5rem;
+    padding: 1.75rem 2rem 1.25rem;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-.footer-left {
+.footer-col { flex: 1; min-width: 160px; }
+
+.footer-col-brand {
+    flex: 1.4;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.82rem;
+    flex-direction: column;
+    gap: 0.65rem;
 }
 
 .footer-logo-img {
-    height: 20px;
-    width: auto;
-    object-fit: contain;
+    display: none;
 }
 
-.footer-brand {
+.footer-brand-text {
+    font-size: 1.3rem;
     font-weight: 800;
-    color: var(--mc-dark);
-    font-size: 0.87rem;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.35rem;
 }
 
-.footer-sep { color: var(--mc-border); }
-
-.footer-desc { color: var(--mc-muted); }
-
-.footer-right {
-    font-size: 0.77rem;
-    color: var(--mc-muted);
+.footer-brand-text i {
+    color: var(--mc-teal);
+    margin-right: 0.3rem;
 }
+
+.footer-tagline {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.footer-col-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    color: var(--mc-teal);
+    margin-bottom: 0.75rem;
+}
+
+.footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.footer-links li {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.footer-links li i {
+    color: var(--mc-teal);
+    font-size: 0.75rem;
+    opacity: 0.9;
+    flex-shrink: 0;
+}
+
+/* Barra inferior con copyright */
+.footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 2rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.74rem;
+    color: rgba(255,255,255,0.65);
+}
+
+.footer-version {
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: rgba(1,192,186,0.15);
+    color: var(--mc-teal);
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+/* clases legacy eliminadas — mantenidas vacías por compatibilidad */
+.footer-inner, .footer-left, .footer-brand,
+.footer-sep, .footer-desc, .footer-right {}
 
 /* =============================================
    UTILITY
