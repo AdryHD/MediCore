@@ -1,84 +1,56 @@
-﻿@{
+@{
     ViewBag.Title = "Iniciar Sesión";
     Layout = "~/Views/Shared/_LayoutExterno.cshtml";
 }
 
-<div class="row h-100">
-    <div class="col-lg-5 col-12">
-        <div id="auth-left">
-            <div class="auth-logo">
-                <a href="@Url.Action("Index", "Home")">
-                    <img src="~/Content/images/logo.png" alt="MediCore">
-                </a>
+<div id="auth-card">
+
+    <div class="auth-logo">
+        <a href="@Url.Action("Index", "Home")" class="auth-logo-wrapper">
+            <div class="auth-logo-icon">
+                <i class="bi bi-heart-pulse-fill"></i>
             </div>
-            <h1 class="auth-title">MediCore</h1>
-            <p class="auth-subtitle mb-5">Sistema de Gestión Médica. Ingresa con tu correo y contraseña.</p>
+            <span class="auth-logo-text">MediCore</span>
+        </a>
+    </div>
 
-            <form action="@Url.Action("Index", "Home")" method="post">
-                @Html.AntiForgeryToken()
-                <div class="form-group position-relative has-icon-left mb-4">
-                    <input type="email" name="correo" class="form-control form-control-xl" placeholder="Correo electrónico" required>
-                    <div class="form-control-icon">
-                        <i class="bi bi-envelope"></i>
-                    </div>
-                </div>
-                <div class="form-group position-relative has-icon-left mb-4">
-                    <input type="password" name="contrasena" class="form-control form-control-xl" placeholder="Contraseña" required>
-                    <div class="form-control-icon">
-                        <i class="bi bi-shield-lock"></i>
-                    </div>
-                </div>
-                <div class="form-check form-check-lg d-flex align-items-end">
-                    <input class="form-check-input me-2" type="checkbox" name="recordarme" id="recordarme">
-                    <label class="form-check-label text-gray-600" for="recordarme">
-                        Recordarme
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Iniciar Sesión</button>
-            </form>
+    <h1 class="auth-title">Bienvenido de nuevo</h1>
+    <p class="auth-subtitle">Ingresa tus credenciales para acceder al sistema de gestión médica.</p>
 
-            <div class="text-center mt-5 text-lg fs-4">
-                <p class="text-gray-600">
-                    ¿No tienes cuenta? <a href="@Url.Action("Registro", "Home")" class="font-bold">Regístrate</a>.
-                </p>
-                <p>
-                    <a class="font-bold" href="@Url.Action("RecuperarAcceso", "Home")">¿Olvidaste tu contraseña?</a>
-                </p>
+    <div class="auth-divider"><span>Acceso al sistema</span></div>
+
+    <form action="@Url.Action("Index", "Home")" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group position-relative has-icon-left mb-4">
+            <input type="email" name="correo" class="form-control" placeholder="Correo electrónico" required>
+            <div class="form-control-icon">
+                <i class="bi bi-envelope"></i>
             </div>
         </div>
+
+        <div class="form-group position-relative has-icon-left mb-4">
+            <input type="password" name="contrasena" class="form-control" placeholder="Contraseña" required>
+            <div class="form-control-icon">
+                <i class="bi bi-shield-lock"></i>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="form-check d-flex align-items-center gap-2 m-0">
+                <input class="form-check-input m-0" type="checkbox" name="recordarme" id="recordarme">
+                <label class="form-check-label" for="recordarme">Recordarme</label>
+            </div>
+            <a href="@Url.Action("RecuperarAcceso", "Home")" class="auth-link-small">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button type="submit" class="btn-auth-primary">
+            <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
+        </button>
+    </form>
+
+    <div class="auth-footer-links">
+        <p>¿No tienes cuenta? <a href="@Url.Action("Registro", "Home")">Regístrate aquí</a></p>
     </div>
-    <div class="col-lg-7 d-none d-lg-block">
-        <div id="auth-right"></div>
-    </div>
+
 </div>
-
-
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
-
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
-    </div>
-</main>

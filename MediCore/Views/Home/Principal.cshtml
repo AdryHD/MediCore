@@ -3,103 +3,75 @@
     ViewBag.ActiveMenu = "Dashboard";
 }
 
-<div class="d-flex justify-content-end mb-3">
-    <a href="@Url.Action("Index", "Home")"
-       class="btn btn-danger">
-        Cerrar Sesión
-    </a>
-</div>
-
-<div class="page-title">
-    <div class="row">
-        <div class="col-12 col-md-6 order-md-1 order-last">
-            <h3>Dashboard</h3>
-            <p class="text-subtitle text-muted">Bienvenido a MediCore — Sistema de Gestión Médica</p>
-        </div>
+<div class="page-heading">
+    <div>
+        <h3>Dashboard</h3>
+        <p>Bienvenido a MediCore &mdash; Sistema de Gestión Médica</p>
     </div>
 </div>
 
 <section class="section">
-    <div class="row">
-        <div class="col-6 col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body px-3 py-4-5">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="stats-icon blue">
-                                <i class="bi bi-people-fill" style="font-size:1.7rem;color:#fff;"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <h6 class="text-muted font-semibold">Total Pacientes</h6>
-                            <h6 class="font-extrabold mb-0">—</h6>
-                        </div>
-                    </div>
+    <div class="row g-3 mb-4">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stats-card">
+                <div class="stats-icon blue">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stats-info">
+                    <h6 class="label">Total Pacientes</h6>
+                    <h4 class="value">—</h4>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body px-3 py-4-5">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="stats-icon purple">
-                                <i class="bi bi-person-badge-fill" style="font-size:1.7rem;color:#fff;"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <h6 class="text-muted font-semibold">Total Doctores</h6>
-                            <h6 class="font-extrabold mb-0">—</h6>
-                        </div>
-                    </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stats-card">
+                <div class="stats-icon teal">
+                    <i class="bi bi-person-badge-fill"></i>
+                </div>
+                <div class="stats-info">
+                    <h6 class="label">Total Doctores</h6>
+                    <h4 class="value">—</h4>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body px-3 py-4-5">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="stats-icon green">
-                                <i class="bi bi-calendar2-check-fill" style="font-size:1.7rem;color:#fff;"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <h6 class="text-muted font-semibold">Citas Hoy</h6>
-                            <h6 class="font-extrabold mb-0">—</h6>
-                        </div>
-                    </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stats-card">
+                <div class="stats-icon green">
+                    <i class="bi bi-calendar2-check-fill"></i>
+                </div>
+                <div class="stats-info">
+                    <h6 class="label">Citas Hoy</h6>
+                    <h4 class="value">—</h4>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body px-3 py-4-5">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="stats-icon red">
-                                <i class="bi bi-clock-history" style="font-size:1.7rem;color:#fff;"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <h6 class="text-muted font-semibold">Citas Pendientes</h6>
-                            <h6 class="font-extrabold mb-0">—</h6>
-                        </div>
-                    </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stats-card">
+                <div class="stats-icon orange">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="stats-info">
+                    <h6 class="label">Citas Pendientes</h6>
+                    <h4 class="value">—</h4>
                 </div>
             </div>
         </div>
+
     </div>
 
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4>Próximas Citas</h4>
+                    <h4><i class="bi bi-calendar2-week me-2" style="color:#01C0BA;"></i>Próximas Citas</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover table-lg">
+                        <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -112,15 +84,16 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">
+                                    <td colspan="6" class="text-center py-5" style="color:#6b84a0;">
+                                        <i class="bi bi-calendar-x" style="font-size:2rem;display:block;margin-bottom:0.5rem;opacity:0.4;"></i>
                                         No hay citas registradas aún.
                                     </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+                                                        </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>

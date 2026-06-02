@@ -1,1 +1,174 @@
-body{background-color:#fff}#auth{height:100vh;overflow-x:hidden}#auth #auth-right{height:100%;background:url(../../images/bg/4853433.jpg),linear-gradient(90deg,#2d499d,#3f5491)}#auth #auth-left{padding:5rem 8rem}#auth #auth-left .auth-title{font-size:4rem;margin-bottom:1rem}#auth #auth-left .auth-subtitle{font-size:1.7rem;line-height:2.5rem;color:#a8aebb}#auth #auth-left .auth-logo{margin-bottom:7rem}#auth #auth-left .auth-logo img{height:2rem}@media screen and (max-width:767px){#auth #auth-left{padding:5rem}}
+﻿/* MediCore — Auth Page */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    background-color: #f0f4ff;
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+#auth {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+}
+
+#auth-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(45, 73, 157, 0.12);
+    padding: 2.8rem 2.5rem;
+    width: 100%;
+    max-width: 440px;
+}
+
+.auth-logo { margin-bottom: 1.8rem; }
+
+.auth-logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+}
+
+.auth-logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #2d499d, #4a6acf);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.auth-logo-icon i { font-size: 1.25rem; color: #fff; }
+
+.auth-logo-text {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #2d499d;
+    letter-spacing: -0.4px;
+}
+
+.auth-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1a2b5e;
+    margin-bottom: 0.35rem;
+}
+
+.auth-subtitle {
+    font-size: 0.93rem;
+    color: #7a8aaa;
+    margin-bottom: 1.6rem;
+    line-height: 1.55;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.6rem;
+}
+
+.auth-divider::before, .auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e4e9f5;
+}
+
+.auth-divider span {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #aab3cc;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.form-group.has-icon-left .form-control {
+    padding-left: 2.9rem;
+    border: 1.5px solid #dde3f2;
+    border-radius: 10px;
+    height: 50px;
+    font-size: 0.94rem;
+    color: #1a2b5e;
+    background: #f7f9ff;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.form-group.has-icon-left .form-control::placeholder { color: #aab3cc; }
+
+.form-group.has-icon-left .form-control:focus {
+    border-color: #2d499d;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(45, 73, 157, 0.12);
+    outline: none;
+}
+
+.form-group.has-icon-left .form-control-icon {
+    position: absolute;
+    top: 50%;
+    left: 0.95rem;
+    transform: translateY(-50%);
+    color: #aab3cc;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.form-group.has-icon-left:focus-within .form-control-icon { color: #2d499d; }
+
+.form-check-input:checked { background-color: #2d499d; border-color: #2d499d; }
+.form-check-label { font-size: 0.88rem; color: #7a8aaa; }
+
+.auth-link-small {
+    font-size: 0.86rem;
+    color: #2d499d;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-link-small:hover { text-decoration: underline; }
+
+.btn-auth-primary {
+    background: linear-gradient(135deg, #2d499d, #4a6acf);
+    border: none;
+    border-radius: 10px;
+    height: 50px;
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: #fff;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(45, 73, 157, 0.32);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-auth-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(45, 73, 157, 0.42);
+}
+
+.btn-auth-primary:active { transform: translateY(0); }
+
+.auth-footer-links {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.auth-footer-links p { font-size: 0.88rem; color: #7a8aaa; margin: 0; }
+.auth-footer-links a { color: #2d499d; font-weight: 700; text-decoration: none; }
+.auth-footer-links a:hover { text-decoration: underline; }
+
+@media (max-width: 480px) {
+    #auth-card { padding: 2rem 1.5rem; }
+}
+

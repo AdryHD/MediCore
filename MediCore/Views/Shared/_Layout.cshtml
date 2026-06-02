@@ -1,25 +1,190 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Mazer Admin Dashboard</title>
+    <title>@ViewBag.Title - MediCore</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/Content/bootstrap.css">
-    <link rel="stylesheet" href="~/Content/bootstrap-icons.css">
-    <link rel="stylesheet" href="~/Content/app.css">
-    <link rel="stylesheet" href="~/Content/auth.css">
+    @Styles.Render("~/Content/css-panel")
 </head>
 
 <body>
-    <div id="auth">
+<div id="app">
 
-        @RenderBody()
+    @* ========== SIDEBAR ========== *@
+    <div id="sidebar" class="active">
+        <div class="sidebar-wrapper active">
 
-       
+            <div class="sidebar-header">
+                <a href="@Url.Action("Principal", "Home")" class="logo-link">
+                    <img src="~/Content/images/LogoMediCore.png" alt="MediCore" class="logo-img">
+                    <span class="logo-text">MediCore</span>
+                </a>
+            </div>
+
+            <div class="sidebar-menu">
+                <ul class="menu">
+                    <li class="sidebar-title">Menú Principal</li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">
+                        <a href="@Url.Action("Principal", "Home")" class="sidebar-link">
+                            <i class="bi bi-grid-fill"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-title">Gestión Médica</li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Citas" ? "active" : "")">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-calendar2-check"></i>
+                            <span>Citas</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Pacientes" ? "active" : "")">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-people"></i>
+                            <span>Pacientes</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Doctores" ? "active" : "")">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-person-badge"></i>
+                            <span>Doctores</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Especialidades" ? "active" : "")">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-hospital"></i>
+                            <span>Especialidades</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Horarios" ? "active" : "")">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-clock"></i>
+                            <span>Horarios</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-title">Expedientes</li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Expedientes" ? "active" : "")">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-folder2-open"></i>
+                            <span>Expedientes</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Historial" ? "active" : "")">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-journal-medical"></i>
+                            <span>Historial Médico</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-title">Administración</li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Usuarios" ? "active" : "")">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Usuarios</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Bitacora" ? "active" : "")">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-journal-text"></i>
+                            <span>Bitácora</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    @* ========== CONTENIDO PRINCIPAL ========== *@
+    <div id="main">
+
+        @* Navbar superior *@
+        <header class="mb-3">
+            <nav class="navbar navbar-expand px-3 border-bottom">
+                <a href="#" class="burger-btn d-block">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <div class="nav-item dropdown me-1">
+                        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                            <div class="navbar-avatar">
+                                <i class="bi bi-person-circle fs-4"></i>
+                            </div>
+                            <span class="d-none d-md-inline fw-semibold" style="font-size:0.9rem;">Administrador</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width:180px;">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2" href="#">
+                                    <i class="bi bi-person"></i> Mi Perfil
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="@Url.Action("Index", "Home")">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        @* Contenido de la vista *@
+        <div class="main-content container-fluid">
+            @RenderBody()
+        </div>
+
+        @* Footer *@
+        <footer class="main-footer">
+            <div class="footer-inner">
+                <div class="footer-left">
+                    <img src="~/Content/images/LogoMediCore.png" alt="MediCore" class="footer-logo-img">
+                    <span class="footer-brand">MediCore</span>
+                    <span class="footer-sep">·</span>
+                    <span class="footer-desc">Sistema de Gestión Médica</span>
+                </div>
+                <div class="footer-right">
+                    <span>&copy; @DateTime.Now.Year MediCore. Todos los derechos reservados.</span>
+                </div>
+            </div>
+        </footer>
 
     </div>
+
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Scripts/bootstrap.bundle.min.js"></script>
+<script src="~/Scripts/mazer-main.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var sidebar = document.getElementById('sidebar');
+        var main = document.getElementById('main');
+        var burgerBtn = document.querySelector('.burger-btn');
+        if (burgerBtn && sidebar) {
+            burgerBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                sidebar.classList.toggle('hide');
+                if (main) main.classList.toggle('expanded');
+            });
+        }
+    });
+</script>
 </body>
 
 </html>

@@ -8,6 +8,8 @@ namespace MediCore
         // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            // Deshabilitar optimización para evitar errores con JS moderno
+            BundleTable.EnableOptimizations = false;
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
 
@@ -30,9 +32,9 @@ namespace MediCore
             // CSS panel interno
             bundles.Add(new StyleBundle("~/Content/css-panel").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/perfect-scrollbar.css",
                       "~/Content/bootstrap-icons.css",
-                      "~/Content/app.css"));
+                      "~/Content/app.css",
+                      "~/Content/panel.css"));
         }
     }
 }
