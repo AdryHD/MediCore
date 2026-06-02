@@ -43,7 +43,7 @@ namespace MediCore.Controllers
         {
             Session.Clear();
             Session.Abandon();
-
+            // Cerrar sesión y redirigir al login
             return RedirectToAction("Index");
         }
     }

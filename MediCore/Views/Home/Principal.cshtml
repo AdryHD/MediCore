@@ -1,12 +1,33 @@
 @{
-    ViewBag.Title = "Dashboard";
+    ViewBag.Title = "Inicio";
     ViewBag.ActiveMenu = "Dashboard";
 }
 
+@* Banner de bienvenida *@
+<div class="welcome-banner">
+    <div class="welcome-banner-left">
+        <span class="welcome-eyebrow"><i class="bi bi-grid-fill me-1"></i>PANEL DE CONTROL</span>
+        <h2 class="welcome-title">Bienvenido a MediCore</h2>
+        <p class="welcome-sub">Hoy es <strong id="welcome-date"></strong> &mdash; Gestiona citas, pacientes y más desde aquí.</p>
+    </div>
+    <div class="welcome-banner-right">
+        <i class="bi bi-heart-pulse welcome-banner-icon"></i>
+    </div>
+</div>
+<script>
+    (function () {
+        var d = new Date();
+        var dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+        var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+        document.getElementById('welcome-date').textContent =
+            dias[d.getDay()] + ', ' + d.getDate() + ' de ' + meses[d.getMonth()] + ' de ' + d.getFullYear();
+    })();
+</script>
+
 <div class="page-heading">
     <div>
-        <h3>Dashboard</h3>
-        <p>Bienvenido a MediCore &mdash; Sistema de Gestión Médica</p>
+        <span class="section-eyebrow">RESUMEN GENERAL</span>
+        <h3>Indicadores del Sistema</h3>
     </div>
 </div>
 
@@ -14,7 +35,7 @@
     <div class="row g-3 mb-4">
 
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="stats-card">
+            <div class="stats-card stats-card--blue">
                 <div class="stats-icon blue">
                     <i class="bi bi-people-fill"></i>
                 </div>
@@ -26,7 +47,7 @@
         </div>
 
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="stats-card">
+            <div class="stats-card stats-card--teal">
                 <div class="stats-icon teal">
                     <i class="bi bi-person-badge-fill"></i>
                 </div>
@@ -38,7 +59,7 @@
         </div>
 
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="stats-card">
+            <div class="stats-card stats-card--green">
                 <div class="stats-icon green">
                     <i class="bi bi-calendar2-check-fill"></i>
                 </div>
@@ -50,7 +71,7 @@
         </div>
 
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="stats-card">
+            <div class="stats-card stats-card--orange">
                 <div class="stats-icon orange">
                     <i class="bi bi-clock-history"></i>
                 </div>
@@ -65,6 +86,10 @@
 
     <div class="row">
         <div class="col-12">
+            <div class="section-heading">
+                <span class="section-eyebrow">AGENDA</span>
+                <h3 class="section-title">Próximas Citas</h3>
+            </div>
             <div class="card">
                 <div class="card-header">
                     <h4><i class="bi bi-calendar2-week me-2" style="color:#01C0BA;"></i>Próximas Citas</h4>
@@ -84,16 +109,21 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="6" class="text-center py-5" style="color:#6b84a0;">
-                                        <i class="bi bi-calendar-x" style="font-size:2rem;display:block;margin-bottom:0.5rem;opacity:0.4;"></i>
-                                        No hay citas registradas aún.
-                                    </td>
-                                                        </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+                                    <td colspan="6" class="empty-state-cell">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon-wrap">
+                                                <i class="bi bi-calendar3"></i>
                                             </div>
+                                            <p class="empty-state-title">Sin citas registradas</p>
+                                            <p class="empty-state-sub">Aún no hay citas programadas en el sistema.</p>
                                         </div>
-                                    </div>
-                                </section>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

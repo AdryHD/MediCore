@@ -27,35 +27,27 @@ body {
     padding: 2.8rem 2.5rem;
     width: 100%;
     max-width: 440px;
+    margin: 1.5rem auto;
 }
 
-.auth-logo { margin-bottom: 1.8rem; }
+.auth-logo {
+    margin-bottom: 1.8rem;
+    text-align: center;
+}
 
 .auth-logo-wrapper {
     display: flex;
-    align-items: center;
-    gap: 0.65rem;
+    justify-content: center;
     text-decoration: none;
 }
 
-.auth-logo-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #2d499d, #4a6acf);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.auth-logo-icon i { font-size: 1.25rem; color: #fff; }
-
-.auth-logo-text {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #2d499d;
-    letter-spacing: -0.4px;
+.auth-logo-img {
+    height: auto !important;
+    width: 154px !important;
+    max-width: 154px !important;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
 }
 
 .auth-title {

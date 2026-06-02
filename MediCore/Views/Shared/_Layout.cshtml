@@ -10,6 +10,26 @@
 </head>
 
 <body>
+
+@* ========== TOPBAR ========== *@
+<div id="topbar">
+    <div class="topbar-inner">
+        <div class="topbar-left">
+            <i class="bi bi-heart-pulse-fill topbar-icon"></i>
+            <span class="topbar-name">MediCore</span>
+            <span class="topbar-sep">—</span>
+            <span class="topbar-tagline">Sistema de Gestión Médica</span>
+        </div>
+        <div class="topbar-right">
+            <span><i class="bi bi-telephone-fill me-1"></i>Soporte: (504) 1234-5678</span>
+            <span class="topbar-divider"></span>
+            <span><i class="bi bi-envelope-fill me-1"></i>soporte@medicore.hn</span>
+            <span class="topbar-divider"></span>
+            <span><i class="bi bi-clock-fill me-1"></i>Lun–Vie 7:00–17:00</span>
+        </div>
+    </div>
+</div>
+
 <div id="app">
 
     @* ========== SIDEBAR ========== *@
@@ -19,7 +39,6 @@
             <div class="sidebar-header">
                 <a href="@Url.Action("Principal", "Home")" class="logo-link">
                     <img src="~/Content/images/LogoMediCore.png" alt="MediCore" class="logo-img">
-                    <span class="logo-text">MediCore</span>
                 </a>
             </div>
 
@@ -30,7 +49,7 @@
                     <li class="sidebar-item @(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">
                         <a href="@Url.Action("Principal", "Home")" class="sidebar-link">
                             <i class="bi bi-grid-fill"></i>
-                            <span>Dashboard</span>
+                            <span>Inicio</span>
                         </a>
                     </li>
 
@@ -59,7 +78,7 @@
 
                     <li class="sidebar-item @(ViewBag.ActiveMenu == "Especialidades" ? "active" : "")">
                         <a href="#" class="sidebar-link">
-                            <i class="bi bi-hospital"></i>
+                            <i class="bi bi-award"></i>
                             <span>Especialidades</span>
                         </a>
                     </li>
@@ -91,7 +110,7 @@
 
                     <li class="sidebar-item @(ViewBag.ActiveMenu == "Usuarios" ? "active" : "")">
                         <a href="#" class="sidebar-link">
-                            <i class="bi bi-person-gear"></i>
+                            <i class="bi bi-people-fill"></i>
                             <span>Usuarios</span>
                         </a>
                     </li>
@@ -121,10 +140,8 @@
                 <div class="navbar-nav ms-auto">
                     <div class="nav-item dropdown me-1">
                         <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
-                            <div class="navbar-avatar">
-                                <i class="bi bi-person-circle fs-4"></i>
-                            </div>
-                            <span class="d-none d-md-inline fw-semibold" style="font-size:0.9rem;">Administrador</span>
+                            <div class="navbar-avatar">AD</div>
+                            <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem;">Administrador</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width:180px;">
                             <li>
