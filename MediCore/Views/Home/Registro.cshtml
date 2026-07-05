@@ -1,5 +1,4 @@
-@{model MediCore.Models.UsuarioModel
-
+@model MediCore.Models.UsuarioModel
 @{
     ViewBag.Title = "Registro de Paciente";
     Layout = "~/Views/Shared/_LayoutExterno.cshtml";
@@ -18,51 +17,55 @@
 
     <div class="auth-divider"><span>Datos del paciente</span></div>
 
-    <form action="@Url.Action("Registro", "Home")" method="post">
+    @using (Html.BeginForm("Registro", "Home", FormMethod.Post, new { id = "RegistroForm" }))
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-group position-relative has-icon-left mb-4">
-            <input type="text" name="nombreCompleto" class="form-control" placeholder="Nombre completo" required>
+            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", @placeholder = "Nombre completo" })
             <div class="form-control-icon"><i class="bi bi-person"></i></div>
         </div>
 
         <div class="form-group position-relative has-icon-left mb-4">
-            <input type="text" name="cedula" class="form-control" placeholder="Cédula o documento de identidad" required>
+            @Html.TextBoxFor(m => m.Cedula, new { @class = "form-control", @placeholder = "Cédula o documento de identidad" })
             <div class="form-control-icon"><i class="bi bi-card-text"></i></div>
         </div>
 
         <div class="form-group position-relative has-icon-left mb-4">
-            <input type="date" name="fechaNacimiento" class="form-control" required>
+            @Html.TextBoxFor(m => m.FechaNacimiento, new { @class = "form-control", @type = "date" })
             <div class="form-control-icon"><i class="bi bi-calendar-date"></i></div>
         </div>
 
         <div class="form-group position-relative has-icon-left mb-4">
-            <input type="tel" name="telefono" class="form-control" placeholder="Teléfono">
+            @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", @placeholder = "Teléfono" })
             <div class="form-control-icon"><i class="bi bi-telephone"></i></div>
         </div>
 
         <div class="form-group position-relative has-icon-left mb-4">
-            <input type="email" name="correo" class="form-control" placeholder="Correo electrónico" required>
+            @Html.TextBoxFor(m => m.Correo, new { @class = "form-control", @placeholder = "Correo electrónico" })
             <div class="form-control-icon"><i class="bi bi-envelope"></i></div>
         </div>
 
         <div class="form-group position-relative has-icon-left mb-4">
-            <input type="password" name="contrasena" class="form-control" placeholder="Contraseña" required>
+            @Html.PasswordFor(m => m.Contrasenna, new { @class = "form-control", @placeholder = "Contraseña" })
             <div class="form-control-icon"><i class="bi bi-shield-lock"></i></div>
         </div>
 
         <div class="form-group position-relative has-icon-left mb-4">
-            <input type="password" name="confirmarContrasena" class="form-control" placeholder="Confirmar contraseña" required>
+            @Html.PasswordFor(m => m.ConfirmarContrasenna, new { @class = "form-control", @placeholder = "Confirmar contraseña" })
             <div class="form-control-icon"><i class="bi bi-shield-check"></i></div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block btn-lg w-100 mt-2">
             <i class="bi bi-person-plus-fill me-2"></i>Crear Cuenta
         </button>
-    </form>
+    }
 
     <p class="text-center mt-4 mb-0" style="font-size:0.9rem;color:#7a8aaa;">
         ¿Ya tienes cuenta? <a href="@Url.Action("Index", "Home")" class="fw-bold" style="color:#2d499d;">Iniciar Sesión</a>
     </p>
-
 </div>
+
+@section scripts {
+    <script src="~/Scripts/registro.js"></script>
+}

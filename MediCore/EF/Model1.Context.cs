@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MediCore.Content.EF
+namespace MediCore.EF
 {
     using System;
     using System.Data.Entity;

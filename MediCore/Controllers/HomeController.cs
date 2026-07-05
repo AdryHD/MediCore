@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MediCore.EF;
+using MediCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -21,10 +23,20 @@ namespace MediCore.Controllers
             return RedirectToAction("Principal");
         }
 
-        // GET: Registro
+        [HttpGet]
         public ActionResult Registro()
         {
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Registro(UsuarioModel model)
+        {
+            using (var db = new MediCoreEntities())
+            {
+                db.sp_RegistrarUsuario(model.Nombre, model.Cedula, model.FechaNacimiento, model.Telefono, model.Correo, model.Contrasenna);
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Recuperar Acceso

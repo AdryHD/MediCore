@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="4515b455672347148573de106e78560e" Name="Diagram1">
+      <Diagram DiagramId="e61eb0a1efa2461c9bf7874ea423b13d" Name="Diagram1">
         <EntityTypeShape EntityType="MediCoreModel.tbUsuario" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
       </Diagram>
     </edmx:Diagrams>
