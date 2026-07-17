@@ -204,22 +204,11 @@
 </div>
 
 @Scripts.Render("~/bundles/jquery")
-<script src="~/Scripts/bootstrap.bundle.min.js"></script>
-<script src="~/Scripts/mazer-main.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var sidebar = document.getElementById('sidebar');
-        var main = document.getElementById('main');
-        var burgerBtn = document.querySelector('.burger-btn');
-        if (burgerBtn && sidebar) {
-            burgerBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                sidebar.classList.toggle('hide');
-                if (main) main.classList.toggle('expanded');
-            });
-        }
-    });
-</script>
+<script src="~/Scripts/perfect-scrollbar.min.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/perfect-scrollbar.min.js")).Ticks"></script>
+<script src="~/Scripts/bootstrap.bundle.min.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/bootstrap.bundle.min.js")).Ticks"></script>
+<script src="~/Scripts/mazer-main.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/mazer-main.js")).Ticks"></script>
+<script src="~/Scripts/layout-sidebar.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/layout-sidebar.js")).Ticks"></script>
+@RenderSection("scripts", required: false)
 </body>
 
 </html>

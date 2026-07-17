@@ -16,12 +16,6 @@ namespace MediCore
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
-            // Scripts del panel interno (Mazer)
-            bundles.Add(new ScriptBundle("~/bundles/mazer").Include(
-                      "~/Scripts/perfect-scrollbar.min.js",
-                      "~/Scripts/bootstrap.bundle.min.js",
-                      "~/Scripts/mazer-main.js"));
-
             // CSS páginas de autenticación (login, registro, recuperar acceso)
             bundles.Add(new StyleBundle("~/Content/css-auth").Include(
                       "~/Content/bootstrap.css",
