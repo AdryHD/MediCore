@@ -10,7 +10,7 @@
             <PropertyRef Name="Consecutivo" />
           </Key>
           <Property Name="Consecutivo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="id_rol" Type="int" Nullable="false" />
+          <Property Name="id_rol" Type="int" Nullable="true" />
           <Property Name="Nombre" Type="varchar" MaxLength="250" Nullable="false" />
           <Property Name="Cedula" Type="varchar" MaxLength="15" Nullable="false" />
           <Property Name="FechaNacimiento" Type="datetime" Nullable="true" />
@@ -94,7 +94,7 @@
             <PropertyRef Name="Consecutivo" />
           </Key>
           <Property Name="Consecutivo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="id_rol" Type="Int32" Nullable="false" />
+          <Property Name="id_rol" Type="Int32" Nullable="true" />
           <Property Name="Nombre" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Cedula" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="FechaNacimiento" Type="DateTime" Nullable="true" Precision="3" />

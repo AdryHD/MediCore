@@ -15,7 +15,7 @@ namespace MediCore.EF
     public partial class tbUsuario
     {
         public int Consecutivo { get; set; }
-        public int id_rol { get; set; }
+        public Nullable<int> id_rol { get; set; }
         public string Nombre { get; set; }
         public string Cedula { get; set; }
         public Nullable<System.DateTime> FechaNacimiento { get; set; }

@@ -26,12 +26,10 @@ INSERT INTO dbo.tbRol (nombre_rol) VALUES ('DOCTOR')
 GO
 INSERT INTO dbo.tbRol (nombre_rol) VALUES ('RECEPCIONISTA')
 GO
-INSERT INTO dbo.tbRol (nombre_rol) VALUES ('PACIENTE')
-GO
 
 CREATE TABLE [dbo].[tbUsuario](
 	[Consecutivo] [int] IDENTITY(1,1) NOT NULL,
-	[id_rol] [int] NOT NULL,
+	[id_rol] [int] NULL,
 	[Nombre] [varchar](250) NOT NULL,
 	[Cedula] [varchar](15) NOT NULL,
 	[FechaNacimiento] [datetime] NULL,
@@ -63,9 +61,6 @@ AS
 BEGIN
 
 Declare @vEstado BIT= 1
-DECLARE @IdRolPaciente int;
-
-SELECT @IdRolPaciente = id_rol FROM dbo.tbRol WHERE nombre_rol = 'PACIENTE';
 
 INSERT INTO dbo.tbUsuario
            (id_rol,
@@ -77,7 +72,7 @@ INSERT INTO dbo.tbUsuario
            Contrasenna,
            Estado)
      VALUES
-           (@IdRolPaciente,
+		     (NULL,
            @Nombre,
            @Cedula,
            @FechaNacimiento,
