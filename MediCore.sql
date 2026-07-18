@@ -420,6 +420,45 @@ BEGIN
 END
 GO
 
+-- Cambia el estado (ACTIVO/INACTIVO) de una especialidad médica.
+-- Regla de negocio (RF-01): no se puede desactivar una especialidad si
+-- existen doctores ACTIVOS asignados a ella. Devuelve un código de resultado:
+--   0 = operación exitosa
+--   1 = no se puede desactivar, tiene doctores activos asignados
+--   2 = la especialidad no existe
+CREATE PROCEDURE [dbo].[spCambiarEstadoEspecialidad]
+	@IdEspecialidad	int,
+	@NuevoEstado	varchar(10),
+	@IdUsuario		int = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @Resultado int = 0;
+
+	IF NOT EXISTS (SELECT 1 FROM dbo.Especialidades WHERE id_especialidad = @IdEspecialidad)
+	BEGIN
+		SET @Resultado = 2;
+	END
+	ELSE IF (@NuevoEstado = 'INACTIVO' AND EXISTS (
+				SELECT 1 FROM dbo.Doctores
+				WHERE id_especialidad = @IdEspecialidad AND estado = 'ACTIVO'))
+	BEGIN
+		SET @Resultado = 1;
+	END
+	ELSE
+	BEGIN
+		UPDATE dbo.Especialidades
+		SET estado = @NuevoEstado
+		WHERE id_especialidad = @IdEspecialidad;
+
+		SET @Resultado = 0;
+	END
+
+	SELECT @Resultado AS Resultado;
+END
+GO
+
 -- Valida si un doctor tiene disponibilidad en una fecha/hora específica,
 -- evitando la doble reserva del mismo espacio (RF-13).
 CREATE PROCEDURE [dbo].[spValidarDisponibilidadCita]

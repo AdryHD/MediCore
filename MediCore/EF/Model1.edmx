@@ -26,8 +26,33 @@
           <Parameter Name="Correo" Type="varchar" Mode="In" />
           <Parameter Name="Contrasenna" Type="varchar" Mode="In" />
         </Function>
+        <EntityType Name="Especialidades">
+          <Key>
+            <PropertyRef Name="id_especialidad" />
+          </Key>
+          <Property Name="id_especialidad" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="nvarchar" MaxLength="80" Nullable="false" />
+          <Property Name="descripcion" Type="nvarchar" MaxLength="255" Nullable="true" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="fecha_creacion" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <Function Name="spCambiarEstadoEspecialidad" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdEspecialidad" Type="int" Mode="In" />
+          <Parameter Name="NuevoEstado" Type="varchar" Mode="In" />
+          <Parameter Name="IdUsuario" Type="int" Mode="In" />
+        </Function>
+        <Function Name="spRegistrarBitacora" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Nivel" Type="varchar" Mode="In" />
+          <Parameter Name="IdUsuario" Type="int" Mode="In" />
+          <Parameter Name="Controlador" Type="varchar" Mode="In" />
+          <Parameter Name="Accion" Type="varchar" Mode="In" />
+          <Parameter Name="Mensaje" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="StackTrace" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="IpOrigen" Type="varchar" Mode="In" />
+        </Function>
         <EntityContainer Name="MediCoreModelStoreContainer">
           <EntitySet Name="tbUsuario" EntityType="Self.tbUsuario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Especialidades" EntityType="Self.Especialidades" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
@@ -47,8 +72,19 @@
           <Property Name="Contrasenna" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Estado" Type="Boolean" Nullable="false" />
         </EntityType>
+        <EntityType Name="Especialidades">
+          <Key>
+            <PropertyRef Name="id_especialidad" />
+          </Key>
+          <Property Name="id_especialidad" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="80" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="descripcion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="true" />
+          <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="fecha_creacion" Type="DateTime" Precision="7" Nullable="false" />
+        </EntityType>
         <EntityContainer Name="MediCoreEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="tbUsuario" EntityType="Self.tbUsuario" />
+          <EntitySet Name="Especialidades" EntityType="Self.Especialidades" />
           <FunctionImport Name="sp_RegistrarUsuario">
             <Parameter Name="Nombre" Mode="In" Type="String" />
             <Parameter Name="Cedula" Mode="In" Type="String" />
@@ -56,6 +92,20 @@
             <Parameter Name="Telefono" Mode="In" Type="String" />
             <Parameter Name="Correo" Mode="In" Type="String" />
             <Parameter Name="Contrasenna" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="spCambiarEstadoEspecialidad" ReturnType="Collection(Int32)">
+            <Parameter Name="IdEspecialidad" Mode="In" Type="Int32" />
+            <Parameter Name="NuevoEstado" Mode="In" Type="String" />
+            <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="spRegistrarBitacora">
+            <Parameter Name="Nivel" Mode="In" Type="String" />
+            <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
+            <Parameter Name="Controlador" Mode="In" Type="String" />
+            <Parameter Name="Accion" Mode="In" Type="String" />
+            <Parameter Name="Mensaje" Mode="In" Type="String" />
+            <Parameter Name="StackTrace" Mode="In" Type="String" />
+            <Parameter Name="IpOrigen" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
       </Schema>
@@ -78,7 +128,20 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Especialidades">
+            <EntityTypeMapping TypeName="MediCoreModel.Especialidades">
+              <MappingFragment StoreEntitySet="Especialidades">
+                <ScalarProperty Name="id_especialidad" ColumnName="id_especialidad" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="fecha_creacion" ColumnName="fecha_creacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="sp_RegistrarUsuario" FunctionName="MediCoreModel.Store.sp_RegistrarUsuario" />
+          <FunctionImportMapping FunctionImportName="spCambiarEstadoEspecialidad" FunctionName="MediCoreModel.Store.spCambiarEstadoEspecialidad" />
+          <FunctionImportMapping FunctionImportName="spRegistrarBitacora" FunctionName="MediCoreModel.Store.spRegistrarBitacora" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

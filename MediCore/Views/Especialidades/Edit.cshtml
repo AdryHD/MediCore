@@ -1,0 +1,57 @@
+@model MediCore.Models.EspecialidadFormModel
+@{
+    ViewBag.Title = "Editar Especialidad";
+    ViewBag.ActiveMenu = "Especialidades";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">GESTIÓN MÉDICA</span>
+        <h3>Editar Especialidad</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "Especialidades")" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-award me-2" style="color:#01C0BA;"></i>Datos de la Especialidad</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Edit", "Especialidades", FormMethod.Post, new { id = "EspecialidadForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.IdEspecialidad)
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-light-danger" })
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.Nombre)
+                            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", @placeholder = "Ej. Cardiología", @maxlength = 80 })
+                            @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.Descripcion)
+                            @Html.TextAreaFor(m => m.Descripcion, new { @class = "form-control", rows = 3, @placeholder = "Descripción breve (opcional)", @maxlength = 255 })
+                            @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>Guardar Cambios
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script src="~/Scripts/especialidades.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/especialidades.js")).Ticks"></script>
+}

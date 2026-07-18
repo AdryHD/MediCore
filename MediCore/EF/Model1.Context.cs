@@ -29,6 +29,8 @@ namespace MediCore.EF
     
         public virtual DbSet<tbUsuario> tbUsuario { get; set; }
     
+        public virtual DbSet<Especialidades> Especialidades { get; set; }
+    
         public virtual int sp_RegistrarUsuario(string nombre, string cedula, Nullable<System.DateTime> fechaNacimiento, string telefono, string correo, string contrasenna)
         {
             var nombreParameter = nombre != null ?
@@ -56,6 +58,56 @@ namespace MediCore.EF
                 new ObjectParameter("Contrasenna", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_RegistrarUsuario", nombreParameter, cedulaParameter, fechaNacimientoParameter, telefonoParameter, correoParameter, contrasennaParameter);
+        }
+    
+        public virtual int spCambiarEstadoEspecialidad(Nullable<int> idEspecialidad, string nuevoEstado, Nullable<int> idUsuario)
+        {
+            var idEspecialidadParameter = idEspecialidad.HasValue ?
+                new ObjectParameter("IdEspecialidad", idEspecialidad) :
+                new ObjectParameter("IdEspecialidad", typeof(int));
+    
+            var nuevoEstadoParameter = nuevoEstado != null ?
+                new ObjectParameter("NuevoEstado", nuevoEstado) :
+                new ObjectParameter("NuevoEstado", typeof(string));
+    
+            var idUsuarioParameter = idUsuario.HasValue ?
+                new ObjectParameter("IdUsuario", idUsuario) :
+                new ObjectParameter("IdUsuario", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<int>("spCambiarEstadoEspecialidad", idEspecialidadParameter, nuevoEstadoParameter, idUsuarioParameter).Single();
+        }
+    
+        public virtual int spRegistrarBitacora(string nivel, Nullable<int> idUsuario, string controlador, string accion, string mensaje, string stackTrace, string ipOrigen)
+        {
+            var nivelParameter = nivel != null ?
+                new ObjectParameter("Nivel", nivel) :
+                new ObjectParameter("Nivel", typeof(string));
+    
+            var idUsuarioParameter = idUsuario.HasValue ?
+                new ObjectParameter("IdUsuario", idUsuario) :
+                new ObjectParameter("IdUsuario", typeof(int));
+    
+            var controladorParameter = controlador != null ?
+                new ObjectParameter("Controlador", controlador) :
+                new ObjectParameter("Controlador", typeof(string));
+    
+            var accionParameter = accion != null ?
+                new ObjectParameter("Accion", accion) :
+                new ObjectParameter("Accion", typeof(string));
+    
+            var mensajeParameter = mensaje != null ?
+                new ObjectParameter("Mensaje", mensaje) :
+                new ObjectParameter("Mensaje", typeof(string));
+    
+            var stackTraceParameter = stackTrace != null ?
+                new ObjectParameter("StackTrace", stackTrace) :
+                new ObjectParameter("StackTrace", typeof(string));
+    
+            var ipOrigenParameter = ipOrigen != null ?
+                new ObjectParameter("IpOrigen", ipOrigen) :
+                new ObjectParameter("IpOrigen", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spRegistrarBitacora", nivelParameter, idUsuarioParameter, controladorParameter, accionParameter, mensajeParameter, stackTraceParameter, ipOrigenParameter);
         }
     }
 }
