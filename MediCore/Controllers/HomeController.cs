@@ -20,6 +20,8 @@ namespace MediCore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Index(string correo, string contrasena)
         {
+            Session["Consecutivo"] = 1;
+            Session["Nombre"] = "Usuario";
             return RedirectToAction("Principal");
         }
 
@@ -48,6 +50,11 @@ namespace MediCore.Controllers
         // GET: Panel principal (requiere autenticación)
         public ActionResult Principal()
         {
+            if (Session["Consecutivo"] == null)
+            {
+                return RedirectToAction("Index");
+            }
+
             return View();
         }
 
