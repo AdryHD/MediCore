@@ -70,7 +70,7 @@
                     </li>
 
                     <li class="sidebar-item @(ViewBag.ActiveMenu == "Doctores" ? "active" : "")">
-                        <a href="#" class="sidebar-link">
+                        <a href="@Url.Action("Index", "Doctores")" class="sidebar-link">
                             <i class="bi bi-person-badge"></i>
                             <span>Doctores</span>
                         </a>

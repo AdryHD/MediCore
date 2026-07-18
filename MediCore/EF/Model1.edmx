@@ -10,9 +10,10 @@
             <PropertyRef Name="Consecutivo" />
           </Key>
           <Property Name="Consecutivo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_rol" Type="int" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="250" Nullable="false" />
           <Property Name="Cedula" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="FechaNacimiento" Type="datetime" Nullable="false" />
+          <Property Name="FechaNacimiento" Type="datetime" Nullable="true" />
           <Property Name="Telefono" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Correo" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Contrasenna" Type="varchar" MaxLength="10" Nullable="false" />
@@ -50,9 +51,38 @@
           <Parameter Name="StackTrace" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="IpOrigen" Type="varchar" Mode="In" />
         </Function>
+        <EntityType Name="Doctores">
+          <Key>
+            <PropertyRef Name="id_doctor" />
+          </Key>
+          <Property Name="id_doctor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_usuario" Type="int" Nullable="true" />
+          <Property Name="id_especialidad" Type="int" Nullable="false" />
+          <Property Name="nombre_completo" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="cedula" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="codigo_colegiado" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="telefono" Type="nvarchar" MaxLength="20" Nullable="true" />
+          <Property Name="correo" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <Function Name="spRegistrarDoctor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="NombreCompleto" Type="nvarchar" Mode="In" />
+          <Parameter Name="Cedula" Type="nvarchar" Mode="In" />
+          <Parameter Name="CodigoColegiado" Type="nvarchar" Mode="In" />
+          <Parameter Name="Correo" Type="nvarchar" Mode="In" />
+          <Parameter Name="Telefono" Type="nvarchar" Mode="In" />
+          <Parameter Name="IdEspecialidad" Type="int" Mode="In" />
+          <Parameter Name="Contrasenna" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="spCambiarEstadoDoctor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdDoctor" Type="int" Mode="In" />
+          <Parameter Name="NuevoEstado" Type="varchar" Mode="In" />
+          <Parameter Name="IdUsuario" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="MediCoreModelStoreContainer">
           <EntitySet Name="tbUsuario" EntityType="Self.tbUsuario" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Especialidades" EntityType="Self.Especialidades" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
@@ -64,9 +94,10 @@
             <PropertyRef Name="Consecutivo" />
           </Key>
           <Property Name="Consecutivo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_rol" Type="Int32" Nullable="false" />
           <Property Name="Nombre" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Cedula" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="FechaNacimiento" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FechaNacimiento" Type="DateTime" Nullable="true" Precision="3" />
           <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Correo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Contrasenna" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
@@ -82,9 +113,24 @@
           <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="fecha_creacion" Type="DateTime" Precision="7" Nullable="false" />
         </EntityType>
+        <EntityType Name="Doctores">
+          <Key>
+            <PropertyRef Name="id_doctor" />
+          </Key>
+          <Property Name="id_doctor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_usuario" Type="Int32" Nullable="true" />
+          <Property Name="id_especialidad" Type="Int32" Nullable="false" />
+          <Property Name="nombre_completo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="cedula" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="codigo_colegiado" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="true" />
+          <Property Name="correo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
         <EntityContainer Name="MediCoreEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="tbUsuario" EntityType="Self.tbUsuario" />
           <EntitySet Name="Especialidades" EntityType="Self.Especialidades" />
+          <EntitySet Name="Doctores" EntityType="Self.Doctores" />
           <FunctionImport Name="sp_RegistrarUsuario">
             <Parameter Name="Nombre" Mode="In" Type="String" />
             <Parameter Name="Cedula" Mode="In" Type="String" />
@@ -107,6 +153,20 @@
             <Parameter Name="StackTrace" Mode="In" Type="String" />
             <Parameter Name="IpOrigen" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="spRegistrarDoctor" ReturnType="Collection(Int32)">
+            <Parameter Name="NombreCompleto" Mode="In" Type="String" />
+            <Parameter Name="Cedula" Mode="In" Type="String" />
+            <Parameter Name="CodigoColegiado" Mode="In" Type="String" />
+            <Parameter Name="Correo" Mode="In" Type="String" />
+            <Parameter Name="Telefono" Mode="In" Type="String" />
+            <Parameter Name="IdEspecialidad" Mode="In" Type="Int32" />
+            <Parameter Name="Contrasenna" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="spCambiarEstadoDoctor" ReturnType="Collection(Int32)">
+            <Parameter Name="IdDoctor" Mode="In" Type="Int32" />
+            <Parameter Name="NuevoEstado" Mode="In" Type="String" />
+            <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
@@ -118,6 +178,7 @@
             <EntityTypeMapping TypeName="MediCoreModel.tbUsuario">
               <MappingFragment StoreEntitySet="tbUsuario">
                 <ScalarProperty Name="Consecutivo" ColumnName="Consecutivo" />
+                <ScalarProperty Name="id_rol" ColumnName="id_rol" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="Cedula" ColumnName="Cedula" />
                 <ScalarProperty Name="FechaNacimiento" ColumnName="FechaNacimiento" />
@@ -139,9 +200,26 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Doctores">
+            <EntityTypeMapping TypeName="MediCoreModel.Doctores">
+              <MappingFragment StoreEntitySet="Doctores">
+                <ScalarProperty Name="id_doctor" ColumnName="id_doctor" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="id_especialidad" ColumnName="id_especialidad" />
+                <ScalarProperty Name="nombre_completo" ColumnName="nombre_completo" />
+                <ScalarProperty Name="cedula" ColumnName="cedula" />
+                <ScalarProperty Name="codigo_colegiado" ColumnName="codigo_colegiado" />
+                <ScalarProperty Name="telefono" ColumnName="telefono" />
+                <ScalarProperty Name="correo" ColumnName="correo" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="sp_RegistrarUsuario" FunctionName="MediCoreModel.Store.sp_RegistrarUsuario" />
           <FunctionImportMapping FunctionImportName="spCambiarEstadoEspecialidad" FunctionName="MediCoreModel.Store.spCambiarEstadoEspecialidad" />
           <FunctionImportMapping FunctionImportName="spRegistrarBitacora" FunctionName="MediCoreModel.Store.spRegistrarBitacora" />
+          <FunctionImportMapping FunctionImportName="spRegistrarDoctor" FunctionName="MediCoreModel.Store.spRegistrarDoctor" />
+          <FunctionImportMapping FunctionImportName="spCambiarEstadoDoctor" FunctionName="MediCoreModel.Store.spCambiarEstadoDoctor" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

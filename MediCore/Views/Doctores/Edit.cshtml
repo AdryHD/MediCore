@@ -1,0 +1,91 @@
+@model MediCore.Models.DoctorFormModel
+@{
+    ViewBag.Title = "Editar Doctor";
+    ViewBag.ActiveMenu = "Doctores";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">GESTIÓN MÉDICA</span>
+        <h3>Editar Doctor</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "Doctores")" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12 col-lg-7">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-person-badge me-2" style="color:#01C0BA;"></i>Datos del Doctor</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Edit", "Doctores", FormMethod.Post, new { id = "DoctorForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.IdDoctor)
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-light-danger" })
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.NombreCompleto)
+                            @Html.TextBoxFor(m => m.NombreCompleto, new { @class = "form-control", @placeholder = "Ej. Dra. María López", @maxlength = 150 })
+                            @Html.ValidationMessageFor(m => m.NombreCompleto, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Cedula)
+                                    @Html.TextBoxFor(m => m.Cedula, new { @class = "form-control", @placeholder = "Cédula profesional", @maxlength = 20 })
+                                    @Html.ValidationMessageFor(m => m.Cedula, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.CodigoColegiado)
+                                    @Html.TextBoxFor(m => m.CodigoColegiado, new { @class = "form-control", @placeholder = "Código colegiado", @maxlength = 30 })
+                                    @Html.ValidationMessageFor(m => m.CodigoColegiado, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Correo)
+                                    @Html.TextBoxFor(m => m.Correo, new { @class = "form-control", type = "email", @placeholder = "correo@medicore.com", @maxlength = 150 })
+                                    @Html.ValidationMessageFor(m => m.Correo, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Telefono)
+                                    @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", @placeholder = "Opcional", @maxlength = 20 })
+                                    @Html.ValidationMessageFor(m => m.Telefono, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.IdEspecialidad)
+                            @Html.DropDownListFor(m => m.IdEspecialidad, (SelectList)ViewBag.Especialidades, "Seleccione una especialidad", new { @class = "form-select" })
+                            @Html.ValidationMessageFor(m => m.IdEspecialidad, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>Guardar Cambios
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script src="~/Scripts/doctores.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/doctores.js")).Ticks"></script>
+}

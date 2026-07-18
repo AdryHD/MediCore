@@ -12,16 +12,16 @@ namespace MediCore.EF
     using System;
     using System.Collections.Generic;
     
-    public partial class tbUsuario
+    public partial class Doctores
     {
-        public int Consecutivo { get; set; }
-        public int id_rol { get; set; }
-        public string Nombre { get; set; }
-        public string Cedula { get; set; }
-        public Nullable<System.DateTime> FechaNacimiento { get; set; }
-        public string Telefono { get; set; }
-        public string Correo { get; set; }
-        public string Contrasenna { get; set; }
-        public bool Estado { get; set; }
+        public int id_doctor { get; set; }
+        public Nullable<int> id_usuario { get; set; }
+        public int id_especialidad { get; set; }
+        public string nombre_completo { get; set; }
+        public string cedula { get; set; }
+        public string codigo_colegiado { get; set; }
+        public string telefono { get; set; }
+        public string correo { get; set; }
+        public string estado { get; set; }
     }
 }

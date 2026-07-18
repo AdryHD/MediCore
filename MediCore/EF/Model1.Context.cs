@@ -31,6 +31,8 @@ namespace MediCore.EF
     
         public virtual DbSet<Especialidades> Especialidades { get; set; }
     
+        public virtual DbSet<Doctores> Doctores { get; set; }
+    
         public virtual int sp_RegistrarUsuario(string nombre, string cedula, Nullable<System.DateTime> fechaNacimiento, string telefono, string correo, string contrasenna)
         {
             var nombreParameter = nombre != null ?
@@ -108,6 +110,56 @@ namespace MediCore.EF
                 new ObjectParameter("IpOrigen", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spRegistrarBitacora", nivelParameter, idUsuarioParameter, controladorParameter, accionParameter, mensajeParameter, stackTraceParameter, ipOrigenParameter);
+        }
+    
+        public virtual int spRegistrarDoctor(string nombreCompleto, string cedula, string codigoColegiado, string correo, string telefono, Nullable<int> idEspecialidad, string contrasenna)
+        {
+            var nombreCompletoParameter = nombreCompleto != null ?
+                new ObjectParameter("NombreCompleto", nombreCompleto) :
+                new ObjectParameter("NombreCompleto", typeof(string));
+    
+            var cedulaParameter = cedula != null ?
+                new ObjectParameter("Cedula", cedula) :
+                new ObjectParameter("Cedula", typeof(string));
+    
+            var codigoColegiadoParameter = codigoColegiado != null ?
+                new ObjectParameter("CodigoColegiado", codigoColegiado) :
+                new ObjectParameter("CodigoColegiado", typeof(string));
+    
+            var correoParameter = correo != null ?
+                new ObjectParameter("Correo", correo) :
+                new ObjectParameter("Correo", typeof(string));
+    
+            var telefonoParameter = telefono != null ?
+                new ObjectParameter("Telefono", telefono) :
+                new ObjectParameter("Telefono", typeof(string));
+    
+            var idEspecialidadParameter = idEspecialidad.HasValue ?
+                new ObjectParameter("IdEspecialidad", idEspecialidad) :
+                new ObjectParameter("IdEspecialidad", typeof(int));
+    
+            var contrasennaParameter = contrasenna != null ?
+                new ObjectParameter("Contrasenna", contrasenna) :
+                new ObjectParameter("Contrasenna", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<int>("spRegistrarDoctor", nombreCompletoParameter, cedulaParameter, codigoColegiadoParameter, correoParameter, telefonoParameter, idEspecialidadParameter, contrasennaParameter).Single();
+        }
+    
+        public virtual int spCambiarEstadoDoctor(Nullable<int> idDoctor, string nuevoEstado, Nullable<int> idUsuario)
+        {
+            var idDoctorParameter = idDoctor.HasValue ?
+                new ObjectParameter("IdDoctor", idDoctor) :
+                new ObjectParameter("IdDoctor", typeof(int));
+    
+            var nuevoEstadoParameter = nuevoEstado != null ?
+                new ObjectParameter("NuevoEstado", nuevoEstado) :
+                new ObjectParameter("NuevoEstado", typeof(string));
+    
+            var idUsuarioParameter = idUsuario.HasValue ?
+                new ObjectParameter("IdUsuario", idUsuario) :
+                new ObjectParameter("IdUsuario", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<int>("spCambiarEstadoDoctor", idDoctorParameter, nuevoEstadoParameter, idUsuarioParameter).Single();
         }
     }
 }

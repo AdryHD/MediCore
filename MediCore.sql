@@ -7,11 +7,34 @@ USE [MediCore]
 GO
 
 GO
+CREATE TABLE [dbo].[tbRol](
+	[id_rol] [int] IDENTITY(1,1) NOT NULL,
+	[nombre_rol] [varchar](30) NOT NULL,
+ CONSTRAINT [PK_tbRol] PRIMARY KEY CLUSTERED
+(
+	[id_rol] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[tbRol] ADD CONSTRAINT [UQ_tbRol_NombreRol] UNIQUE NONCLUSTERED ([nombre_rol] ASC)
+GO
+
+INSERT INTO dbo.tbRol (nombre_rol) VALUES ('ADMINISTRADOR')
+GO
+INSERT INTO dbo.tbRol (nombre_rol) VALUES ('DOCTOR')
+GO
+INSERT INTO dbo.tbRol (nombre_rol) VALUES ('RECEPCIONISTA')
+GO
+INSERT INTO dbo.tbRol (nombre_rol) VALUES ('PACIENTE')
+GO
+
 CREATE TABLE [dbo].[tbUsuario](
 	[Consecutivo] [int] IDENTITY(1,1) NOT NULL,
+	[id_rol] [int] NOT NULL,
 	[Nombre] [varchar](250) NOT NULL,
 	[Cedula] [varchar](15) NOT NULL,
-	[FechaNacimiento] [datetime] NOT NULL,
+	[FechaNacimiento] [datetime] NULL,
 	[Telefono] [varchar](20) NOT NULL,
 	[Correo] [varchar](100) NOT NULL,
 	[Contrasenna] [varchar](10) NOT NULL,
@@ -21,6 +44,12 @@ CREATE TABLE [dbo].[tbUsuario](
 	[Consecutivo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[tbUsuario]  WITH CHECK ADD  CONSTRAINT [FK_tbUsuario_tbRol] FOREIGN KEY([id_rol])
+REFERENCES [dbo].[tbRol] ([id_rol])
+GO
+ALTER TABLE [dbo].[tbUsuario] CHECK CONSTRAINT [FK_tbUsuario_tbRol]
 GO
 
 CREATE PROCEDURE [dbo].[sp_RegistrarUsuario]
@@ -34,9 +63,13 @@ AS
 BEGIN
 
 Declare @vEstado BIT= 1
+DECLARE @IdRolPaciente int;
+
+SELECT @IdRolPaciente = id_rol FROM dbo.tbRol WHERE nombre_rol = 'PACIENTE';
 
 INSERT INTO dbo.tbUsuario
-           (Nombre,
+           (id_rol,
+           Nombre,
            Cedula,
            FechaNacimiento,
            Telefono,
@@ -44,7 +77,8 @@ INSERT INTO dbo.tbUsuario
            Contrasenna,
            Estado)
      VALUES
-           (@Nombre,
+           (@IdRolPaciente,
+           @Nombre,
            @Cedula,
            @FechaNacimiento,
            @Telefono,
@@ -54,10 +88,6 @@ INSERT INTO dbo.tbUsuario
 
 END
 GO
-
-/* ============================================================================
-   2. CATÁLOGOS Y ENTIDADES DEL DOMINIO CLÍNICO
-============================================================================ */
 
 CREATE TABLE [dbo].[Especialidades](
 	[id_especialidad] [int] IDENTITY(1,1) NOT NULL,
@@ -253,10 +283,6 @@ GO
 ALTER TABLE [dbo].[Archivos] ADD CONSTRAINT [CK_Archivos_Estado] CHECK ([estado] IN ('ACTIVO','INACTIVO'))
 GO
 
-/* ============================================================================
-   3. BITÁCORA Y NOTIFICACIONES
-============================================================================ */
-
 CREATE TABLE [dbo].[Bitacora](
 	[id_bitacora] [bigint] IDENTITY(1,1) NOT NULL,
 	[fecha] [datetime2](7) NOT NULL,
@@ -301,10 +327,6 @@ ALTER TABLE [dbo].[Notificaciones] ADD CONSTRAINT [CK_Notificaciones_Tipo] CHECK
 GO
 ALTER TABLE [dbo].[Notificaciones] ADD CONSTRAINT [CK_Notificaciones_Estado] CHECK ([estado] IN ('ENVIADO','FALLIDO'))
 GO
-
-/* ============================================================================
-   4. LLAVES FORÁNEAS (INTEGRIDAD REFERENCIAL)
-============================================================================ */
 
 ALTER TABLE [dbo].[Doctores]  WITH CHECK ADD  CONSTRAINT [FK_Doctores_tbUsuario] FOREIGN KEY([id_usuario])
 REFERENCES [dbo].[tbUsuario] ([Consecutivo])
@@ -396,13 +418,6 @@ GO
 ALTER TABLE [dbo].[Notificaciones] CHECK CONSTRAINT [FK_Notificaciones_tbUsuario]
 GO
 
-/* ============================================================================
-   5. PROCEDIMIENTOS ALMACENADOS
-============================================================================ */
-
--- Registro centralizado de bitácora (errores y eventos relevantes del sistema).
--- Todos los controladores deben invocar este procedimiento desde el bloque
--- catch de sus acciones GET/POST, tal como indican las reglas del proyecto.
 CREATE PROCEDURE [dbo].[spRegistrarBitacora]
 	@Nivel			varchar(10),
 	@IdUsuario		int = NULL,
@@ -420,12 +435,6 @@ BEGIN
 END
 GO
 
--- Cambia el estado (ACTIVO/INACTIVO) de una especialidad médica.
--- Regla de negocio (RF-01): no se puede desactivar una especialidad si
--- existen doctores ACTIVOS asignados a ella. Devuelve un código de resultado:
---   0 = operación exitosa
---   1 = no se puede desactivar, tiene doctores activos asignados
---   2 = la especialidad no existe
 CREATE PROCEDURE [dbo].[spCambiarEstadoEspecialidad]
 	@IdEspecialidad	int,
 	@NuevoEstado	varchar(10),
@@ -459,8 +468,103 @@ BEGIN
 END
 GO
 
--- Valida si un doctor tiene disponibilidad en una fecha/hora específica,
--- evitando la doble reserva del mismo espacio (RF-13).
+CREATE PROCEDURE [dbo].[spRegistrarDoctor]
+	@NombreCompleto		nvarchar(150),
+	@Cedula				nvarchar(20),
+	@CodigoColegiado	nvarchar(30),
+	@Correo				nvarchar(150),
+	@Telefono			nvarchar(20) = NULL,
+	@IdEspecialidad		int,
+	@Contrasenna		varchar(10)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @Resultado int = 0;
+	DECLARE @IdRolDoctor int;
+	DECLARE @IdUsuario int;
+
+	SELECT @IdRolDoctor = id_rol FROM dbo.tbRol WHERE nombre_rol = 'DOCTOR';
+
+	IF NOT EXISTS (SELECT 1 FROM dbo.Especialidades WHERE id_especialidad = @IdEspecialidad AND estado = 'ACTIVO')
+	BEGIN
+		SET @Resultado = 1;
+	END
+	ELSE IF EXISTS (SELECT 1 FROM dbo.Doctores WHERE cedula = @Cedula)
+	BEGIN
+		SET @Resultado = 2;
+	END
+	ELSE IF EXISTS (SELECT 1 FROM dbo.Doctores WHERE codigo_colegiado = @CodigoColegiado)
+	BEGIN
+		SET @Resultado = 3;
+	END
+	ELSE IF EXISTS (SELECT 1 FROM dbo.Doctores WHERE correo = @Correo)
+			OR EXISTS (SELECT 1 FROM dbo.tbUsuario WHERE Correo = @Correo)
+	BEGIN
+		SET @Resultado = 4;
+	END
+	ELSE
+	BEGIN
+		BEGIN TRY
+			BEGIN TRANSACTION;
+
+			INSERT INTO dbo.tbUsuario (id_rol, Nombre, Cedula, FechaNacimiento, Telefono, Correo, Contrasenna, Estado)
+			VALUES (@IdRolDoctor, @NombreCompleto, @Cedula, NULL, ISNULL(@Telefono, ''), @Correo, @Contrasenna, 1);
+
+			SET @IdUsuario = SCOPE_IDENTITY();
+
+			INSERT INTO dbo.Doctores (id_usuario, id_especialidad, nombre_completo, cedula, codigo_colegiado, telefono, correo, estado)
+			VALUES (@IdUsuario, @IdEspecialidad, @NombreCompleto, @Cedula, @CodigoColegiado, @Telefono, @Correo, 'ACTIVO');
+
+			COMMIT TRANSACTION;
+		END TRY
+		BEGIN CATCH
+			IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+			SET @Resultado = 99;
+		END CATCH
+	END
+
+	SELECT @Resultado AS Resultado;
+END
+GO
+
+CREATE PROCEDURE [dbo].[spCambiarEstadoDoctor]
+	@IdDoctor		int,
+	@NuevoEstado	varchar(10),
+	@IdUsuario		int = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @Resultado int = 0;
+	DECLARE @IdUsuarioDoctor int;
+
+	IF NOT EXISTS (SELECT 1 FROM dbo.Doctores WHERE id_doctor = @IdDoctor)
+	BEGIN
+		SET @Resultado = 2;
+	END
+	ELSE
+	BEGIN
+		SELECT @IdUsuarioDoctor = id_usuario FROM dbo.Doctores WHERE id_doctor = @IdDoctor;
+
+		UPDATE dbo.Doctores
+		SET estado = @NuevoEstado
+		WHERE id_doctor = @IdDoctor;
+
+		IF @IdUsuarioDoctor IS NOT NULL
+		BEGIN
+			UPDATE dbo.tbUsuario
+			SET Estado = CASE WHEN @NuevoEstado = 'ACTIVO' THEN 1 ELSE 0 END
+			WHERE Consecutivo = @IdUsuarioDoctor;
+		END
+
+		SET @Resultado = 0;
+	END
+
+	SELECT @Resultado AS Resultado;
+END
+GO
+
 CREATE PROCEDURE [dbo].[spValidarDisponibilidadCita]
 	@IdDoctor		int,
 	@FechaCita		datetime2,
