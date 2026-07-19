@@ -1,3 +1,4 @@
+@using System.Linq
 <!DOCTYPE html>
 <html lang="es">
 
@@ -140,13 +141,13 @@
                 <div class="navbar-nav ms-auto">
                     <div class="nav-item dropdown me-1">
                         <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
-                            <div class="navbar-avatar">AD</div>
-                            <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem;">Administrador</span>
+                            <div class="navbar-avatar">@(Session["Nombre"] != null && Session["Nombre"].ToString().Length > 0 ? string.Join("", Session["Nombre"].ToString().Split(' ').Where(p => p.Length > 0).Take(2).Select(p => char.ToUpper(p[0]))) : "US")</div>
+                            <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem;">@(Session["Nombre"] ?? "Usuario")</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width:180px;">
                             <li>
-                                <a class="dropdown-item d-flex align-items-center gap-2" href="#">
-                                    <i class="bi bi-person"></i> Mi Perfil
+                                <a class="dropdown-item d-flex align-items-center gap-2" href="@Url.Action("Index", "Perfil")">
+                                    <i class="bi bi-person"></i> Configuración
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>

@@ -30,11 +30,11 @@
 
     <div class="auth-divider"><span>Recuperar acceso</span></div>
 
-    <form action="@Url.Action("RecuperarAcceso", "Home")" method="post">
+    <form action="@Url.Action("RecuperarAcceso", "Home")" method="post" id="RecuperarAccesoForm">
         @Html.AntiForgeryToken()
 
         <div class="form-group position-relative has-icon-left mb-4">
-            <input type="email" name="correo" class="form-control" placeholder="Correo electrónico" required>
+            <input type="email" id="Correo" name="correo" class="form-control" placeholder="Correo electrónico" required>
             <div class="form-control-icon"><i class="bi bi-envelope"></i></div>
         </div>
 
@@ -48,3 +48,7 @@
     </p>
 
 </div>
+
+@section scripts {
+    <script src="~/Scripts/recuperar-acceso.js"></script>
+}

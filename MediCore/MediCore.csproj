@@ -132,6 +132,7 @@
     <Compile Include="Controllers\DoctoresController.cs" />
     <Compile Include="Controllers\EspecialidadesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PerfilController.cs" />
     <Compile Include="EF\Doctores.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -162,6 +163,8 @@
     <Compile Include="Models\DoctorFormModel.cs" />
     <Compile Include="Models\EspecialidadFormModel.cs" />
     <Compile Include="Models\UsuarioModel.cs" />
+    <Compile Include="Models\PerfilModel.cs" />
+    <Compile Include="Models\AuthActionFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +215,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\registro.js" />
+    <Content Include="Scripts\recuperar-acceso.js" />
+    <Content Include="Scripts\login.js" />
     <Content Include="Scripts\especialidades.js" />
     <Content Include="Scripts\doctores.js" />
     <Content Include="Web.config" />
@@ -238,6 +243,7 @@
     <Content Include="Views\Doctores\Index.cshtml" />
     <Content Include="Views\Doctores\Create.cshtml" />
     <Content Include="Views\Doctores\Edit.cshtml" />
+    <Content Include="Views\Perfil\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
