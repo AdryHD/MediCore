@@ -45,6 +45,11 @@ CREATE TABLE [dbo].[tbUsuario](
 ) ON [PRIMARY]
 GO
 
+ALTER TABLE [dbo].[tbUsuario] ADD CONSTRAINT [UQ_tbUsuario_Correo] UNIQUE NONCLUSTERED ([Correo] ASC)
+GO
+ALTER TABLE [dbo].[tbUsuario] ADD CONSTRAINT [UQ_tbUsuario_Cedula] UNIQUE NONCLUSTERED ([Cedula] ASC)
+GO
+
 ALTER TABLE [dbo].[tbUsuario]  WITH CHECK ADD  CONSTRAINT [FK_tbUsuario_tbRol] FOREIGN KEY([id_rol])
 REFERENCES [dbo].[tbRol] ([id_rol])
 GO

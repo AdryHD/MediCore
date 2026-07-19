@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace MediCore.Controllers
 {
+    [AuthActionFilter]
     public class EspecialidadesController : Controller
     {
         private const string NombreControlador = "Especialidades";

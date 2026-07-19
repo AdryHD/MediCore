@@ -13,6 +13,8 @@ namespace MediCore.Controllers
 {
     public class HomeController : Controller
     {
+        private const string NombreControlador = "Home";
+
         // GET: Login
         public ActionResult Index()
         {
@@ -33,29 +35,41 @@ namespace MediCore.Controllers
 
             using (var db = new MediCoreEntities())
             {
-                var usuario = db.tbUsuario.FirstOrDefault(u => u.Correo == correoLimpio && u.Contrasenna == contrasena);
-
-                if (usuario == null)
+                try
                 {
-                    TempData["Error"] = "Correo o contraseña incorrectos.";
+                    var usuario = db.tbUsuario.FirstOrDefault(u => u.Correo == correoLimpio && u.Contrasenna == contrasena);
+
+                    if (usuario == null)
+                    {
+                        TempData["Error"] = "Correo o contraseña incorrectos.";
+                        return View();
+                    }
+
+                    if (!usuario.Estado)
+                    {
+                        TempData["Error"] = "El usuario se encuentra inactivo. Contacte al administrador.";
+                        return View();
+                    }
+
+                    if (usuario.FechaExpiracionTemp.HasValue && DateTime.Now > usuario.FechaExpiracionTemp.Value)
+                    {
+                        TempData["Error"] = "La contraseña temporal expiró. Solicita una nueva recuperación de acceso.";
+                        return View();
+                    }
+
+                    Session["Consecutivo"] = usuario.Consecutivo;
+                    Session["Nombre"] = usuario.Nombre;
+
+                    RegistrarEvento(db, usuario.Consecutivo, "Index", string.Format("Inicio de sesión exitoso para el correo '{0}'.", correoLimpio));
+
+                    return RedirectToAction("Principal");
+                }
+                catch (Exception ex)
+                {
+                    RegistrarError(db, null, "Index", ex);
+                    TempData["Error"] = "Ocurrió un error al iniciar sesión. Intente nuevamente.";
                     return View();
                 }
-
-                if (!usuario.Estado)
-                {
-                    TempData["Error"] = "El usuario se encuentra inactivo. Contacte al administrador.";
-                    return View();
-                }
-
-                if (usuario.FechaExpiracionTemp.HasValue && DateTime.Now > usuario.FechaExpiracionTemp.Value)
-                {
-                    TempData["Error"] = "La contraseña temporal expiró. Solicita una nueva recuperación de acceso.";
-                    return View();
-                }
-
-                Session["Consecutivo"] = usuario.Consecutivo;
-                Session["Nombre"] = usuario.Nombre;
-                return RedirectToAction("Principal");
             }
         }
 
@@ -68,10 +82,39 @@ namespace MediCore.Controllers
         [HttpPost]
         public ActionResult Registro(UsuarioModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             using (var db = new MediCoreEntities())
             {
-                db.sp_RegistrarUsuario(model.Nombre, model.Cedula, model.FechaNacimiento, model.Telefono, model.Correo, model.Contrasenna);
-                return RedirectToAction("Index", "Home");
+                try
+                {
+                    var correoLimpio = model.Correo.Trim();
+                    var cedulaLimpia = model.Cedula.Trim();
+
+                    bool existeUsuario = db.tbUsuario.Any(u => u.Correo == correoLimpio || u.Cedula == cedulaLimpia);
+
+                    if (existeUsuario)
+                    {
+                        ModelState.AddModelError("", "Ya existe un usuario registrado con ese correo o cédula.");
+                        return View(model);
+                    }
+
+                    db.sp_RegistrarUsuario(model.Nombre, cedulaLimpia, model.FechaNacimiento, model.Telefono, correoLimpio, model.Contrasenna);
+
+                    RegistrarEvento(db, null, "Registro", string.Format("Usuario registrado con correo '{0}' (Cédula: {1}).", correoLimpio, cedulaLimpia));
+
+                    TempData["Success"] = "Usuario registrado correctamente. Ya puede iniciar sesión.";
+                    return RedirectToAction("Index", "Home");
+                }
+                catch (Exception ex)
+                {
+                    RegistrarError(db, null, "Registro", ex);
+                    ModelState.AddModelError("", "Ocurrió un error al registrar el usuario. Intente nuevamente.");
+                    return View(model);
+                }
             }
         }
 
@@ -109,9 +152,12 @@ namespace MediCore.Controllers
                         db.SaveChanges();
 
                         EnviarCorreoRecuperacion(correoLimpio, usuario.Nombre, contrasennaTemporal, expiracion);
+
+                        RegistrarEvento(db, usuario.Consecutivo, "RecuperarAcceso", string.Format("Contraseña temporal generada para el correo '{0}'.", correoLimpio));
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        RegistrarError(db, usuario.Consecutivo, "RecuperarAcceso", ex);
                         TempData["Error"] = "No se pudo procesar la recuperación en este momento. Intente nuevamente.";
                         return View();
                     }
@@ -123,13 +169,9 @@ namespace MediCore.Controllers
         }
 
         // GET: Panel principal (requiere autenticación)
+        [AuthActionFilter]
         public ActionResult Principal()
         {
-            if (Session["Consecutivo"] == null)
-            {
-                return RedirectToAction("Index");
-            }
-
             return View();
         }
 
@@ -255,5 +297,38 @@ namespace MediCore.Controllers
                 }
             }
         }
+
+        #region Bitácora
+
+        private string ObtenerIp()
+        {
+            return Request != null ? Request.UserHostAddress : null;
+        }
+
+        private void RegistrarEvento(MediCoreEntities db, int? idUsuario, string accion, string mensaje)
+        {
+            try
+            {
+                db.spRegistrarBitacora("INFO", idUsuario, NombreControlador, accion, mensaje, null, ObtenerIp());
+            }
+            catch
+            {
+                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
+            }
+        }
+
+        private void RegistrarError(MediCoreEntities db, int? idUsuario, string accion, Exception ex)
+        {
+            try
+            {
+                db.spRegistrarBitacora("ERROR", idUsuario, NombreControlador, accion, ex.Message, ex.StackTrace, ObtenerIp());
+            }
+            catch
+            {
+                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
+            }
+        }
+
+        #endregion
     }
 }
