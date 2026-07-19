@@ -110,7 +110,7 @@
                     <li class="sidebar-title">Administración</li>
 
                     <li class="sidebar-item @(ViewBag.ActiveMenu == "Usuarios" ? "active" : "")">
-                        <a href="#" class="sidebar-link">
+                        <a href="@Url.Action("Index", "Usuarios")" class="sidebar-link">
                             <i class="bi bi-people-fill"></i>
                             <span>Usuarios</span>
                         </a>

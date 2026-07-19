@@ -59,6 +59,7 @@ namespace MediCore.Controllers
 
                     Session["Consecutivo"] = usuario.Consecutivo;
                     Session["Nombre"] = usuario.Nombre;
+                    Session["NombreRol"] = ObtenerNombreRol(db, usuario.id_rol);
 
                     RegistrarEvento(db, usuario.Consecutivo, "Index", string.Format("Inicio de sesión exitoso para el correo '{0}'.", correoLimpio));
 
@@ -195,6 +196,24 @@ namespace MediCore.Controllers
             }
 
             return new string(nuevaContrasenna);
+        }
+
+        private string ObtenerNombreRol(MediCoreEntities db, int? idRol)
+        {
+            if (!idRol.HasValue)
+            {
+                return null;
+            }
+
+            try
+            {
+                return db.Database.SqlQuery<string>(
+                    "SELECT nombre_rol FROM dbo.tbRol WHERE id_rol = @p0", idRol.Value).FirstOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private void EnviarCorreoRecuperacion(string correoDestino, string nombreUsuario, string contrasennaTemporal, DateTime expiracion)

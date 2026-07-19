@@ -1,0 +1,114 @@
+@model IEnumerable<MediCore.Models.GestionUsuarioModel>
+@{
+    ViewBag.Title = "Usuarios";
+    ViewBag.ActiveMenu = "Usuarios";
+
+    var roles = ViewBag.Roles as System.Collections.Generic.List<MediCore.Models.RolItem>;
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">ADMINISTRACIÓN</span>
+        <h3>Usuarios y Roles</h3>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-light-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-light-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<section class="section">
+    <div class="card">
+        <div class="card-header">
+            <h4><i class="bi bi-people-fill me-2" style="color:#01C0BA;"></i>Listado de Usuarios</h4>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Cédula</th>
+                            <th>Estado</th>
+                            <th>Rol actual</th>
+                            <th class="text-end">Asignar rol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Consecutivo</td>
+                                    <td class="fw-semibold">@item.Nombre</td>
+                                    <td>@item.Correo</td>
+                                    <td>@item.Cedula</td>
+                                    <td>
+                                        @if (item.Estado)
+                                        {
+                                            <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Inactivo</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (string.IsNullOrWhiteSpace(item.NombreRol))
+                                        {
+                                            <span class="badge-status canceled"><i class="bi bi-question-circle"></i>Sin asignar</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-status done"><i class="bi bi-person-badge"></i>@item.NombreRol</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        @using (Html.BeginForm("AsignarRol", "Usuarios", FormMethod.Post, new { style = "display:inline-flex; gap:.4rem; justify-content:flex-end;" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="idUsuario" value="@item.Consecutivo" />
+                                            <select name="idRol" class="form-select form-select-sm" style="width:auto;">
+                                                <option value="">Sin asignar</option>
+                                                @if (roles != null)
+                                                {
+                                                    foreach (var rol in roles)
+                                                    {
+                                                        <option value="@rol.IdRol" selected="@(item.IdRol == rol.IdRol)">@rol.NombreRol</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <button type="submit" class="btn btn-light-secondary btn-sm" title="Guardar">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">No hay usuarios registrados.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
