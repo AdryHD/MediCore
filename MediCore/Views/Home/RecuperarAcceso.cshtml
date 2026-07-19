@@ -14,6 +14,20 @@
     <h1 class="auth-title">¿Olvidaste tu contraseña?</h1>
     <p class="auth-subtitle">Ingresa tu correo y te enviaremos un enlace para recuperar tu acceso.</p>
 
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-light-success" role="alert" style="font-size:0.9rem;">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-light-danger" role="alert" style="font-size:0.9rem;">
+            @TempData["Error"]
+        </div>
+    }
+
     <div class="auth-divider"><span>Recuperar acceso</span></div>
 
     <form action="@Url.Action("RecuperarAcceso", "Home")" method="post">

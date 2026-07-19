@@ -18,6 +18,7 @@
           <Property Name="Correo" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Contrasenna" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="Estado" Type="bit" Nullable="false" />
+          <Property Name="FechaExpiracionTemp" Type="datetime" Nullable="true" />
         </EntityType>
         <Function Name="sp_RegistrarUsuario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Nombre" Type="varchar" Mode="In" />
@@ -102,6 +103,7 @@
           <Property Name="Correo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Contrasenna" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <Property Name="FechaExpiracionTemp" Type="DateTime" Nullable="true" Precision="3" />
         </EntityType>
         <EntityType Name="Especialidades">
           <Key>
@@ -186,6 +188,7 @@
                 <ScalarProperty Name="Correo" ColumnName="Correo" />
                 <ScalarProperty Name="Contrasenna" ColumnName="Contrasenna" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="FechaExpiracionTemp" ColumnName="FechaExpiracionTemp" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -37,6 +37,7 @@ CREATE TABLE [dbo].[tbUsuario](
 	[Correo] [varchar](100) NOT NULL,
 	[Contrasenna] [varchar](10) NOT NULL,
 	[Estado] [bit] NOT NULL,
+	[FechaExpiracionTemp] [datetime] NULL,
  CONSTRAINT [PK_tbUsuario] PRIMARY KEY CLUSTERED 
 (
 	[Consecutivo] ASC

@@ -16,6 +16,13 @@
 
     <div class="auth-divider"><span>Acceso al sistema</span></div>
 
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-light-danger" role="alert" style="font-size:0.9rem;">
+            @TempData["Error"]
+        </div>
+    }
+
     <form action="@Url.Action("Index", "Home")" method="post">
         @Html.AntiForgeryToken()
 

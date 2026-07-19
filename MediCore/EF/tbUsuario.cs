@@ -23,5 +23,6 @@ namespace MediCore.EF
         public string Correo { get; set; }
         public string Contrasenna { get; set; }
         public bool Estado { get; set; }
+        public Nullable<System.DateTime> FechaExpiracionTemp { get; set; }
     }
 }
