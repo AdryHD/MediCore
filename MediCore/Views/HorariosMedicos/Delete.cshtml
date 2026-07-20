@@ -1,0 +1,64 @@
+@model MediCore.EF.HorariosMedicos
+@{
+    ViewBag.Title = "Desactivar Horario Médico";
+    ViewBag.ActiveMenu = "Horarios";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">GESTIÓN MÉDICA</span>
+        <h3>Desactivar Horario Médico</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "HorariosMedicos")" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12 col-lg-7">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-exclamation-triangle-fill me-2" style="color:#d64545;"></i>Confirmar Desactivación</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-light-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Este horario dejará de estar disponible para programar nuevas citas. Podrá activarlo nuevamente desde el listado.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Doctor</label>
+                            <p class="fw-semibold mb-0">@ViewBag.NombreDoctor</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Día de la semana</label>
+                            <p class="fw-semibold mb-0">@ViewBag.NombreDiaSemana</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Hora de inicio</label>
+                            <p class="fw-semibold mb-0">@Model.hora_inicio.ToString(@"hh\:mm")</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Hora de fin</label>
+                            <p class="fw-semibold mb-0">@Model.hora_fin.ToString(@"hh\:mm")</p>
+                        </div>
+                    </div>
+
+                    @using (Html.BeginForm("Delete", "HorariosMedicos", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("id", Model.id_horario)
+                        <button type="submit" class="btn btn-light-danger">
+                            <i class="bi bi-toggle-off me-1"></i>Sí, desactivar
+                        </button>
+                        <a href="@Url.Action("Index", "HorariosMedicos")" class="btn btn-light-secondary">Cancelar</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,190 @@
+@model IEnumerable<MediCore.EF.HorariosMedicos>
+@{
+    ViewBag.Title = "Horarios Médicos";
+    ViewBag.ActiveMenu = "Horarios";
+
+    var nombreDoctor = ViewBag.NombreDoctor as System.Collections.Generic.Dictionary<int, string>;
+    var diasSemana = ViewBag.DiasSemana as System.Collections.Generic.Dictionary<byte, string>;
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 0;
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">GESTIÓN MÉDICA</span>
+        <h3>Horarios Médicos</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Create", "HorariosMedicos")" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Nuevo Horario
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-light-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-light-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<section class="section">
+    <div class="card mb-3">
+        <div class="card-body">
+            @using (Html.BeginForm("Index", "HorariosMedicos", FormMethod.Get))
+            {
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label">Doctor</label>
+                        @Html.DropDownList("idDoctor", (SelectList)ViewBag.Doctores, "Todos", new { @class = "form-select" })
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label class="form-label">Día de la semana</label>
+                        <select name="diaSemana" class="form-select">
+                            <option value="">Todos</option>
+                            @if (diasSemana != null)
+                            {
+                                foreach (var dia in diasSemana)
+                                {
+                                    <option value="@dia.Key"@(ViewBag.FiltroDiaSemana == dia.Key ? " selected" : "")>@dia.Value</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label class="form-label">Estado</label>
+                        <select name="estado" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="ACTIVO"@(ViewBag.FiltroEstado == "ACTIVO" ? " selected" : "")>Activo</option>
+                            <option value="INACTIVO"@(ViewBag.FiltroEstado == "INACTIVO" ? " selected" : "")>Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 d-grid">
+                        <button type="submit" class="btn btn-light-secondary">
+                            <i class="bi bi-funnel me-1"></i>Filtrar
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4><i class="bi bi-clock me-2" style="color:#01C0BA;"></i>Listado de Horarios</h4>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Doctor</th>
+                            <th>Día</th>
+                            <th>Hora inicio</th>
+                            <th>Hora fin</th>
+                            <th>Duración (min)</th>
+                            <th>Estado</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.id_horario</td>
+                                    <td class="fw-semibold">@(nombreDoctor != null && nombreDoctor.ContainsKey(item.id_doctor) ? nombreDoctor[item.id_doctor] : "—")</td>
+                                    <td>@(diasSemana != null && diasSemana.ContainsKey(item.dia_semana) ? diasSemana[item.dia_semana] : "—")</td>
+                                    <td>@item.hora_inicio.ToString(@"hh\:mm")</td>
+                                    <td>@item.hora_fin.ToString(@"hh\:mm")</td>
+                                    <td>@item.duracion_cita_min</td>
+                                    <td>
+                                        @if (item.estado == "ACTIVO")
+                                        {
+                                            <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Inactivo</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="@Url.Action("Details", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-light-secondary btn-sm" title="Ver detalle">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("Edit", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-light-secondary btn-sm" title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        @if (item.estado == "ACTIVO")
+                                        {
+                                            <a href="@Url.Action("Delete", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-light-danger btn-sm" title="Desactivar">
+                                                <i class="bi bi-toggle-off"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            using (Html.BeginForm("CambiarEstado", "HorariosMedicos", FormMethod.Post, new { style = "display:inline-block;" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.id_horario" />
+                                                <input type="hidden" name="nuevoEstado" value="ACTIVO" />
+                                                <button type="submit" class="btn btn-light-success btn-sm" title="Activar">
+                                                    <i class="bi bi-toggle-on"></i>
+                                                </button>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="empty-state-cell">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon-wrap">
+                                            <i class="bi bi-clock"></i>
+                                        </div>
+                                        <p class="empty-state-title">Sin horarios registrados</p>
+                                        <p class="empty-state-sub">Aún no hay horarios que coincidan con los filtros aplicados.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @if (totalPaginas > 1)
+        {
+            <div class="card-footer">
+                <nav aria-label="Paginación de horarios">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "HorariosMedicos", new { idDoctor = ViewBag.FiltroDoctor, diaSemana = ViewBag.FiltroDiaSemana, estado = ViewBag.FiltroEstado, page = paginaActual - 1 })">Anterior</a>
+                        </li>
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "HorariosMedicos", new { idDoctor = ViewBag.FiltroDoctor, diaSemana = ViewBag.FiltroDiaSemana, estado = ViewBag.FiltroEstado, page = i })">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "HorariosMedicos", new { idDoctor = ViewBag.FiltroDoctor, diaSemana = ViewBag.FiltroDiaSemana, estado = ViewBag.FiltroEstado, page = paginaActual + 1 })">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</section>

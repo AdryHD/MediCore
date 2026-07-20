@@ -1,0 +1,58 @@
+@model MediCore.EF.Pacientes
+@{
+    ViewBag.Title = "Desactivar Paciente";
+    ViewBag.ActiveMenu = "Pacientes";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">EXPEDIENTES</span>
+        <h3>Desactivar Paciente</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "Pacientes")" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12 col-lg-7">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-exclamation-triangle-fill me-2" style="color:#d64545;"></i>Confirmar Desactivación</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-light-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Por política del sistema los pacientes <strong>no se eliminan físicamente</strong>. Este paciente
+                        quedará desactivado y no aparecerá disponible para programar nuevas citas, pero su expediente
+                        se conserva. Podrá activarlo nuevamente desde el listado.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Nombre completo</label>
+                            <p class="fw-semibold mb-0">@Model.nombre_completo</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Cédula</label>
+                            <p class="fw-semibold mb-0">@Model.cedula</p>
+                        </div>
+                    </div>
+
+                    @using (Html.BeginForm("Delete", "Pacientes", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("id", Model.id_paciente)
+                        <button type="submit" class="btn btn-light-danger">
+                            <i class="bi bi-toggle-off me-1"></i>Sí, desactivar
+                        </button>
+                        <a href="@Url.Action("Index", "Pacientes")" class="btn btn-light-secondary">Cancelar</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

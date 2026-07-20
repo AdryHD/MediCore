@@ -297,6 +297,13 @@ BEGIN
 END
 GO
 
+-- Migracion: RF-04/RF-09 exigen que el correo del paciente sea unico (igual que en Doctores).
+IF OBJECT_ID(N'dbo.UQ_Pacientes_Correo', N'UQ') IS NULL
+BEGIN
+	ALTER TABLE [dbo].[Pacientes] ADD CONSTRAINT [UQ_Pacientes_Correo] UNIQUE NONCLUSTERED ([correo] ASC)
+END
+GO
+
 IF OBJECT_ID(N'dbo.HorariosMedicos', N'U') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[HorariosMedicos](

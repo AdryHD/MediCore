@@ -1,0 +1,91 @@
+@model MediCore.EF.Pacientes
+@{
+    ViewBag.Title = "Detalle de Paciente";
+    ViewBag.ActiveMenu = "Pacientes";
+    var expediente = ViewBag.Expediente as MediCore.EF.Expedientes;
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">EXPEDIENTES</span>
+        <h3>Detalle de Paciente</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "Pacientes")" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-people me-2" style="color:#01C0BA;"></i>Datos del Paciente</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Nombre completo</label>
+                            <p class="fw-semibold mb-0">@Model.nombre_completo</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Cédula</label>
+                            <p class="fw-semibold mb-0">@Model.cedula</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Fecha de nacimiento</label>
+                            <p class="fw-semibold mb-0">@Model.fecha_nacimiento.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Sexo</label>
+                            <p class="fw-semibold mb-0">@Model.sexo</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <p class="fw-semibold mb-0">@(string.IsNullOrWhiteSpace(Model.telefono) ? "—" : Model.telefono)</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Correo electrónico</label>
+                            <p class="fw-semibold mb-0">@Model.correo</p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Dirección</label>
+                            <p class="fw-semibold mb-0">@(string.IsNullOrWhiteSpace(Model.direccion) ? "—" : Model.direccion)</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Tipo de sangre</label>
+                            <p class="fw-semibold mb-0">@(expediente != null && !string.IsNullOrWhiteSpace(expediente.tipo_sangre) ? expediente.tipo_sangre : "—")</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Estado</label>
+                            <p class="mb-0">
+                                @if (Model.estado == "ACTIVO")
+                                {
+                                    <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Inactivo</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Alergias</label>
+                            <p class="fw-semibold mb-0">@(expediente != null && !string.IsNullOrWhiteSpace(expediente.alergias) ? expediente.alergias : "—")</p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Antecedentes médicos</label>
+                            <p class="fw-semibold mb-0">@(expediente != null && !string.IsNullOrWhiteSpace(expediente.antecedentes) ? expediente.antecedentes : "—")</p>
+                        </div>
+                    </div>
+
+                    <a href="@Url.Action("Edit", "Pacientes", new { id = Model.id_paciente })" class="btn btn-primary">
+                        <i class="bi bi-pencil-square me-1"></i>Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

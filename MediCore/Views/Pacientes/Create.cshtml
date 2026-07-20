@@ -1,0 +1,133 @@
+@model MediCore.Models.PacienteFormModel
+@{
+    ViewBag.Title = "Nuevo Paciente";
+    ViewBag.ActiveMenu = "Pacientes";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">EXPEDIENTES</span>
+        <h3>Nuevo Paciente</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "Pacientes")" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-people me-2" style="color:#01C0BA;"></i>Datos del Paciente</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Create", "Pacientes", FormMethod.Post, new { id = "PacienteForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-light-danger" })
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.NombreCompleto)
+                            @Html.TextBoxFor(m => m.NombreCompleto, new { @class = "form-control", @placeholder = "Ej. Juan Pérez Gómez", @maxlength = 150 })
+                            @Html.ValidationMessageFor(m => m.NombreCompleto, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Cedula)
+                                    @Html.TextBoxFor(m => m.Cedula, new { @class = "form-control", @placeholder = "Cédula", @maxlength = 20 })
+                                    @Html.ValidationMessageFor(m => m.Cedula, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.FechaNacimiento)
+                                    <input type="date" id="FechaNacimiento" name="FechaNacimiento" class="form-control"
+                                           value="@(Model.FechaNacimiento == default(DateTime) ? "" : Model.FechaNacimiento.ToString("yyyy-MM-dd"))"
+                                           min="1900-01-01" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                    @Html.ValidationMessageFor(m => m.FechaNacimiento, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-4">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Sexo)
+                                    <select id="Sexo" name="Sexo" class="form-select">
+                                        <option value="">Seleccione</option>
+                                        <option value="M"@(Model.Sexo == "M" ? " selected" : "")>Masculino</option>
+                                        <option value="F"@(Model.Sexo == "F" ? " selected" : "")>Femenino</option>
+                                        <option value="OTRO"@(Model.Sexo == "OTRO" ? " selected" : "")>Otro</option>
+                                    </select>
+                                    @Html.ValidationMessageFor(m => m.Sexo, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Telefono)
+                                    @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", @placeholder = "Opcional", @maxlength = 20 })
+                                    @Html.ValidationMessageFor(m => m.Telefono, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.TipoSangre)
+                                    <select id="TipoSangre" name="TipoSangre" class="form-select">
+                                        <option value="">Desconocido</option>
+                                        @foreach (var tipo in new[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" })
+                                        {
+                                            <option value="@tipo"@(Model.TipoSangre == tipo ? " selected" : "")>@tipo</option>
+                                        }
+                                    </select>
+                                    @Html.ValidationMessageFor(m => m.TipoSangre, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.CorreoElectronico)
+                                    @Html.TextBoxFor(m => m.CorreoElectronico, new { @class = "form-control", type = "email", @placeholder = "correo@ejemplo.com", @maxlength = 150 })
+                                    @Html.ValidationMessageFor(m => m.CorreoElectronico, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Direccion)
+                                    @Html.TextBoxFor(m => m.Direccion, new { @class = "form-control", @placeholder = "Opcional", @maxlength = 255 })
+                                    @Html.ValidationMessageFor(m => m.Direccion, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.Alergias)
+                            @Html.TextAreaFor(m => m.Alergias, new { @class = "form-control", rows = 2, @placeholder = "Alergias conocidas (opcional)" })
+                            @Html.ValidationMessageFor(m => m.Alergias, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.AntecedentesMedicos)
+                            @Html.TextAreaFor(m => m.AntecedentesMedicos, new { @class = "form-control", rows = 3, @placeholder = "Antecedentes médicos relevantes (opcional)" })
+                            @Html.ValidationMessageFor(m => m.AntecedentesMedicos, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>Guardar Paciente
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script src="~/Scripts/pacientes.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/pacientes.js")).Ticks"></script>
+}

@@ -33,6 +33,12 @@ namespace MediCore.EF
     
         public virtual DbSet<Doctores> Doctores { get; set; }
     
+        public virtual DbSet<HorariosMedicos> HorariosMedicos { get; set; }
+    
+        public virtual DbSet<Pacientes> Pacientes { get; set; }
+    
+        public virtual DbSet<Expedientes> Expedientes { get; set; }
+    
         public virtual int sp_RegistrarUsuario(string nombre, string cedula, Nullable<System.DateTime> fechaNacimiento, string telefono, string correo, string contrasenna, Nullable<int> idRol)
         {
             var nombreParameter = nombre != null ?

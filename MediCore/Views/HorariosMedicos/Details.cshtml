@@ -1,0 +1,70 @@
+@model MediCore.EF.HorariosMedicos
+@{
+    ViewBag.Title = "Detalle de Horario Médico";
+    ViewBag.ActiveMenu = "Horarios";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">GESTIÓN MÉDICA</span>
+        <h3>Detalle de Horario Médico</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "HorariosMedicos")" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12 col-lg-7">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-clock me-2" style="color:#01C0BA;"></i>Datos del Horario</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Doctor</label>
+                            <p class="fw-semibold mb-0">@ViewBag.NombreDoctor</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Día de la semana</label>
+                            <p class="fw-semibold mb-0">@ViewBag.NombreDiaSemana</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Hora de inicio</label>
+                            <p class="fw-semibold mb-0">@Model.hora_inicio.ToString(@"hh\:mm")</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Hora de fin</label>
+                            <p class="fw-semibold mb-0">@Model.hora_fin.ToString(@"hh\:mm")</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Duración de la cita</label>
+                            <p class="fw-semibold mb-0">@Model.duracion_cita_min minutos</p>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Estado</label>
+                            <p class="mb-0">
+                                @if (Model.estado == "ACTIVO")
+                                {
+                                    <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Inactivo</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+
+                    <a href="@Url.Action("Edit", "HorariosMedicos", new { id = Model.id_horario })" class="btn btn-primary">
+                        <i class="bi bi-pencil-square me-1"></i>Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

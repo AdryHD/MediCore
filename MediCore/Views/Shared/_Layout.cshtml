@@ -64,7 +64,7 @@
                     </li>
 
                     <li class="sidebar-item @(ViewBag.ActiveMenu == "Pacientes" ? "active" : "")">
-                        <a href="#" class="sidebar-link">
+                        <a href="@Url.Action("Index", "Pacientes")" class="sidebar-link">
                             <i class="bi bi-people"></i>
                             <span>Pacientes</span>
                         </a>
@@ -85,7 +85,7 @@
                     </li>
 
                     <li class="sidebar-item @(ViewBag.ActiveMenu == "Horarios" ? "active" : "")">
-                        <a href="#" class="sidebar-link">
+                        <a href="@Url.Action("Index", "HorariosMedicos")" class="sidebar-link">
                             <i class="bi bi-clock"></i>
                             <span>Horarios</span>
                         </a>

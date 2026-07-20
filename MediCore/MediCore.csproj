@@ -131,10 +131,21 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\DoctoresController.cs" />
     <Compile Include="Controllers\EspecialidadesController.cs" />
+    <Compile Include="Controllers\HorariosMedicosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PacientesController.cs" />
     <Compile Include="Controllers\PerfilController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="EF\Doctores.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EF\HorariosMedicos.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EF\Pacientes.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EF\Expedientes.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="EF\Especialidades.cs">
@@ -163,10 +174,13 @@
     </Compile>
     <Compile Include="Models\DoctorFormModel.cs" />
     <Compile Include="Models\EspecialidadFormModel.cs" />
+    <Compile Include="Models\HorarioMedicoFormModel.cs" />
+    <Compile Include="Models\PacienteFormModel.cs" />
     <Compile Include="Models\UsuarioModel.cs" />
     <Compile Include="Models\PerfilModel.cs" />
     <Compile Include="Models\AuthActionFilter.cs" />
     <Compile Include="Models\AdminActionFilter.cs" />
+    <Compile Include="Models\DateTimeModelBinder.cs" />
     <Compile Include="Models\GestionUsuarioModel.cs" />
     <Compile Include="Models\RolItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -223,6 +237,8 @@
     <Content Include="Scripts\login.js" />
     <Content Include="Scripts\especialidades.js" />
     <Content Include="Scripts\doctores.js" />
+    <Content Include="Scripts\horariosmedicos.js" />
+    <Content Include="Scripts\pacientes.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -247,6 +263,16 @@
     <Content Include="Views\Doctores\Index.cshtml" />
     <Content Include="Views\Doctores\Create.cshtml" />
     <Content Include="Views\Doctores\Edit.cshtml" />
+    <Content Include="Views\HorariosMedicos\Index.cshtml" />
+    <Content Include="Views\HorariosMedicos\Create.cshtml" />
+    <Content Include="Views\HorariosMedicos\Edit.cshtml" />
+    <Content Include="Views\HorariosMedicos\Details.cshtml" />
+    <Content Include="Views\HorariosMedicos\Delete.cshtml" />
+    <Content Include="Views\Pacientes\Index.cshtml" />
+    <Content Include="Views\Pacientes\Create.cshtml" />
+    <Content Include="Views\Pacientes\Edit.cshtml" />
+    <Content Include="Views\Pacientes\Details.cshtml" />
+    <Content Include="Views\Pacientes\Delete.cshtml" />
     <Content Include="Views\Perfil\Index.cshtml" />
     <Content Include="Views\Usuarios\Index.cshtml" />
   </ItemGroup>

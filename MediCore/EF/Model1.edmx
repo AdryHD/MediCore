@@ -81,10 +81,51 @@
           <Parameter Name="NuevoEstado" Type="varchar" Mode="In" />
           <Parameter Name="IdUsuario" Type="int" Mode="In" />
         </Function>
+        <EntityType Name="HorariosMedicos">
+          <Key>
+            <PropertyRef Name="id_horario" />
+          </Key>
+          <Property Name="id_horario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_doctor" Type="int" Nullable="false" />
+          <Property Name="dia_semana" Type="tinyint" Nullable="false" />
+          <Property Name="hora_inicio" Type="time" Precision="7" Nullable="false" />
+          <Property Name="hora_fin" Type="time" Precision="7" Nullable="false" />
+          <Property Name="duracion_cita_min" Type="int" Nullable="false" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Pacientes">
+          <Key>
+            <PropertyRef Name="id_paciente" />
+          </Key>
+          <Property Name="id_paciente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre_completo" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="cedula" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="fecha_nacimiento" Type="date" Nullable="false" />
+          <Property Name="sexo" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="telefono" Type="nvarchar" MaxLength="20" Nullable="true" />
+          <Property Name="correo" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="direccion" Type="nvarchar" MaxLength="255" Nullable="true" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="fecha_registro" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Expedientes">
+          <Key>
+            <PropertyRef Name="id_expediente" />
+          </Key>
+          <Property Name="id_expediente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_paciente" Type="int" Nullable="false" />
+          <Property Name="alergias" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="antecedentes" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="tipo_sangre" Type="varchar" MaxLength="5" Nullable="true" />
+          <Property Name="fecha_apertura" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
         <EntityContainer Name="MediCoreModelStoreContainer">
           <EntitySet Name="tbUsuario" EntityType="Self.tbUsuario" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Especialidades" EntityType="Self.Especialidades" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HorariosMedicos" EntityType="Self.HorariosMedicos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Pacientes" EntityType="Self.Pacientes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
@@ -130,10 +171,51 @@
           <Property Name="correo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
         </EntityType>
+        <EntityType Name="HorariosMedicos">
+          <Key>
+            <PropertyRef Name="id_horario" />
+          </Key>
+          <Property Name="id_horario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_doctor" Type="Int32" Nullable="false" />
+          <Property Name="dia_semana" Type="Byte" Nullable="false" />
+          <Property Name="hora_inicio" Type="Time" Precision="7" Nullable="false" />
+          <Property Name="hora_fin" Type="Time" Precision="7" Nullable="false" />
+          <Property Name="duracion_cita_min" Type="Int32" Nullable="false" />
+          <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Pacientes">
+          <Key>
+            <PropertyRef Name="id_paciente" />
+          </Key>
+          <Property Name="id_paciente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre_completo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="cedula" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="fecha_nacimiento" Type="DateTime" Nullable="false" />
+          <Property Name="sexo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="true" />
+          <Property Name="correo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="direccion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="true" />
+          <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="fecha_registro" Type="DateTime" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Expedientes">
+          <Key>
+            <PropertyRef Name="id_expediente" />
+          </Key>
+          <Property Name="id_expediente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_paciente" Type="Int32" Nullable="false" />
+          <Property Name="alergias" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="true" />
+          <Property Name="antecedentes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="true" />
+          <Property Name="tipo_sangre" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="true" />
+          <Property Name="fecha_apertura" Type="DateTime" Precision="7" Nullable="false" />
+        </EntityType>
         <EntityContainer Name="MediCoreEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="tbUsuario" EntityType="Self.tbUsuario" />
           <EntitySet Name="Especialidades" EntityType="Self.Especialidades" />
           <EntitySet Name="Doctores" EntityType="Self.Doctores" />
+          <EntitySet Name="HorariosMedicos" EntityType="Self.HorariosMedicos" />
+          <EntitySet Name="Pacientes" EntityType="Self.Pacientes" />
+          <EntitySet Name="Expedientes" EntityType="Self.Expedientes" />
           <FunctionImport Name="sp_RegistrarUsuario">
             <Parameter Name="Nombre" Mode="In" Type="String" />
             <Parameter Name="Cedula" Mode="In" Type="String" />
@@ -217,6 +299,47 @@
                 <ScalarProperty Name="telefono" ColumnName="telefono" />
                 <ScalarProperty Name="correo" ColumnName="correo" />
                 <ScalarProperty Name="estado" ColumnName="estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HorariosMedicos">
+            <EntityTypeMapping TypeName="MediCoreModel.HorariosMedicos">
+              <MappingFragment StoreEntitySet="HorariosMedicos">
+                <ScalarProperty Name="id_horario" ColumnName="id_horario" />
+                <ScalarProperty Name="id_doctor" ColumnName="id_doctor" />
+                <ScalarProperty Name="dia_semana" ColumnName="dia_semana" />
+                <ScalarProperty Name="hora_inicio" ColumnName="hora_inicio" />
+                <ScalarProperty Name="hora_fin" ColumnName="hora_fin" />
+                <ScalarProperty Name="duracion_cita_min" ColumnName="duracion_cita_min" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Pacientes">
+            <EntityTypeMapping TypeName="MediCoreModel.Pacientes">
+              <MappingFragment StoreEntitySet="Pacientes">
+                <ScalarProperty Name="id_paciente" ColumnName="id_paciente" />
+                <ScalarProperty Name="nombre_completo" ColumnName="nombre_completo" />
+                <ScalarProperty Name="cedula" ColumnName="cedula" />
+                <ScalarProperty Name="fecha_nacimiento" ColumnName="fecha_nacimiento" />
+                <ScalarProperty Name="sexo" ColumnName="sexo" />
+                <ScalarProperty Name="telefono" ColumnName="telefono" />
+                <ScalarProperty Name="correo" ColumnName="correo" />
+                <ScalarProperty Name="direccion" ColumnName="direccion" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="fecha_registro" ColumnName="fecha_registro" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Expedientes">
+            <EntityTypeMapping TypeName="MediCoreModel.Expedientes">
+              <MappingFragment StoreEntitySet="Expedientes">
+                <ScalarProperty Name="id_expediente" ColumnName="id_expediente" />
+                <ScalarProperty Name="id_paciente" ColumnName="id_paciente" />
+                <ScalarProperty Name="alergias" ColumnName="alergias" />
+                <ScalarProperty Name="antecedentes" ColumnName="antecedentes" />
+                <ScalarProperty Name="tipo_sangre" ColumnName="tipo_sangre" />
+                <ScalarProperty Name="fecha_apertura" ColumnName="fecha_apertura" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
