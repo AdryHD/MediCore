@@ -10,7 +10,7 @@
             <PropertyRef Name="Consecutivo" />
           </Key>
           <Property Name="Consecutivo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="id_rol" Type="int" Nullable="true" />
+          <Property Name="id_rol" Type="int" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="250" Nullable="false" />
           <Property Name="Cedula" Type="varchar" MaxLength="15" Nullable="false" />
           <Property Name="FechaNacimiento" Type="datetime" Nullable="true" />
@@ -27,6 +27,7 @@
           <Parameter Name="Telefono" Type="varchar" Mode="In" />
           <Parameter Name="Correo" Type="varchar" Mode="In" />
           <Parameter Name="Contrasenna" Type="varchar" Mode="In" />
+          <Parameter Name="IdRol" Type="int" Mode="In" />
         </Function>
         <EntityType Name="Especialidades">
           <Key>
@@ -95,7 +96,7 @@
             <PropertyRef Name="Consecutivo" />
           </Key>
           <Property Name="Consecutivo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="id_rol" Type="Int32" Nullable="true" />
+          <Property Name="id_rol" Type="Int32" Nullable="false" />
           <Property Name="Nombre" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Cedula" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="FechaNacimiento" Type="DateTime" Nullable="true" Precision="3" />
@@ -140,6 +141,7 @@
             <Parameter Name="Telefono" Mode="In" Type="String" />
             <Parameter Name="Correo" Mode="In" Type="String" />
             <Parameter Name="Contrasenna" Mode="In" Type="String" />
+            <Parameter Name="IdRol" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="spCambiarEstadoEspecialidad" ReturnType="Collection(Int32)">
             <Parameter Name="IdEspecialidad" Mode="In" Type="Int32" />

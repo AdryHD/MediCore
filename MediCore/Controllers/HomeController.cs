@@ -103,7 +103,12 @@ namespace MediCore.Controllers
                         return View(model);
                     }
 
-                    db.sp_RegistrarUsuario(model.Nombre, cedulaLimpia, model.FechaNacimiento, model.Telefono, correoLimpio, model.Contrasenna);
+                    // Todo usuario interno debe tener un rol. Quien se registra por este formulario público
+                    // ingresa con el rol de menor privilegio (RECEPCIONISTA); el administrador puede cambiarlo luego.
+                    var idRolRecepcionista = db.Database.SqlQuery<int>(
+                        "SELECT id_rol FROM dbo.tbRol WHERE nombre_rol = 'RECEPCIONISTA'").FirstOrDefault();
+
+                    db.sp_RegistrarUsuario(model.Nombre, cedulaLimpia, model.FechaNacimiento, model.Telefono, correoLimpio, model.Contrasenna, idRolRecepcionista);
 
                     RegistrarEvento(db, null, "Registro", string.Format("Usuario registrado con correo '{0}' (Cédula: {1}).", correoLimpio, cedulaLimpia));
 

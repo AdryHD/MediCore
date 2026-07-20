@@ -49,7 +49,7 @@ IF OBJECT_ID(N'dbo.tbUsuario', N'U') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[tbUsuario](
 		[Consecutivo] [int] IDENTITY(1,1) NOT NULL,
-		[id_rol] [int] NULL,
+		[id_rol] [int] NOT NULL,
 		[Nombre] [varchar](250) NOT NULL,
 		[Cedula] [varchar](15) NOT NULL,
 		[FechaNacimiento] [datetime] NULL,
@@ -86,6 +86,19 @@ BEGIN
 END
 GO
 
+-- Migracion: tbUsuario es solo para personal interno, por lo que todo usuario debe tener un rol.
+-- Se asigna RECEPCIONISTA (rol minimo) a cualquier usuario existente sin rol y se vuelve la columna obligatoria.
+IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('dbo.tbUsuario') AND name = 'id_rol' AND is_nullable = 1)
+BEGIN
+	DECLARE @IdRolRecepcionista INT;
+	SELECT @IdRolRecepcionista = id_rol FROM dbo.tbRol WHERE nombre_rol = 'RECEPCIONISTA';
+
+	UPDATE dbo.tbUsuario SET id_rol = @IdRolRecepcionista WHERE id_rol IS NULL;
+
+	ALTER TABLE [dbo].[tbUsuario] ALTER COLUMN [id_rol] [int] NOT NULL
+END
+GO
+
 IF NOT EXISTS (SELECT 1 FROM dbo.tbUsuario WHERE Correo = 'admin@medicore.com')
 BEGIN
 	DECLARE @IdRolAdmin INT;
@@ -102,7 +115,8 @@ CREATE OR ALTER PROCEDURE [dbo].[sp_RegistrarUsuario]
        @FechaNacimiento datetime,
        @Telefono varchar(20),
        @Correo varchar(100),
-       @Contrasenna varchar(10)
+       @Contrasenna varchar(10),
+       @IdRol int
 AS
 BEGIN
 
@@ -118,7 +132,7 @@ INSERT INTO dbo.tbUsuario
            Contrasenna,
            Estado)
      VALUES
-		     (NULL,
+		     (@IdRol,
            @Nombre,
            @Cedula,
            @FechaNacimiento,
@@ -217,12 +231,12 @@ IF OBJECT_ID(N'dbo.Pacientes', N'U') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[Pacientes](
 		[id_paciente] [int] IDENTITY(1,1) NOT NULL,
-		[id_usuario] [int] NOT NULL,
 		[nombre_completo] [nvarchar](150) NOT NULL,
 		[cedula] [nvarchar](20) NOT NULL,
 		[fecha_nacimiento] [date] NOT NULL,
 		[sexo] [varchar](10) NOT NULL,
 		[telefono] [nvarchar](20) NULL,
+		[correo] [nvarchar](150) NOT NULL,
 		[direccion] [nvarchar](255) NULL,
 		[estado] [varchar](10) NOT NULL,
 		[fecha_registro] [datetime2](7) NOT NULL,
@@ -234,11 +248,6 @@ BEGIN
 END
 GO
 
-IF OBJECT_ID(N'dbo.UQ_Pacientes_IdUsuario', N'UQ') IS NULL
-BEGIN
-	ALTER TABLE [dbo].[Pacientes] ADD CONSTRAINT [UQ_Pacientes_IdUsuario] UNIQUE NONCLUSTERED ([id_usuario] ASC)
-END
-GO
 IF OBJECT_ID(N'dbo.UQ_Pacientes_Cedula', N'UQ') IS NULL
 BEGIN
 	ALTER TABLE [dbo].[Pacientes] ADD CONSTRAINT [UQ_Pacientes_Cedula] UNIQUE NONCLUSTERED ([cedula] ASC)
@@ -262,6 +271,29 @@ GO
 IF OBJECT_ID(N'dbo.CK_Pacientes_Estado', N'C') IS NULL
 BEGIN
 	ALTER TABLE [dbo].[Pacientes] ADD CONSTRAINT [CK_Pacientes_Estado] CHECK ([estado] IN ('ACTIVO','INACTIVO'))
+END
+GO
+
+-- Migracion: los pacientes no inician sesion en el sistema, por lo que Pacientes
+-- no debe depender de tbUsuario. Se elimina id_usuario si viene de una version anterior del script.
+IF COL_LENGTH('dbo.Pacientes', 'id_usuario') IS NOT NULL
+BEGIN
+	IF OBJECT_ID(N'dbo.FK_Pacientes_tbUsuario', N'F') IS NOT NULL
+		ALTER TABLE [dbo].[Pacientes] DROP CONSTRAINT [FK_Pacientes_tbUsuario]
+
+	IF OBJECT_ID(N'dbo.UQ_Pacientes_IdUsuario', N'UQ') IS NOT NULL
+		ALTER TABLE [dbo].[Pacientes] DROP CONSTRAINT [UQ_Pacientes_IdUsuario]
+
+	ALTER TABLE [dbo].[Pacientes] DROP COLUMN [id_usuario]
+END
+GO
+
+-- Migracion: se agrega correo para notificaciones de citas (confirmacion, reprogramacion, cancelacion)
+IF COL_LENGTH('dbo.Pacientes', 'correo') IS NULL
+BEGIN
+	ALTER TABLE [dbo].[Pacientes] ADD [correo] [nvarchar](150) NOT NULL CONSTRAINT [DF_Pacientes_Correo_Temp] DEFAULT ('')
+
+	ALTER TABLE [dbo].[Pacientes] DROP CONSTRAINT [DF_Pacientes_Correo_Temp]
 END
 GO
 
@@ -516,15 +548,6 @@ BEGIN
 	REFERENCES [dbo].[Especialidades] ([id_especialidad])
 
 	ALTER TABLE [dbo].[Doctores] CHECK CONSTRAINT [FK_Doctores_Especialidades]
-END
-GO
-
-IF OBJECT_ID(N'dbo.FK_Pacientes_tbUsuario', N'F') IS NULL
-BEGIN
-	ALTER TABLE [dbo].[Pacientes]  WITH CHECK ADD  CONSTRAINT [FK_Pacientes_tbUsuario] FOREIGN KEY([id_usuario])
-	REFERENCES [dbo].[tbUsuario] ([Consecutivo])
-
-	ALTER TABLE [dbo].[Pacientes] CHECK CONSTRAINT [FK_Pacientes_tbUsuario]
 END
 GO
 

@@ -9,8 +9,8 @@ using System.Web.Mvc;
 namespace MediCore.Controllers
 {
     // Pantalla de administración: permite a un ADMINISTRADOR ver a todos los
-    // usuarios registrados (incluyendo los que se registraron por el formulario
-    // público sin rol asignado) y asignarles/cambiarles el rol correspondiente.
+    // usuarios internos registrados y cambiarles el rol correspondiente
+    // (ADMINISTRADOR, DOCTOR o RECEPCIONISTA).
     [AuthActionFilter]
     [AdminActionFilter]
     public class UsuariosController : Controller
@@ -36,9 +36,7 @@ namespace MediCore.Controllers
                         Cedula = u.Cedula,
                         Estado = u.Estado,
                         IdRol = u.id_rol,
-                        NombreRol = (u.id_rol.HasValue && rolesPorId.ContainsKey(u.id_rol.Value))
-                            ? rolesPorId[u.id_rol.Value]
-                            : null
+                        NombreRol = rolesPorId.ContainsKey(u.id_rol) ? rolesPorId[u.id_rol] : null
                     })
                     .ToList();
 
@@ -50,7 +48,7 @@ namespace MediCore.Controllers
         // POST: Usuarios/AsignarRol
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AsignarRol(int idUsuario, int? idRol)
+        public ActionResult AsignarRol(int idUsuario, int idRol)
         {
             using (var db = new MediCoreEntities())
             {
@@ -71,8 +69,8 @@ namespace MediCore.Controllers
                     db.SaveChanges();
 
                     var roles = ObtenerRoles(db);
-                    var rolAsignado = roles.FirstOrDefault(r => idRol.HasValue && r.IdRol == idRol.Value);
-                    var nombreRolAsignado = rolAsignado != null ? rolAsignado.NombreRol : "SIN ASIGNAR";
+                    var rolAsignado = roles.FirstOrDefault(r => r.IdRol == idRol);
+                    var nombreRolAsignado = rolAsignado != null ? rolAsignado.NombreRol : "DESCONOCIDO";
 
                     RegistrarEvento(db, idAdmin, "AsignarRol", string.Format(
                         "Se asignó el rol '{0}' al usuario '{1}' (Consecutivo: {2}).",

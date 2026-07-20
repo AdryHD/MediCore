@@ -68,14 +68,7 @@
                                         }
                                     </td>
                                     <td>
-                                        @if (string.IsNullOrWhiteSpace(item.NombreRol))
-                                        {
-                                            <span class="badge-status canceled"><i class="bi bi-question-circle"></i>Sin asignar</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge-status done"><i class="bi bi-person-badge"></i>@item.NombreRol</span>
-                                        }
+                                        <span class="badge-status done"><i class="bi bi-person-badge"></i>@item.NombreRol</span>
                                     </td>
                                     <td class="text-end">
                                         @using (Html.BeginForm("AsignarRol", "Usuarios", FormMethod.Post, new { style = "display:inline-flex; gap:.4rem; justify-content:flex-end;" }))
@@ -83,7 +76,6 @@
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="idUsuario" value="@item.Consecutivo" />
                                             <select name="idRol" class="form-select form-select-sm" style="width:auto;">
-                                                <option value="">Sin asignar</option>
                                                 @if (roles != null)
                                                 {
                                                     foreach (var rol in roles)

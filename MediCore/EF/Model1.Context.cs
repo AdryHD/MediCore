@@ -33,7 +33,7 @@ namespace MediCore.EF
     
         public virtual DbSet<Doctores> Doctores { get; set; }
     
-        public virtual int sp_RegistrarUsuario(string nombre, string cedula, Nullable<System.DateTime> fechaNacimiento, string telefono, string correo, string contrasenna)
+        public virtual int sp_RegistrarUsuario(string nombre, string cedula, Nullable<System.DateTime> fechaNacimiento, string telefono, string correo, string contrasenna, Nullable<int> idRol)
         {
             var nombreParameter = nombre != null ?
                 new ObjectParameter("Nombre", nombre) :
@@ -59,7 +59,11 @@ namespace MediCore.EF
                 new ObjectParameter("Contrasenna", contrasenna) :
                 new ObjectParameter("Contrasenna", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_RegistrarUsuario", nombreParameter, cedulaParameter, fechaNacimientoParameter, telefonoParameter, correoParameter, contrasennaParameter);
+            var idRolParameter = idRol.HasValue ?
+                new ObjectParameter("IdRol", idRol) :
+                new ObjectParameter("IdRol", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_RegistrarUsuario", nombreParameter, cedulaParameter, fechaNacimientoParameter, telefonoParameter, correoParameter, contrasennaParameter, idRolParameter);
         }
     
         public virtual int spCambiarEstadoEspecialidad(Nullable<int> idEspecialidad, string nuevoEstado, Nullable<int> idUsuario)

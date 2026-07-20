@@ -55,7 +55,10 @@
                     @using (Html.BeginForm("CambiarContrasenna", "Perfil", FormMethod.Post, new { id = "CambiarContrasennaForm" }))
                     {
                         @Html.AntiForgeryToken()
-                        @Html.ValidationSummary(false, "", new { @class = "alert alert-light-danger" })
+                        if (!ViewData.ModelState.IsValid)
+                        {
+                            @Html.ValidationSummary(false, "", new { @class = "alert alert-light-danger" })
+                        }
 
                         <div class="form-group mb-3">
                             @Html.Label("ContrasennaNueva", "Contraseña Nueva", new { @class = "form-label" })
@@ -92,7 +95,10 @@
                     @using (Html.BeginForm("CambiarPerfil", "Perfil", FormMethod.Post, new { id = "CambiarPerfilForm" }))
                     {
                         @Html.AntiForgeryToken()
-                        @Html.ValidationSummary(false, "", new { @class = "alert alert-light-danger" })
+                        if (!ViewData.ModelState.IsValid)
+                        {
+                            @Html.ValidationSummary(false, "", new { @class = "alert alert-light-danger" })
+                        }
                         @Html.HiddenFor(m => m.Consecutivo)
 
                         <div class="form-group mb-3">

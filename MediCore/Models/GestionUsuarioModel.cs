@@ -11,7 +11,7 @@ namespace MediCore.Models
         public string Correo { get; set; }
         public string Cedula { get; set; }
         public bool Estado { get; set; }
-        public int? IdRol { get; set; }
+        public int IdRol { get; set; }
         public string NombreRol { get; set; }
     }
 }
