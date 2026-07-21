@@ -14,30 +14,75 @@ namespace MediCore.Controllers
         private const string NombreControlador = "Citas";
         private const int TamanoPagina = 10;
 
-        public ActionResult Index()
+        public ActionResult Index(
+            int? idPaciente,
+            int? idDoctor,
+            string estado,
+            DateTime? fecha)
         {
             ViewBag.ActiveMenu = "Citas";
 
             using (var db = new MediCoreEntities())
             {
-                try
+                var citas = db.Citas
+                    .Include(c => c.Pacientes)
+                    .Include(c => c.Doctores)
+                    .AsQueryable();
+
+                // Filtro por paciente
+                if (idPaciente.HasValue)
                 {
-                    var citas = db.Citas
-                        .Include(c => c.Pacientes)
-                        .Include(c => c.Doctores)
+                    citas = citas.Where(c => c.id_paciente == idPaciente.Value);
+                }
+
+                // Filtro por doctor
+                if (idDoctor.HasValue)
+                {
+                    citas = citas.Where(c => c.id_doctor == idDoctor.Value);
+                }
+
+                // Filtro por estado
+                if (!string.IsNullOrWhiteSpace(estado))
+                {
+                    citas = citas.Where(c => c.estado == estado);
+                }
+
+                // Filtro por fecha
+                if (fecha.HasValue)
+                {
+                    citas = citas.Where(c =>
+                        DbFunctions.TruncateTime(c.fecha_cita) ==
+                        DbFunctions.TruncateTime(fecha.Value));
+                }
+
+                // Combos para los filtros
+                var pacientes = db.Pacientes
+    .Where(p => p.estado == "ACTIVO")
+    .OrderBy(p => p.nombre_completo)
+    .Select(p => new SelectListItem
+    {
+        Value = p.id_paciente.ToString(),
+        Text = p.nombre_completo
+    })
+    .ToList();
+
+                var doctores = db.Doctores
+                    .Where(d => d.estado == "ACTIVO")
+                    .OrderBy(d => d.nombre_completo)
+                    .Select(d => new SelectListItem
+                    {
+                        Value = d.id_doctor.ToString(),
+                        Text = d.nombre_completo
+                    })
+                    .ToList();
+
+                ViewBag.Pacientes = pacientes;
+                ViewBag.Doctores = doctores;
+
+                return View(
+                    citas
                         .OrderByDescending(c => c.fecha_cita)
-                        .ToList();
-
-                    return View(citas);
-                }
-                catch (Exception ex)
-                {
-                    RegistrarError(db, "Index", ex);
-
-                    TempData["Error"] = "Ocurrió un error al cargar las citas.";
-
-                    return View(new List<Citas>());
-                }
+                        .ToList());
             }
         }
 
