@@ -130,6 +130,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\CitasController.cs" />
+    <Compile Include="Controllers\ExpedientesController.cs" />
     <Compile Include="Controllers\DoctoresController.cs" />
     <Compile Include="Controllers\EspecialidadesController.cs" />
     <Compile Include="Controllers\HorariosMedicosController.cs" />
@@ -300,6 +301,7 @@
     <Content Include="Views\Citas\Index.cshtml" />
     <Content Include="Views\Citas\Edit.cshtml" />
     <Content Include="Views\Citas\Details.cshtml" />
+    <Content Include="Views\Expedientes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

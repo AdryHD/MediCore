@@ -94,10 +94,16 @@
                     <li class="sidebar-title">Expedientes</li>
 
                     <li class="sidebar-item @(ViewBag.ActiveMenu == "Expedientes" ? "active" : "")">
-                        <a href="#" class="sidebar-link">
+
+                        <a href="@Url.Action("Index","Expedientes")"
+                           class="sidebar-link">
+
                             <i class="bi bi-folder2-open"></i>
+
                             <span>Expedientes</span>
+
                         </a>
+
                     </li>
 
                     <li class="sidebar-item @(ViewBag.ActiveMenu == "Historial" ? "active" : "")">
