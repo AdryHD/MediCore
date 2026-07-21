@@ -4,7 +4,147 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="MediCoreModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="MediCoreModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Archivos">
+          <Key>
+            <PropertyRef Name="id_archivo" />
+          </Key>
+          <Property Name="id_archivo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_expediente" Type="int" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="nombre" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="tipo_mime" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="tamano_bytes" Type="bigint" Nullable="false" />
+          <Property Name="contenido" Type="varbinary(max)" Nullable="false" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="fecha_carga" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Bitacora">
+          <Key>
+            <PropertyRef Name="id_bitacora" />
+          </Key>
+          <Property Name="id_bitacora" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fecha" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="nivel" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="controlador" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="accion" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="mensaje" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="stack_trace" Type="nvarchar(max)" />
+          <Property Name="ip_origen" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="Citas">
+          <Key>
+            <PropertyRef Name="id_cita" />
+          </Key>
+          <Property Name="id_cita" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_paciente" Type="int" Nullable="false" />
+          <Property Name="id_doctor" Type="int" Nullable="false" />
+          <Property Name="fecha_cita" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="duracion_min" Type="int" Nullable="false" />
+          <Property Name="motivo" Type="nvarchar" MaxLength="255" />
+          <Property Name="estado" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="id_cita_anterior" Type="int" />
+          <Property Name="fecha_creacion" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Doctores">
+          <Key>
+            <PropertyRef Name="id_doctor" />
+          </Key>
+          <Property Name="id_doctor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_usuario" Type="int" />
+          <Property Name="id_especialidad" Type="int" Nullable="false" />
+          <Property Name="nombre_completo" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="cedula" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="codigo_colegiado" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="telefono" Type="nvarchar" MaxLength="20" />
+          <Property Name="correo" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Especialidades">
+          <Key>
+            <PropertyRef Name="id_especialidad" />
+          </Key>
+          <Property Name="id_especialidad" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="nvarchar" MaxLength="80" Nullable="false" />
+          <Property Name="descripcion" Type="nvarchar" MaxLength="255" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="fecha_creacion" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Expedientes">
+          <Key>
+            <PropertyRef Name="id_expediente" />
+          </Key>
+          <Property Name="id_expediente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_paciente" Type="int" Nullable="false" />
+          <Property Name="alergias" Type="nvarchar(max)" />
+          <Property Name="antecedentes" Type="nvarchar(max)" />
+          <Property Name="tipo_sangre" Type="varchar" MaxLength="5" />
+          <Property Name="fecha_apertura" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="HistorialMedico">
+          <Key>
+            <PropertyRef Name="id_historial" />
+          </Key>
+          <Property Name="id_historial" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_expediente" Type="int" Nullable="false" />
+          <Property Name="id_cita" Type="int" />
+          <Property Name="id_doctor" Type="int" Nullable="false" />
+          <Property Name="fecha_consulta" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="sintomas" Type="nvarchar(max)" />
+          <Property Name="diagnostico" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="tratamiento" Type="nvarchar(max)" />
+          <Property Name="observaciones" Type="nvarchar(max)" />
+          <Property Name="medicamentos" Type="nvarchar(max)" />
+          <Property Name="proxima_cita" Type="datetime" />
+        </EntityType>
+        <EntityType Name="HorariosMedicos">
+          <Key>
+            <PropertyRef Name="id_horario" />
+          </Key>
+          <Property Name="id_horario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_doctor" Type="int" Nullable="false" />
+          <Property Name="dia_semana" Type="tinyint" Nullable="false" />
+          <Property Name="hora_inicio" Type="time" Precision="7" Nullable="false" />
+          <Property Name="hora_fin" Type="time" Precision="7" Nullable="false" />
+          <Property Name="duracion_cita_min" Type="int" Nullable="false" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Notificaciones">
+          <Key>
+            <PropertyRef Name="id_notificacion" />
+          </Key>
+          <Property Name="id_notificacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_usuario_destino" Type="int" />
+          <Property Name="correo_destino" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="tipo" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="asunto" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="cuerpo" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="fecha_envio" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Pacientes">
+          <Key>
+            <PropertyRef Name="id_paciente" />
+          </Key>
+          <Property Name="id_paciente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre_completo" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="cedula" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="fecha_nacimiento" Type="date" Nullable="false" />
+          <Property Name="sexo" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="telefono" Type="nvarchar" MaxLength="20" />
+          <Property Name="direccion" Type="nvarchar" MaxLength="255" />
+          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="fecha_registro" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="correo" Type="nvarchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbRol">
+          <Key>
+            <PropertyRef Name="id_rol" />
+          </Key>
+          <Property Name="id_rol" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre_rol" Type="varchar" MaxLength="30" Nullable="false" />
+        </EntityType>
         <EntityType Name="tbUsuario">
           <Key>
             <PropertyRef Name="Consecutivo" />
@@ -13,13 +153,193 @@
           <Property Name="id_rol" Type="int" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="250" Nullable="false" />
           <Property Name="Cedula" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="FechaNacimiento" Type="datetime" Nullable="true" />
+          <Property Name="FechaNacimiento" Type="datetime" />
           <Property Name="Telefono" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Correo" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Contrasenna" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="Estado" Type="bit" Nullable="false" />
-          <Property Name="FechaExpiracionTemp" Type="datetime" Nullable="true" />
+          <Property Name="FechaExpiracionTemp" Type="datetime" />
         </EntityType>
+        <Association Name="FK_Archivos_Expedientes">
+          <End Role="Expedientes" Type="Self.Expedientes" Multiplicity="0..1" />
+          <End Role="Archivos" Type="Self.Archivos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Expedientes">
+              <PropertyRef Name="id_expediente" />
+            </Principal>
+            <Dependent Role="Archivos">
+              <PropertyRef Name="id_expediente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Archivos_tbUsuario">
+          <End Role="tbUsuario" Type="Self.tbUsuario" Multiplicity="0..1" />
+          <End Role="Archivos" Type="Self.Archivos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbUsuario">
+              <PropertyRef Name="Consecutivo" />
+            </Principal>
+            <Dependent Role="Archivos">
+              <PropertyRef Name="id_usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Bitacora_tbUsuario">
+          <End Role="tbUsuario" Type="Self.tbUsuario" Multiplicity="0..1" />
+          <End Role="Bitacora" Type="Self.Bitacora" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbUsuario">
+              <PropertyRef Name="Consecutivo" />
+            </Principal>
+            <Dependent Role="Bitacora">
+              <PropertyRef Name="id_usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Citas_CitaAnterior">
+          <End Role="Citas" Type="Self.Citas" Multiplicity="0..1" />
+          <End Role="Citas1" Type="Self.Citas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Citas">
+              <PropertyRef Name="id_cita" />
+            </Principal>
+            <Dependent Role="Citas1">
+              <PropertyRef Name="id_cita_anterior" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Citas_Doctores">
+          <End Role="Doctores" Type="Self.Doctores" Multiplicity="1" />
+          <End Role="Citas" Type="Self.Citas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Doctores">
+              <PropertyRef Name="id_doctor" />
+            </Principal>
+            <Dependent Role="Citas">
+              <PropertyRef Name="id_doctor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Citas_Pacientes">
+          <End Role="Pacientes" Type="Self.Pacientes" Multiplicity="1" />
+          <End Role="Citas" Type="Self.Citas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pacientes">
+              <PropertyRef Name="id_paciente" />
+            </Principal>
+            <Dependent Role="Citas">
+              <PropertyRef Name="id_paciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Doctores_Especialidades">
+          <End Role="Especialidades" Type="Self.Especialidades" Multiplicity="1" />
+          <End Role="Doctores" Type="Self.Doctores" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Especialidades">
+              <PropertyRef Name="id_especialidad" />
+            </Principal>
+            <Dependent Role="Doctores">
+              <PropertyRef Name="id_especialidad" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Doctores_tbUsuario">
+          <End Role="tbUsuario" Type="Self.tbUsuario" Multiplicity="0..1" />
+          <End Role="Doctores" Type="Self.Doctores" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbUsuario">
+              <PropertyRef Name="Consecutivo" />
+            </Principal>
+            <Dependent Role="Doctores">
+              <PropertyRef Name="id_usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Expedientes_Pacientes">
+          <End Role="Pacientes" Type="Self.Pacientes" Multiplicity="1" />
+          <End Role="Expedientes" Type="Self.Expedientes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pacientes">
+              <PropertyRef Name="id_paciente" />
+            </Principal>
+            <Dependent Role="Expedientes">
+              <PropertyRef Name="id_paciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HistorialMedico_Citas">
+          <End Role="Citas" Type="Self.Citas" Multiplicity="0..1" />
+          <End Role="HistorialMedico" Type="Self.HistorialMedico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Citas">
+              <PropertyRef Name="id_cita" />
+            </Principal>
+            <Dependent Role="HistorialMedico">
+              <PropertyRef Name="id_cita" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HistorialMedico_Doctores">
+          <End Role="Doctores" Type="Self.Doctores" Multiplicity="1" />
+          <End Role="HistorialMedico" Type="Self.HistorialMedico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Doctores">
+              <PropertyRef Name="id_doctor" />
+            </Principal>
+            <Dependent Role="HistorialMedico">
+              <PropertyRef Name="id_doctor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HistorialMedico_Expedientes">
+          <End Role="Expedientes" Type="Self.Expedientes" Multiplicity="1" />
+          <End Role="HistorialMedico" Type="Self.HistorialMedico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Expedientes">
+              <PropertyRef Name="id_expediente" />
+            </Principal>
+            <Dependent Role="HistorialMedico">
+              <PropertyRef Name="id_expediente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HorariosMedicos_Doctores">
+          <End Role="Doctores" Type="Self.Doctores" Multiplicity="1" />
+          <End Role="HorariosMedicos" Type="Self.HorariosMedicos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Doctores">
+              <PropertyRef Name="id_doctor" />
+            </Principal>
+            <Dependent Role="HorariosMedicos">
+              <PropertyRef Name="id_doctor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notificaciones_tbUsuario">
+          <End Role="tbUsuario" Type="Self.tbUsuario" Multiplicity="0..1" />
+          <End Role="Notificaciones" Type="Self.Notificaciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbUsuario">
+              <PropertyRef Name="Consecutivo" />
+            </Principal>
+            <Dependent Role="Notificaciones">
+              <PropertyRef Name="id_usuario_destino" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbUsuario_tbRol">
+          <End Role="tbRol" Type="Self.tbRol" Multiplicity="1" />
+          <End Role="tbUsuario" Type="Self.tbUsuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbRol">
+              <PropertyRef Name="id_rol" />
+            </Principal>
+            <Dependent Role="tbUsuario">
+              <PropertyRef Name="id_rol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Function Name="sp_RegistrarUsuario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Nombre" Type="varchar" Mode="In" />
           <Parameter Name="Cedula" Type="varchar" Mode="In" />
@@ -29,16 +349,11 @@
           <Parameter Name="Contrasenna" Type="varchar" Mode="In" />
           <Parameter Name="IdRol" Type="int" Mode="In" />
         </Function>
-        <EntityType Name="Especialidades">
-          <Key>
-            <PropertyRef Name="id_especialidad" />
-          </Key>
-          <Property Name="id_especialidad" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="nombre" Type="nvarchar" MaxLength="80" Nullable="false" />
-          <Property Name="descripcion" Type="nvarchar" MaxLength="255" Nullable="true" />
-          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
-          <Property Name="fecha_creacion" Type="datetime2" Precision="7" Nullable="false" />
-        </EntityType>
+        <Function Name="spCambiarEstadoDoctor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdDoctor" Type="int" Mode="In" />
+          <Parameter Name="NuevoEstado" Type="varchar" Mode="In" />
+          <Parameter Name="IdUsuario" Type="int" Mode="In" />
+        </Function>
         <Function Name="spCambiarEstadoEspecialidad" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IdEspecialidad" Type="int" Mode="In" />
           <Parameter Name="NuevoEstado" Type="varchar" Mode="In" />
@@ -53,20 +368,6 @@
           <Parameter Name="StackTrace" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="IpOrigen" Type="varchar" Mode="In" />
         </Function>
-        <EntityType Name="Doctores">
-          <Key>
-            <PropertyRef Name="id_doctor" />
-          </Key>
-          <Property Name="id_doctor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="id_usuario" Type="int" Nullable="true" />
-          <Property Name="id_especialidad" Type="int" Nullable="false" />
-          <Property Name="nombre_completo" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="cedula" Type="nvarchar" MaxLength="20" Nullable="false" />
-          <Property Name="codigo_colegiado" Type="nvarchar" MaxLength="30" Nullable="false" />
-          <Property Name="telefono" Type="nvarchar" MaxLength="20" Nullable="true" />
-          <Property Name="correo" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
-        </EntityType>
         <Function Name="spRegistrarDoctor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="NombreCompleto" Type="nvarchar" Mode="In" />
           <Parameter Name="Cedula" Type="nvarchar" Mode="In" />
@@ -76,59 +377,87 @@
           <Parameter Name="IdEspecialidad" Type="int" Mode="In" />
           <Parameter Name="Contrasenna" Type="varchar" Mode="In" />
         </Function>
-        <Function Name="spCambiarEstadoDoctor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+        <Function Name="spValidarDisponibilidadCita" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IdDoctor" Type="int" Mode="In" />
-          <Parameter Name="NuevoEstado" Type="varchar" Mode="In" />
-          <Parameter Name="IdUsuario" Type="int" Mode="In" />
+          <Parameter Name="FechaCita" Type="datetime2" Mode="In" />
+          <Parameter Name="DuracionMin" Type="int" Mode="In" />
+          <Parameter Name="IdCitaExcluir" Type="int" Mode="In" />
         </Function>
-        <EntityType Name="HorariosMedicos">
-          <Key>
-            <PropertyRef Name="id_horario" />
-          </Key>
-          <Property Name="id_horario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="id_doctor" Type="int" Nullable="false" />
-          <Property Name="dia_semana" Type="tinyint" Nullable="false" />
-          <Property Name="hora_inicio" Type="time" Precision="7" Nullable="false" />
-          <Property Name="hora_fin" Type="time" Precision="7" Nullable="false" />
-          <Property Name="duracion_cita_min" Type="int" Nullable="false" />
-          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Pacientes">
-          <Key>
-            <PropertyRef Name="id_paciente" />
-          </Key>
-          <Property Name="id_paciente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="nombre_completo" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="cedula" Type="nvarchar" MaxLength="20" Nullable="false" />
-          <Property Name="fecha_nacimiento" Type="date" Nullable="false" />
-          <Property Name="sexo" Type="varchar" MaxLength="10" Nullable="false" />
-          <Property Name="telefono" Type="nvarchar" MaxLength="20" Nullable="true" />
-          <Property Name="correo" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="direccion" Type="nvarchar" MaxLength="255" Nullable="true" />
-          <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
-          <Property Name="fecha_registro" Type="datetime2" Precision="7" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Expedientes">
-          <Key>
-            <PropertyRef Name="id_expediente" />
-          </Key>
-          <Property Name="id_expediente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="id_paciente" Type="int" Nullable="false" />
-          <Property Name="alergias" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="antecedentes" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="tipo_sangre" Type="varchar" MaxLength="5" Nullable="true" />
-          <Property Name="fecha_apertura" Type="datetime2" Precision="7" Nullable="false" />
-        </EntityType>
         <EntityContainer Name="MediCoreModelStoreContainer">
-          <EntitySet Name="tbUsuario" EntityType="Self.tbUsuario" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Especialidades" EntityType="Self.Especialidades" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Archivos" EntityType="Self.Archivos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Bitacora" EntityType="Self.Bitacora" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Citas" EntityType="Self.Citas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="HorariosMedicos" EntityType="Self.HorariosMedicos" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Pacientes" EntityType="Self.Pacientes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Especialidades" EntityType="Self.Especialidades" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HistorialMedico" EntityType="Self.HistorialMedico" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HorariosMedicos" EntityType="Self.HorariosMedicos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notificaciones" EntityType="Self.Notificaciones" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Pacientes" EntityType="Self.Pacientes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbRol" EntityType="Self.tbRol" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbUsuario" EntityType="Self.tbUsuario" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Archivos_Expedientes" Association="Self.FK_Archivos_Expedientes">
+            <End Role="Expedientes" EntitySet="Expedientes" />
+            <End Role="Archivos" EntitySet="Archivos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Archivos_tbUsuario" Association="Self.FK_Archivos_tbUsuario">
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+            <End Role="Archivos" EntitySet="Archivos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Bitacora_tbUsuario" Association="Self.FK_Bitacora_tbUsuario">
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+            <End Role="Bitacora" EntitySet="Bitacora" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Citas_CitaAnterior" Association="Self.FK_Citas_CitaAnterior">
+            <End Role="Citas" EntitySet="Citas" />
+            <End Role="Citas1" EntitySet="Citas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Citas_Doctores" Association="Self.FK_Citas_Doctores">
+            <End Role="Doctores" EntitySet="Doctores" />
+            <End Role="Citas" EntitySet="Citas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Citas_Pacientes" Association="Self.FK_Citas_Pacientes">
+            <End Role="Pacientes" EntitySet="Pacientes" />
+            <End Role="Citas" EntitySet="Citas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Doctores_Especialidades" Association="Self.FK_Doctores_Especialidades">
+            <End Role="Especialidades" EntitySet="Especialidades" />
+            <End Role="Doctores" EntitySet="Doctores" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Doctores_tbUsuario" Association="Self.FK_Doctores_tbUsuario">
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+            <End Role="Doctores" EntitySet="Doctores" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Expedientes_Pacientes" Association="Self.FK_Expedientes_Pacientes">
+            <End Role="Pacientes" EntitySet="Pacientes" />
+            <End Role="Expedientes" EntitySet="Expedientes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HistorialMedico_Citas" Association="Self.FK_HistorialMedico_Citas">
+            <End Role="Citas" EntitySet="Citas" />
+            <End Role="HistorialMedico" EntitySet="HistorialMedico" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HistorialMedico_Doctores" Association="Self.FK_HistorialMedico_Doctores">
+            <End Role="Doctores" EntitySet="Doctores" />
+            <End Role="HistorialMedico" EntitySet="HistorialMedico" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HistorialMedico_Expedientes" Association="Self.FK_HistorialMedico_Expedientes">
+            <End Role="Expedientes" EntitySet="Expedientes" />
+            <End Role="HistorialMedico" EntitySet="HistorialMedico" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HorariosMedicos_Doctores" Association="Self.FK_HorariosMedicos_Doctores">
+            <End Role="Doctores" EntitySet="Doctores" />
+            <End Role="HorariosMedicos" EntitySet="HorariosMedicos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notificaciones_tbUsuario" Association="Self.FK_Notificaciones_tbUsuario">
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+            <End Role="Notificaciones" EntitySet="Notificaciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbUsuario_tbRol" Association="Self.FK_tbUsuario_tbRol">
+            <End Role="tbRol" EntitySet="tbRol" />
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MediCoreModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -146,6 +475,11 @@
           <Property Name="Contrasenna" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Estado" Type="Boolean" Nullable="false" />
           <Property Name="FechaExpiracionTemp" Type="DateTime" Nullable="true" Precision="3" />
+          <NavigationProperty Name="Doctores" Relationship="MediCoreModel.FK_Doctores_tbUsuario" FromRole="tbUsuario" ToRole="Doctores" />
+          <NavigationProperty Name="Archivos" Relationship="MediCoreModel.FK_Archivos_tbUsuario" FromRole="tbUsuario" ToRole="Archivos" />
+          <NavigationProperty Name="Bitacora" Relationship="MediCoreModel.FK_Bitacora_tbUsuario" FromRole="tbUsuario" ToRole="Bitacora" />
+          <NavigationProperty Name="Notificaciones" Relationship="MediCoreModel.FK_Notificaciones_tbUsuario" FromRole="tbUsuario" ToRole="Notificaciones" />
+          <NavigationProperty Name="tbRol" Relationship="MediCoreModel.FK_tbUsuario_tbRol" FromRole="tbUsuario" ToRole="tbRol" />
         </EntityType>
         <EntityType Name="Especialidades">
           <Key>
@@ -156,6 +490,7 @@
           <Property Name="descripcion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="true" />
           <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="fecha_creacion" Type="DateTime" Precision="7" Nullable="false" />
+          <NavigationProperty Name="Doctores" Relationship="MediCoreModel.FK_Doctores_Especialidades" FromRole="Especialidades" ToRole="Doctores" />
         </EntityType>
         <EntityType Name="Doctores">
           <Key>
@@ -170,6 +505,11 @@
           <Property Name="telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="true" />
           <Property Name="correo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Especialidades" Relationship="MediCoreModel.FK_Doctores_Especialidades" FromRole="Doctores" ToRole="Especialidades" />
+          <NavigationProperty Name="tbUsuario" Relationship="MediCoreModel.FK_Doctores_tbUsuario" FromRole="Doctores" ToRole="tbUsuario" />
+          <NavigationProperty Name="HorariosMedicos" Relationship="MediCoreModel.FK_HorariosMedicos_Doctores" FromRole="Doctores" ToRole="HorariosMedicos" />
+          <NavigationProperty Name="Citas" Relationship="MediCoreModel.FK_Citas_Doctores" FromRole="Doctores" ToRole="Citas" />
+          <NavigationProperty Name="HistorialMedico" Relationship="MediCoreModel.FK_HistorialMedico_Doctores" FromRole="Doctores" ToRole="HistorialMedico" />
         </EntityType>
         <EntityType Name="HorariosMedicos">
           <Key>
@@ -182,6 +522,7 @@
           <Property Name="hora_fin" Type="Time" Precision="7" Nullable="false" />
           <Property Name="duracion_cita_min" Type="Int32" Nullable="false" />
           <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Doctores" Relationship="MediCoreModel.FK_HorariosMedicos_Doctores" FromRole="HorariosMedicos" ToRole="Doctores" />
         </EntityType>
         <EntityType Name="Pacientes">
           <Key>
@@ -190,13 +531,15 @@
           <Property Name="id_paciente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="nombre_completo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="cedula" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="fecha_nacimiento" Type="DateTime" Nullable="false" />
+          <Property Name="fecha_nacimiento" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="sexo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="true" />
           <Property Name="correo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="direccion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="true" />
           <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="fecha_registro" Type="DateTime" Precision="7" Nullable="false" />
+          <NavigationProperty Name="Expedientes" Relationship="MediCoreModel.FK_Expedientes_Pacientes" FromRole="Pacientes" ToRole="Expedientes" />
+          <NavigationProperty Name="Citas" Relationship="MediCoreModel.FK_Citas_Pacientes" FromRole="Pacientes" ToRole="Citas" />
         </EntityType>
         <EntityType Name="Expedientes">
           <Key>
@@ -208,6 +551,9 @@
           <Property Name="antecedentes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="true" />
           <Property Name="tipo_sangre" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="true" />
           <Property Name="fecha_apertura" Type="DateTime" Precision="7" Nullable="false" />
+          <NavigationProperty Name="Pacientes" Relationship="MediCoreModel.FK_Expedientes_Pacientes" FromRole="Expedientes" ToRole="Pacientes" />
+          <NavigationProperty Name="Archivos" Relationship="MediCoreModel.FK_Archivos_Expedientes" FromRole="Expedientes" ToRole="Archivos" />
+          <NavigationProperty Name="HistorialMedico" Relationship="MediCoreModel.FK_HistorialMedico_Expedientes" FromRole="Expedientes" ToRole="HistorialMedico" />
         </EntityType>
         <EntityContainer Name="MediCoreEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="tbUsuario" EntityType="Self.tbUsuario" />
@@ -253,7 +599,350 @@
             <Parameter Name="NuevoEstado" Mode="In" Type="String" />
             <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
           </FunctionImport>
+          <AssociationSet Name="FK_Doctores_Especialidades" Association="MediCoreModel.FK_Doctores_Especialidades">
+            <End Role="Especialidades" EntitySet="Especialidades" />
+            <End Role="Doctores" EntitySet="Doctores" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Doctores_tbUsuario" Association="MediCoreModel.FK_Doctores_tbUsuario">
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+            <End Role="Doctores" EntitySet="Doctores" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HorariosMedicos_Doctores" Association="MediCoreModel.FK_HorariosMedicos_Doctores">
+            <End Role="Doctores" EntitySet="Doctores" />
+            <End Role="HorariosMedicos" EntitySet="HorariosMedicos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Expedientes_Pacientes" Association="MediCoreModel.FK_Expedientes_Pacientes">
+            <End Role="Pacientes" EntitySet="Pacientes" />
+            <End Role="Expedientes" EntitySet="Expedientes" />
+          </AssociationSet>
+          <EntitySet Name="Archivos" EntityType="MediCoreModel.Archivos" />
+          <EntitySet Name="Bitacora" EntityType="MediCoreModel.Bitacora" />
+          <EntitySet Name="Citas" EntityType="MediCoreModel.Citas" />
+          <EntitySet Name="HistorialMedico" EntityType="MediCoreModel.HistorialMedico" />
+          <EntitySet Name="Notificaciones" EntityType="MediCoreModel.Notificaciones" />
+          <EntitySet Name="tbRol" EntityType="MediCoreModel.tbRol" />
+          <AssociationSet Name="FK_Archivos_Expedientes" Association="MediCoreModel.FK_Archivos_Expedientes">
+            <End Role="Expedientes" EntitySet="Expedientes" />
+            <End Role="Archivos" EntitySet="Archivos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Archivos_tbUsuario" Association="MediCoreModel.FK_Archivos_tbUsuario">
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+            <End Role="Archivos" EntitySet="Archivos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Bitacora_tbUsuario" Association="MediCoreModel.FK_Bitacora_tbUsuario">
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+            <End Role="Bitacora" EntitySet="Bitacora" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Citas_CitaAnterior" Association="MediCoreModel.FK_Citas_CitaAnterior">
+            <End Role="Citas" EntitySet="Citas" />
+            <End Role="Citas1" EntitySet="Citas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Citas_Doctores" Association="MediCoreModel.FK_Citas_Doctores">
+            <End Role="Doctores" EntitySet="Doctores" />
+            <End Role="Citas" EntitySet="Citas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Citas_Pacientes" Association="MediCoreModel.FK_Citas_Pacientes">
+            <End Role="Pacientes" EntitySet="Pacientes" />
+            <End Role="Citas" EntitySet="Citas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HistorialMedico_Citas" Association="MediCoreModel.FK_HistorialMedico_Citas">
+            <End Role="Citas" EntitySet="Citas" />
+            <End Role="HistorialMedico" EntitySet="HistorialMedico" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HistorialMedico_Doctores" Association="MediCoreModel.FK_HistorialMedico_Doctores">
+            <End Role="Doctores" EntitySet="Doctores" />
+            <End Role="HistorialMedico" EntitySet="HistorialMedico" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HistorialMedico_Expedientes" Association="MediCoreModel.FK_HistorialMedico_Expedientes">
+            <End Role="Expedientes" EntitySet="Expedientes" />
+            <End Role="HistorialMedico" EntitySet="HistorialMedico" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notificaciones_tbUsuario" Association="MediCoreModel.FK_Notificaciones_tbUsuario">
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+            <End Role="Notificaciones" EntitySet="Notificaciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbUsuario_tbRol" Association="MediCoreModel.FK_tbUsuario_tbRol">
+            <End Role="tbRol" EntitySet="tbRol" />
+            <End Role="tbUsuario" EntitySet="tbUsuario" />
+          </AssociationSet>
+          <FunctionImport Name="spValidarDisponibilidadCita" ReturnType="Collection(Int32)">
+            <Parameter Name="IdDoctor" Mode="In" Type="Int32" />
+            <Parameter Name="FechaCita" Mode="In" Type="DateTime" />
+            <Parameter Name="DuracionMin" Mode="In" Type="Int32" />
+            <Parameter Name="IdCitaExcluir" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
+        <Association Name="FK_Doctores_Especialidades">
+          <End Type="MediCoreModel.Especialidades" Role="Especialidades" Multiplicity="1" />
+          <End Type="MediCoreModel.Doctores" Role="Doctores" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Especialidades">
+              <PropertyRef Name="id_especialidad" />
+            </Principal>
+            <Dependent Role="Doctores">
+              <PropertyRef Name="id_especialidad" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Doctores_tbUsuario">
+          <End Type="MediCoreModel.tbUsuario" Role="tbUsuario" Multiplicity="0..1" />
+          <End Type="MediCoreModel.Doctores" Role="Doctores" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbUsuario">
+              <PropertyRef Name="Consecutivo" />
+            </Principal>
+            <Dependent Role="Doctores">
+              <PropertyRef Name="id_usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HorariosMedicos_Doctores">
+          <End Type="MediCoreModel.Doctores" Role="Doctores" Multiplicity="1" />
+          <End Type="MediCoreModel.HorariosMedicos" Role="HorariosMedicos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Doctores">
+              <PropertyRef Name="id_doctor" />
+            </Principal>
+            <Dependent Role="HorariosMedicos">
+              <PropertyRef Name="id_doctor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Expedientes_Pacientes">
+          <End Type="MediCoreModel.Pacientes" Role="Pacientes" Multiplicity="1" />
+          <End Type="MediCoreModel.Expedientes" Role="Expedientes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pacientes">
+              <PropertyRef Name="id_paciente" />
+            </Principal>
+            <Dependent Role="Expedientes">
+              <PropertyRef Name="id_paciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Archivos">
+          <Key>
+            <PropertyRef Name="id_archivo" />
+          </Key>
+          <Property Name="id_archivo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_expediente" Type="Int32" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="nombre" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="tipo_mime" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="tamano_bytes" Type="Int64" Nullable="false" />
+          <Property Name="contenido" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <Property Name="estado" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="fecha_carga" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Expedientes" Relationship="MediCoreModel.FK_Archivos_Expedientes" FromRole="Archivos" ToRole="Expedientes" />
+          <NavigationProperty Name="tbUsuario" Relationship="MediCoreModel.FK_Archivos_tbUsuario" FromRole="Archivos" ToRole="tbUsuario" />
+        </EntityType>
+        <EntityType Name="Bitacora">
+          <Key>
+            <PropertyRef Name="id_bitacora" />
+          </Key>
+          <Property Name="id_bitacora" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fecha" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="nivel" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="id_usuario" Type="Int32" />
+          <Property Name="controlador" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="accion" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="mensaje" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="stack_trace" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ip_origen" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tbUsuario" Relationship="MediCoreModel.FK_Bitacora_tbUsuario" FromRole="Bitacora" ToRole="tbUsuario" />
+        </EntityType>
+        <EntityType Name="Citas">
+          <Key>
+            <PropertyRef Name="id_cita" />
+          </Key>
+          <Property Name="id_cita" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_paciente" Type="Int32" Nullable="false" />
+          <Property Name="id_doctor" Type="Int32" Nullable="false" />
+          <Property Name="fecha_cita" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="duracion_min" Type="Int32" Nullable="false" />
+          <Property Name="motivo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="estado" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="id_cita_anterior" Type="Int32" />
+          <Property Name="fecha_creacion" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Citas1" Relationship="MediCoreModel.FK_Citas_CitaAnterior" FromRole="Citas" ToRole="Citas1" />
+          <NavigationProperty Name="Citas2" Relationship="MediCoreModel.FK_Citas_CitaAnterior" FromRole="Citas1" ToRole="Citas" />
+          <NavigationProperty Name="Doctores" Relationship="MediCoreModel.FK_Citas_Doctores" FromRole="Citas" ToRole="Doctores" />
+          <NavigationProperty Name="Pacientes" Relationship="MediCoreModel.FK_Citas_Pacientes" FromRole="Citas" ToRole="Pacientes" />
+          <NavigationProperty Name="HistorialMedico" Relationship="MediCoreModel.FK_HistorialMedico_Citas" FromRole="Citas" ToRole="HistorialMedico" />
+        </EntityType>
+        <EntityType Name="HistorialMedico">
+          <Key>
+            <PropertyRef Name="id_historial" />
+          </Key>
+          <Property Name="id_historial" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_expediente" Type="Int32" Nullable="false" />
+          <Property Name="id_cita" Type="Int32" />
+          <Property Name="id_doctor" Type="Int32" Nullable="false" />
+          <Property Name="fecha_consulta" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="sintomas" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="diagnostico" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="tratamiento" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="observaciones" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Citas" Relationship="MediCoreModel.FK_HistorialMedico_Citas" FromRole="HistorialMedico" ToRole="Citas" />
+          <NavigationProperty Name="Doctores" Relationship="MediCoreModel.FK_HistorialMedico_Doctores" FromRole="HistorialMedico" ToRole="Doctores" />
+          <NavigationProperty Name="Expedientes" Relationship="MediCoreModel.FK_HistorialMedico_Expedientes" FromRole="HistorialMedico" ToRole="Expedientes" />
+          <Property Name="medicamentos" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="proxima_cita" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Notificaciones">
+          <Key>
+            <PropertyRef Name="id_notificacion" />
+          </Key>
+          <Property Name="id_notificacion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_usuario_destino" Type="Int32" />
+          <Property Name="correo_destino" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="tipo" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="asunto" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="cuerpo" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="estado" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="fecha_envio" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="tbUsuario" Relationship="MediCoreModel.FK_Notificaciones_tbUsuario" FromRole="Notificaciones" ToRole="tbUsuario" />
+        </EntityType>
+        <EntityType Name="tbRol">
+          <Key>
+            <PropertyRef Name="id_rol" />
+          </Key>
+          <Property Name="id_rol" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre_rol" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tbUsuario" Relationship="MediCoreModel.FK_tbUsuario_tbRol" FromRole="tbRol" ToRole="tbUsuario" />
+        </EntityType>
+        <Association Name="FK_Archivos_Expedientes">
+          <End Type="MediCoreModel.Expedientes" Role="Expedientes" Multiplicity="0..1" />
+          <End Type="MediCoreModel.Archivos" Role="Archivos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Expedientes">
+              <PropertyRef Name="id_expediente" />
+            </Principal>
+            <Dependent Role="Archivos">
+              <PropertyRef Name="id_expediente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Archivos_tbUsuario">
+          <End Type="MediCoreModel.tbUsuario" Role="tbUsuario" Multiplicity="0..1" />
+          <End Type="MediCoreModel.Archivos" Role="Archivos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbUsuario">
+              <PropertyRef Name="Consecutivo" />
+            </Principal>
+            <Dependent Role="Archivos">
+              <PropertyRef Name="id_usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Bitacora_tbUsuario">
+          <End Type="MediCoreModel.tbUsuario" Role="tbUsuario" Multiplicity="0..1" />
+          <End Type="MediCoreModel.Bitacora" Role="Bitacora" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbUsuario">
+              <PropertyRef Name="Consecutivo" />
+            </Principal>
+            <Dependent Role="Bitacora">
+              <PropertyRef Name="id_usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Citas_CitaAnterior">
+          <End Type="MediCoreModel.Citas" Role="Citas" Multiplicity="0..1" />
+          <End Type="MediCoreModel.Citas" Role="Citas1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Citas">
+              <PropertyRef Name="id_cita" />
+            </Principal>
+            <Dependent Role="Citas1">
+              <PropertyRef Name="id_cita_anterior" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Citas_Doctores">
+          <End Type="MediCoreModel.Doctores" Role="Doctores" Multiplicity="1" />
+          <End Type="MediCoreModel.Citas" Role="Citas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Doctores">
+              <PropertyRef Name="id_doctor" />
+            </Principal>
+            <Dependent Role="Citas">
+              <PropertyRef Name="id_doctor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Citas_Pacientes">
+          <End Type="MediCoreModel.Pacientes" Role="Pacientes" Multiplicity="1" />
+          <End Type="MediCoreModel.Citas" Role="Citas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pacientes">
+              <PropertyRef Name="id_paciente" />
+            </Principal>
+            <Dependent Role="Citas">
+              <PropertyRef Name="id_paciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HistorialMedico_Citas">
+          <End Type="MediCoreModel.Citas" Role="Citas" Multiplicity="0..1" />
+          <End Type="MediCoreModel.HistorialMedico" Role="HistorialMedico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Citas">
+              <PropertyRef Name="id_cita" />
+            </Principal>
+            <Dependent Role="HistorialMedico">
+              <PropertyRef Name="id_cita" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HistorialMedico_Doctores">
+          <End Type="MediCoreModel.Doctores" Role="Doctores" Multiplicity="1" />
+          <End Type="MediCoreModel.HistorialMedico" Role="HistorialMedico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Doctores">
+              <PropertyRef Name="id_doctor" />
+            </Principal>
+            <Dependent Role="HistorialMedico">
+              <PropertyRef Name="id_doctor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HistorialMedico_Expedientes">
+          <End Type="MediCoreModel.Expedientes" Role="Expedientes" Multiplicity="1" />
+          <End Type="MediCoreModel.HistorialMedico" Role="HistorialMedico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Expedientes">
+              <PropertyRef Name="id_expediente" />
+            </Principal>
+            <Dependent Role="HistorialMedico">
+              <PropertyRef Name="id_expediente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notificaciones_tbUsuario">
+          <End Type="MediCoreModel.tbUsuario" Role="tbUsuario" Multiplicity="0..1" />
+          <End Type="MediCoreModel.Notificaciones" Role="Notificaciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbUsuario">
+              <PropertyRef Name="Consecutivo" />
+            </Principal>
+            <Dependent Role="Notificaciones">
+              <PropertyRef Name="id_usuario_destino" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbUsuario_tbRol">
+          <End Type="MediCoreModel.tbRol" Role="tbRol" Multiplicity="1" />
+          <End Type="MediCoreModel.tbUsuario" Role="tbUsuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbRol">
+              <PropertyRef Name="id_rol" />
+            </Principal>
+            <Dependent Role="tbUsuario">
+              <PropertyRef Name="id_rol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -348,6 +1037,91 @@
           <FunctionImportMapping FunctionImportName="spRegistrarBitacora" FunctionName="MediCoreModel.Store.spRegistrarBitacora" />
           <FunctionImportMapping FunctionImportName="spRegistrarDoctor" FunctionName="MediCoreModel.Store.spRegistrarDoctor" />
           <FunctionImportMapping FunctionImportName="spCambiarEstadoDoctor" FunctionName="MediCoreModel.Store.spCambiarEstadoDoctor" />
+          <EntitySetMapping Name="Archivos">
+            <EntityTypeMapping TypeName="MediCoreModel.Archivos">
+              <MappingFragment StoreEntitySet="Archivos">
+                <ScalarProperty Name="fecha_carga" ColumnName="fecha_carga" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="contenido" ColumnName="contenido" />
+                <ScalarProperty Name="tamano_bytes" ColumnName="tamano_bytes" />
+                <ScalarProperty Name="tipo_mime" ColumnName="tipo_mime" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="id_expediente" ColumnName="id_expediente" />
+                <ScalarProperty Name="id_archivo" ColumnName="id_archivo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Bitacora">
+            <EntityTypeMapping TypeName="MediCoreModel.Bitacora">
+              <MappingFragment StoreEntitySet="Bitacora">
+                <ScalarProperty Name="ip_origen" ColumnName="ip_origen" />
+                <ScalarProperty Name="stack_trace" ColumnName="stack_trace" />
+                <ScalarProperty Name="mensaje" ColumnName="mensaje" />
+                <ScalarProperty Name="accion" ColumnName="accion" />
+                <ScalarProperty Name="controlador" ColumnName="controlador" />
+                <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+                <ScalarProperty Name="nivel" ColumnName="nivel" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="id_bitacora" ColumnName="id_bitacora" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Citas">
+            <EntityTypeMapping TypeName="MediCoreModel.Citas">
+              <MappingFragment StoreEntitySet="Citas">
+                <ScalarProperty Name="fecha_creacion" ColumnName="fecha_creacion" />
+                <ScalarProperty Name="id_cita_anterior" ColumnName="id_cita_anterior" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="motivo" ColumnName="motivo" />
+                <ScalarProperty Name="duracion_min" ColumnName="duracion_min" />
+                <ScalarProperty Name="fecha_cita" ColumnName="fecha_cita" />
+                <ScalarProperty Name="id_doctor" ColumnName="id_doctor" />
+                <ScalarProperty Name="id_paciente" ColumnName="id_paciente" />
+                <ScalarProperty Name="id_cita" ColumnName="id_cita" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HistorialMedico">
+            <EntityTypeMapping TypeName="MediCoreModel.HistorialMedico">
+              <MappingFragment StoreEntitySet="HistorialMedico">
+                <ScalarProperty Name="proxima_cita" ColumnName="proxima_cita" />
+                <ScalarProperty Name="medicamentos" ColumnName="medicamentos" />
+                <ScalarProperty Name="observaciones" ColumnName="observaciones" />
+                <ScalarProperty Name="tratamiento" ColumnName="tratamiento" />
+                <ScalarProperty Name="diagnostico" ColumnName="diagnostico" />
+                <ScalarProperty Name="sintomas" ColumnName="sintomas" />
+                <ScalarProperty Name="fecha_consulta" ColumnName="fecha_consulta" />
+                <ScalarProperty Name="id_doctor" ColumnName="id_doctor" />
+                <ScalarProperty Name="id_cita" ColumnName="id_cita" />
+                <ScalarProperty Name="id_expediente" ColumnName="id_expediente" />
+                <ScalarProperty Name="id_historial" ColumnName="id_historial" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notificaciones">
+            <EntityTypeMapping TypeName="MediCoreModel.Notificaciones">
+              <MappingFragment StoreEntitySet="Notificaciones">
+                <ScalarProperty Name="fecha_envio" ColumnName="fecha_envio" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="cuerpo" ColumnName="cuerpo" />
+                <ScalarProperty Name="asunto" ColumnName="asunto" />
+                <ScalarProperty Name="tipo" ColumnName="tipo" />
+                <ScalarProperty Name="correo_destino" ColumnName="correo_destino" />
+                <ScalarProperty Name="id_usuario_destino" ColumnName="id_usuario_destino" />
+                <ScalarProperty Name="id_notificacion" ColumnName="id_notificacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbRol">
+            <EntityTypeMapping TypeName="MediCoreModel.tbRol">
+              <MappingFragment StoreEntitySet="tbRol">
+                <ScalarProperty Name="nombre_rol" ColumnName="nombre_rol" />
+                <ScalarProperty Name="id_rol" ColumnName="id_rol" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="spValidarDisponibilidadCita" FunctionName="MediCoreModel.Store.spValidarDisponibilidadCita" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

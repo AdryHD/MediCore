@@ -12,16 +12,19 @@ namespace MediCore.EF
     using System;
     using System.Collections.Generic;
     
-    public partial class HorariosMedicos
+    public partial class Archivos
     {
-        public int id_horario { get; set; }
-        public int id_doctor { get; set; }
-        public byte dia_semana { get; set; }
-        public System.TimeSpan hora_inicio { get; set; }
-        public System.TimeSpan hora_fin { get; set; }
-        public int duracion_cita_min { get; set; }
+        public int id_archivo { get; set; }
+        public Nullable<int> id_expediente { get; set; }
+        public Nullable<int> id_usuario { get; set; }
+        public string nombre { get; set; }
+        public string tipo_mime { get; set; }
+        public long tamano_bytes { get; set; }
+        public byte[] contenido { get; set; }
         public string estado { get; set; }
+        public System.DateTime fecha_carga { get; set; }
     
-        public virtual Doctores Doctores { get; set; }
+        public virtual Expedientes Expedientes { get; set; }
+        public virtual tbUsuario tbUsuario { get; set; }
     }
 }

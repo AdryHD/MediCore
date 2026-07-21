@@ -14,11 +14,24 @@ namespace MediCore.EF
     
     public partial class Expedientes
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Expedientes()
+        {
+            this.Archivos = new HashSet<Archivos>();
+            this.HistorialMedico = new HashSet<HistorialMedico>();
+        }
+    
         public int id_expediente { get; set; }
         public int id_paciente { get; set; }
         public string alergias { get; set; }
         public string antecedentes { get; set; }
         public string tipo_sangre { get; set; }
         public System.DateTime fecha_apertura { get; set; }
+    
+        public virtual Pacientes Pacientes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Archivos> Archivos { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<HistorialMedico> HistorialMedico { get; set; }
     }
 }

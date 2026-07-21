@@ -1,0 +1,322 @@
+using System.Data.Entity;
+@model IEnumerable<MediCore.EF.Citas>
+
+@{
+    ViewBag.Title = "Gestión de Citas";
+}
+
+<div class="page-heading">
+
+    <div class="page-title">
+
+        <div class="row">
+
+            <div class="col-md-6 col-12">
+                <h3>Gestión de Citas</h3>
+                <p class="text-subtitle text-muted">
+                    Administración de las citas médicas registradas.
+                </p>
+            </div>
+
+            <div class="col-md-6 col-12 text-md-end">
+
+                <a href="@Url.Action("Create","Citas")"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-plus-circle"></i>
+
+                    Nueva Cita
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<section class="section">
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h4 class="card-title">
+
+                Listado de Citas
+
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+
+                    @TempData["Success"]
+
+                    <button class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+
+                    @TempData["Error"]
+
+                    <button class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+            }
+
+            <div class="table-responsive">
+
+                <table class="table table-striped table-hover"
+                       id="tablaCitas">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Paciente</th>
+
+                            <th>Doctor</th>
+
+                            <th>Fecha</th>
+
+                            <th>Duración</th>
+
+                            <th>Estado</th>
+
+                            <th class="text-center">
+
+                                Acciones
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+
+                            <tr>
+
+                                <td>
+
+                                    @item.id_cita
+
+                                </td>
+
+                                <td>
+
+                                    @item.Pacientes.nombre_completo
+
+                                </td>
+
+                                <td>
+
+                                    @item.Doctores.nombre_completo
+
+                                </td>
+
+                                <td>
+
+                                    @item.fecha_cita.ToString("dd/MM/yyyy HH:mm")
+
+                                </td>
+
+                                <td>
+
+                                    @item.duracion_min min
+
+                                </td>
+
+                                <td>
+
+                                    @if (item.estado == "PENDIENTE")
+                                    {
+
+                                        <span class="badge bg-warning">
+
+                                            Pendiente
+
+                                        </span>
+
+                                    }
+                                    else if (item.estado == "ATENDIDA")
+                                    {
+
+                                        <span class="badge bg-success">
+
+                                            Atendida
+
+                                        </span>
+
+                                    }
+                                    else if (item.estado == "CANCELADA")
+                                    {
+
+                                        <span class="badge bg-danger">
+
+                                            Cancelada
+
+                                        </span>
+
+                                    }
+                                    else
+                                    {
+
+                                        <span class="badge bg-secondary">
+
+                                            @item.estado
+
+                                        </span>
+
+                                    }
+
+                                </td>
+
+                                <td class="text-center">
+                                    @if (item.estado == "PENDIENTE")
+                                    {
+                                        <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })"
+                                           class="btn btn-sm btn-info"
+                                           title="Ver detalle">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                        <a href="@Url.Action("Edit","Citas",
+                                        new { id = item.id_cita })"
+                                           class="btn btn-sm btn-warning"
+                                           title="Editar">
+
+                                            <i class="bi bi-pencil-square"></i>
+
+                                        </a>
+
+                                        <a href="@Url.Action("Atender","Citas",
+                                        new { id = item.id_cita })"
+                                           class="btn btn-sm btn-success"
+                                           title="Atender">
+
+                                            <i class="bi bi-heart-pulse"></i>
+
+                                        </a>
+
+                                        <a href="@Url.Action("Cancelar","Citas",
+                                        new { id = item.id_cita })"
+                                           class="btn btn-sm btn-danger"
+                                           onclick="return confirm('¿Desea cancelar esta cita?');"
+                                           title="Cancelar">
+
+                                            <i class="bi bi-x-circle"></i>
+
+                                        </a>
+                                    }
+                                    else if (item.estado == "ATENDIDA")
+                                    {
+                                        <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })"
+                                           class="btn btn-sm btn-info"
+                                           title="Ver detalle">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                        <a href="@Url.Action("Details","Citas",
+                                        new { id = item.id_cita })"
+                                           class="btn btn-sm btn-info"
+                                           title="Ver">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                        <a href="@Url.Action("Create","Expedientes",
+                                        new { idCita = item.id_cita })"
+                                           class="btn btn-sm btn-primary"
+                                           title="Expediente">
+
+                                            <i class="bi bi-folder2-open"></i>
+
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Details","Citas",
+                                        new { id = item.id_cita })"
+                                           class="btn btn-sm btn-secondary"
+                                           title="Ver">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+                                    }
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+@section Scripts{
+
+    @Scripts.Render("~/bundles/jquery")
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        $(document).ready(function () {
+
+            if ($.fn.DataTable) {
+
+                $('#tablaCitas').DataTable({
+
+                    language: {
+                        url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                    },
+
+                    pageLength: 10,
+
+                    order: [[3, "desc"]]
+
+                });
+
+            }
+
+        });
+
+    </script>
+
+}

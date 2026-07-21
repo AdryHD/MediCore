@@ -12,16 +12,18 @@ namespace MediCore.EF
     using System;
     using System.Collections.Generic;
     
-    public partial class HorariosMedicos
+    public partial class tbRol
     {
-        public int id_horario { get; set; }
-        public int id_doctor { get; set; }
-        public byte dia_semana { get; set; }
-        public System.TimeSpan hora_inicio { get; set; }
-        public System.TimeSpan hora_fin { get; set; }
-        public int duracion_cita_min { get; set; }
-        public string estado { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbRol()
+        {
+            this.tbUsuario = new HashSet<tbUsuario>();
+        }
     
-        public virtual Doctores Doctores { get; set; }
+        public int id_rol { get; set; }
+        public string nombre_rol { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbUsuario> tbUsuario { get; set; }
     }
 }

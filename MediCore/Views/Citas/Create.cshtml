@@ -1,0 +1,205 @@
+@model MediCore.Models.CitaFormModel
+
+@{
+    ViewBag.Title = "Registrar Cita";
+}
+
+<div class="page-heading">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>Registrar Cita</h3>
+                <p class="text-subtitle text-muted">
+                    Agende una nueva cita médica.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <section class="section">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h4 class="card-title">Información de la cita</h4>
+            </div>
+
+            <div class="card-body">
+
+                @using (Html.BeginForm("Create", "Citas", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            @Html.LabelFor(m => m.IdPaciente)
+
+                            @Html.DropDownListFor(
+                                m => m.IdPaciente,
+                                Model.Pacientes,
+                                "-- Seleccione un paciente --",
+                                new
+                                {
+                                    @class = "form-select"
+                                })
+
+                            @Html.ValidationMessageFor(m => m.IdPaciente, "", new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            @Html.LabelFor(m => m.IdEspecialidad)
+
+                            @Html.DropDownListFor(
+                                m => m.IdEspecialidad,
+                                Model.Especialidades,
+                                "-- Seleccione una especialidad --",
+                                new
+                                {
+                                    @class = "form-select",
+                                    id = "IdEspecialidad"
+                                })
+
+                            @Html.ValidationMessageFor(m => m.IdEspecialidad, "", new { @class = "text-danger" })
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            @Html.LabelFor(m => m.IdDoctor)
+
+                            @Html.DropDownListFor(
+                                m => m.IdDoctor,
+                                Enumerable.Empty<SelectListItem>(),
+                                "-- Seleccione un doctor --",
+                                new
+                                {
+                                    @class = "form-select",
+                                    id = "IdDoctor"
+                                })
+
+                            @Html.ValidationMessageFor(m => m.IdDoctor, "", new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            @Html.LabelFor(m => m.Fecha)
+
+                            @Html.TextBoxFor(
+                                m => m.Fecha,
+                                "{0:yyyy-MM-dd}",
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "date",
+                                    id = "Fecha"
+                                })
+
+                            @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger" })
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>Hora Disponible</label>
+
+                            @Html.DropDownListFor(
+                                m => m.Hora,
+                                Enumerable.Empty<SelectListItem>(),
+                                "-- Seleccione una hora --",
+                                new
+                                {
+                                    @class = "form-select",
+                                    id = "Hora"
+                                })
+
+                            @Html.ValidationMessageFor(m => m.Hora, "", new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            @Html.LabelFor(m => m.DuracionMinutos)
+
+                            @Html.TextBoxFor(
+                                m => m.DuracionMinutos,
+                                new
+                                {
+                                    @class = "form-control",
+                                    @readonly = "readonly",
+                                    id = "Duracion"
+                                })
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        @Html.LabelFor(m => m.Motivo)
+
+                        @Html.TextAreaFor(
+                            m => m.Motivo,
+                            new
+                            {
+                                @class = "form-control",
+                                rows = 4
+                            })
+
+                        @Html.ValidationMessageFor(m => m.Motivo, "", new { @class = "text-danger" })
+
+                    </div>
+
+
+                    <div class="text-end">
+
+                        <a href="@Url.Action("Index","Citas")"
+                           class="btn btn-secondary">
+
+                            Cancelar
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            Guardar Cita
+
+                        </button>
+
+                    </div>
+
+                }
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+@section Scripts{
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/Scripts/citas.js"></script>
+
+}

@@ -12,29 +12,31 @@ namespace MediCore.EF
     using System;
     using System.Collections.Generic;
     
-    public partial class Pacientes
+    public partial class Citas
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Pacientes()
+        public Citas()
         {
-            this.Expedientes = new HashSet<Expedientes>();
-            this.Citas = new HashSet<Citas>();
+            this.Citas1 = new HashSet<Citas>();
+            this.HistorialMedico = new HashSet<HistorialMedico>();
         }
     
+        public int id_cita { get; set; }
         public int id_paciente { get; set; }
-        public string nombre_completo { get; set; }
-        public string cedula { get; set; }
-        public System.DateTime fecha_nacimiento { get; set; }
-        public string sexo { get; set; }
-        public string telefono { get; set; }
-        public string correo { get; set; }
-        public string direccion { get; set; }
+        public int id_doctor { get; set; }
+        public System.DateTime fecha_cita { get; set; }
+        public int duracion_min { get; set; }
+        public string motivo { get; set; }
         public string estado { get; set; }
-        public System.DateTime fecha_registro { get; set; }
+        public Nullable<int> id_cita_anterior { get; set; }
+        public System.DateTime fecha_creacion { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Expedientes> Expedientes { get; set; }
+        public virtual ICollection<Citas> Citas1 { get; set; }
+        public virtual Citas Citas2 { get; set; }
+        public virtual Doctores Doctores { get; set; }
+        public virtual Pacientes Pacientes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Citas> Citas { get; set; }
+        public virtual ICollection<HistorialMedico> HistorialMedico { get; set; }
     }
 }

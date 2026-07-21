@@ -14,6 +14,14 @@ namespace MediCore.EF
     
     public partial class Doctores
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Doctores()
+        {
+            this.HorariosMedicos = new HashSet<HorariosMedicos>();
+            this.Citas = new HashSet<Citas>();
+            this.HistorialMedico = new HashSet<HistorialMedico>();
+        }
+    
         public int id_doctor { get; set; }
         public Nullable<int> id_usuario { get; set; }
         public int id_especialidad { get; set; }
@@ -23,5 +31,14 @@ namespace MediCore.EF
         public string telefono { get; set; }
         public string correo { get; set; }
         public string estado { get; set; }
+    
+        public virtual Especialidades Especialidades { get; set; }
+        public virtual tbUsuario tbUsuario { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<HorariosMedicos> HorariosMedicos { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Citas> Citas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<HistorialMedico> HistorialMedico { get; set; }
     }
 }

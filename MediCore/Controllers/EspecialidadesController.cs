@@ -183,7 +183,7 @@ namespace MediCore.Controllers
             {
                 try
                 {
-                    int resultado = db.spCambiarEstadoEspecialidad(id, nuevoEstado, ObtenerIdUsuarioActual());
+                    int resultado = db.spCambiarEstadoEspecialidad(id, nuevoEstado, ObtenerIdUsuarioActual()).FirstOrDefault() ?? -1;
 
                     switch (resultado)
                     {

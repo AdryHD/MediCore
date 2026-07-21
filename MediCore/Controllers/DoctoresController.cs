@@ -114,7 +114,7 @@ namespace MediCore.Controllers
                         model.Correo.Trim(),
                         string.IsNullOrWhiteSpace(model.Telefono) ? null : model.Telefono.Trim(),
                         model.IdEspecialidad,
-                        contrasenna);
+                        contrasenna).FirstOrDefault() ?? -1;
 
                     switch (resultado)
                     {
@@ -296,7 +296,7 @@ namespace MediCore.Controllers
             {
                 try
                 {
-                    int resultado = db.spCambiarEstadoDoctor(id, nuevoEstado, ObtenerIdUsuarioActual());
+                    int resultado = db.spCambiarEstadoDoctor(id, nuevoEstado, ObtenerIdUsuarioActual()).FirstOrDefault() ?? -1;
 
                     switch (resultado)
                     {

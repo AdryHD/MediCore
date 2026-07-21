@@ -1,0 +1,101 @@
+@model MediCore.EF.Citas
+
+
+@{
+    ViewBag.Title = "Detalle de la Cita";
+}
+
+<div class="page-heading">
+
+    <h3>Detalle de la Cita</h3>
+
+</div>
+
+<div class="card">
+
+    <div class="card-header">
+        <h4>Información de la cita</h4>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <strong>Paciente</strong><br />
+                @Model.Pacientes.nombre_completo
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <strong>Doctor</strong><br />
+                @Model.Doctores.nombre_completo
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <strong>Especialidad</strong><br />
+                @Model.Doctores.Especialidades.nombre
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <strong>Fecha</strong><br />
+                @Model.fecha_cita.ToString("dd/MM/yyyy")
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <strong>Hora</strong><br />
+                @Model.fecha_cita.ToString("HH:mm")
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <strong>Duración</strong><br />
+                @Model.duracion_min minutos
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <strong>Motivo</strong><br />
+                @(String.IsNullOrWhiteSpace(Model.motivo)
+                    ? "No registrado"
+                    : Model.motivo)
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <strong>Estado</strong><br />
+
+                @if (Model.estado == "PENDIENTE")
+                {
+                    <span class="badge bg-warning">Pendiente</span>
+                }
+                else if (Model.estado == "ATENDIDA")
+                {
+                    <span class="badge bg-success">Atendida</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Cancelada</span>
+                }
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <strong>Fecha de registro</strong><br />
+                @Model.fecha_creacion.ToString("dd/MM/yyyy HH:mm")
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card-footer text-end">
+
+        <a href="@Url.Action("Index","Citas")"
+           class="btn btn-secondary">
+
+            <i class="bi bi-arrow-left"></i>
+
+            Regresar
+
+        </a>
+
+    </div>
+
+</div>
