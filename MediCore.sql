@@ -274,8 +274,7 @@ BEGIN
 END
 GO
 
--- Migracion: los pacientes no inician sesion en el sistema, por lo que Pacientes
--- no debe depender de tbUsuario. Se elimina id_usuario si viene de una version anterior del script.
+
 IF COL_LENGTH('dbo.Pacientes', 'id_usuario') IS NOT NULL
 BEGIN
 	IF OBJECT_ID(N'dbo.FK_Pacientes_tbUsuario', N'F') IS NOT NULL
@@ -288,7 +287,6 @@ BEGIN
 END
 GO
 
--- Migracion: se agrega correo para notificaciones de citas (confirmacion, reprogramacion, cancelacion)
 IF COL_LENGTH('dbo.Pacientes', 'correo') IS NULL
 BEGIN
 	ALTER TABLE [dbo].[Pacientes] ADD [correo] [nvarchar](150) NOT NULL CONSTRAINT [DF_Pacientes_Correo_Temp] DEFAULT ('')
@@ -297,7 +295,6 @@ BEGIN
 END
 GO
 
--- Migracion: RF-04/RF-09 exigen que el correo del paciente sea unico (igual que en Doctores).
 IF OBJECT_ID(N'dbo.UQ_Pacientes_Correo', N'UQ') IS NULL
 BEGIN
 	ALTER TABLE [dbo].[Pacientes] ADD CONSTRAINT [UQ_Pacientes_Correo] UNIQUE NONCLUSTERED ([correo] ASC)
@@ -836,3 +833,8 @@ USE [master]
 GO
 ALTER DATABASE [MediCore] SET  READ_WRITE
 GO
+
+
+ALTER TABLE HistorialMedico
+ADD medicamentos NVARCHAR(MAX) NULL,
+    proxima_cita DATETIME NULL;
