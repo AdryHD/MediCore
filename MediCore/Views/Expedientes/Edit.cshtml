@@ -1,0 +1,193 @@
+
+@model MediCore.EF.Expedientes
+
+@{
+    ViewBag.Title = "Editar Expediente";
+}
+
+<div class="page-heading">
+
+    <div class="page-title">
+
+        <span class="section-eyebrow">
+            EXPEDIENTES
+        </span>
+
+        <h3>Editar Expediente</h3>
+
+        <p class="text-subtitle text-muted">
+            Actualice la información general del expediente clínico.
+        </p>
+
+    </div>
+
+</div>
+
+
+<section class="section">
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h4 class="card-title">
+                <i class="bi bi-folder2-open me-2"></i>
+                Información del expediente
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            @using (Html.BeginForm("Edit", "Expedientes", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.id_expediente)
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Paciente
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@Model.Pacientes.nombre_completo"
+                               readonly />
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Cédula
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@Model.Pacientes.cedula"
+                               readonly />
+
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Tipo de sangre
+                        </label>
+
+                        @Html.DropDownListFor(
+                            m => m.tipo_sangre,
+                            new SelectList(
+                                new[]
+                                {
+                                    "A+",
+                                    "A-",
+                                    "B+",
+                                    "B-",
+                                    "AB+",
+                                    "AB-",
+                                    "O+",
+                                    "O-"
+                                },
+                                Model.tipo_sangre
+                            ),
+                            "-- Seleccione --",
+                            new { @class = "form-select" }
+                        )
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Fecha de apertura
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@Model.fecha_apertura.ToString("dd/MM/yyyy")"
+                               readonly />
+
+                    </div>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Alergias
+                    </label>
+
+                    @Html.TextAreaFor(
+                        m => m.alergias,
+                        new
+                        {
+                            @class = "form-control",
+                            rows = "4",
+                            placeholder = "Ingrese las alergias conocidas del paciente..."
+                        }
+                    )
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Antecedentes médicos
+                    </label>
+
+                    @Html.TextAreaFor(
+                        m => m.antecedentes,
+                        new
+                        {
+                            @class = "form-control",
+                            rows = "5",
+                            placeholder = "Ingrese los antecedentes médicos relevantes..."
+                        }
+                    )
+
+                </div>
+
+
+                <div class="text-end mt-4">
+
+                    <a href="@Url.Action(
+                                "Details",
+                                "Expedientes",
+                                new { id = Model.id_expediente })"
+                       class="btn btn-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+                        Cancelar
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-circle"></i>
+                        Guardar Cambios
+
+                    </button>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</section>

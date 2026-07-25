@@ -194,6 +194,7 @@
     </Compile>
     <Compile Include="Models\CitaFormModel.cs" />
     <Compile Include="Models\DoctorFormModel.cs" />
+    <Compile Include="Models\ExpedienteFormModel.cs" />
     <Compile Include="Models\EspecialidadFormModel.cs" />
     <Compile Include="Models\HorarioMedicoFormModel.cs" />
     <Compile Include="Models\PacienteFormModel.cs" />
@@ -302,6 +303,8 @@
     <Content Include="Views\Citas\Edit.cshtml" />
     <Content Include="Views\Citas\Details.cshtml" />
     <Content Include="Views\Expedientes\Index.cshtml" />
+    <Content Include="Views\Expedientes\Details.cshtml" />
+    <Content Include="Views\Expedientes\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

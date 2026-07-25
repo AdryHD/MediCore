@@ -1,65 +1,279 @@
+@model IEnumerable<MediCore.EF.Expedientes>
+
 @{
     ViewBag.Title = "Expedientes";
 }
 
 <div class="page-heading">
 
-    <div>
+    <div class="d-flex justify-content-between align-items-start">
 
-        <span class="section-eyebrow">
-            EXPEDIENTES CLÍNICOS
-        </span>
+        <div>
+            <span class="section-eyebrow">
+                EXPEDIENTES
+            </span>
 
-        <h3>Expedientes</h3>
+            <h3>Expedientes Clínicos</h3>
 
-        <p class="text-subtitle text-muted">
-            Administración de expedientes médicos.
-        </p>
+            <p class="text-subtitle text-muted mb-0">
+                Gestión de expedientes clínicos de los pacientes.
+            </p>
+        </div>
+
+       
 
     </div>
 
 </div>
 
+
 <section class="section">
 
-    <div class="row justify-content-center">
+    <!-- FILTROS -->
+    <div class="card mb-4">
 
-        <div class="col-lg-8">
+        <div class="card-body">
 
-            <div class="card shadow-sm">
+            @using (Html.BeginForm("Index", "Expedientes", FormMethod.Get))
+            {
+                <div class="row">
 
-                <div class="card-body text-center py-5">
+                    <div class="col-md-6">
 
-                    <i class="bi bi-folder2-open"
-                       style="font-size:90px;color:#435ebe;"></i>
+                        <label>Buscar paciente</label>
 
-                    <h2 class="mt-4">
+                        <input type="text"
+                               name="buscar"
+                               value="@ViewBag.Buscar"
+                               class="form-control"
+                               placeholder="Nombre o cédula" />
 
-                        Módulo en construcción
+                    </div>
 
-                    </h2>
 
-                    <p class="text-muted mt-3">
+                    <div class="col-md-4">
 
-                        El módulo de Expedientes Clínicos aún se encuentra en desarrollo.
-                        Próximamente estará disponible con todas sus funcionalidades.
+                        <label>Tipo de sangre</label>
 
-                    </p>
+                        <select name="tipoSangre"
+                                class="form-select">
 
-                    <div class="mt-4">
+                            <option value="">Todos</option>
 
-                        <a href="@Url.Action("Principal","Home")"
-                           class="btn btn-primary btn-lg">
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
 
-                            <i class="bi bi-house-door-fill me-2"></i>
+                        </select>
 
-                            Regresar al Menú Principal
+                    </div>
 
-                        </a>
+
+                    <div class="col-md-2 d-flex align-items-end">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            <i class="bi bi-funnel"></i>
+                            Filtrar
+
+                        </button>
 
                     </div>
 
                 </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- LISTADO -->
+    <div class="card">
+
+        <div class="card-header">
+
+            <h4 class="card-title">
+
+                <i class="bi bi-folder2-open"></i>
+                Listado de Expedientes
+
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+
+                    @TempData["Success"]
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+            }
+
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+
+                    @TempData["Error"]
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+            }
+
+
+            <div class="table-responsive">
+
+                <table class="table table-striped table-hover">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Paciente</th>
+
+                            <th>Cédula</th>
+
+                            <th>Tipo de sangre</th>
+
+                            <th>Fecha de apertura</th>
+
+                            <th>Consultas</th>
+
+                            <th class="text-center">
+                                Acciones
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @item.id_expediente
+                                    </td>
+
+
+                                    <td>
+                                        @item.Pacientes.nombre_completo
+                                    </td>
+
+
+                                    <td>
+                                        @item.Pacientes.cedula
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (!string.IsNullOrWhiteSpace(item.tipo_sangre))
+                                        {
+                                            <span class="badge bg-danger">
+                                                @item.tipo_sangre
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                No registrado
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td>
+                                        @item.fecha_apertura.ToString("dd/MM/yyyy")
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="badge bg-primary">
+
+                                            @item.HistorialMedico.Count
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        <a href="@Url.Action("Details", "Expedientes", new { id = item.id_expediente })"
+                                           class="btn btn-sm btn-info"
+                                           title="Ver expediente">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                        <a href="@Url.Action(
+                                            "Edit",
+                                            "Expedientes",
+                                            new { id = item.id_expediente })"
+                                            class="btn btn-sm btn-warning"
+                                           title="Editar expediente">
+
+                                            <i class="bi bi-pencil-square"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="7"
+                                    class="text-center text-muted py-4">
+
+                                    <i class="bi bi-folder-x fs-4"></i>
+
+                                    <br />
+
+                                    No hay expedientes registrados.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
 
             </div>
 
