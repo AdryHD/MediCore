@@ -300,15 +300,14 @@
                                     </td>
 
                                     <td class="text-center">
-
-                                        <button type="button"
-                                                class="btn btn-sm btn-info"
-                                                disabled
-                                                title="El detalle de la consulta se habilitará con Historial Médico">
+                                        <a href="@Url.Action("Details", "HistorialMedico", new { id = historial.id_historial })"
+                                           class="btn btn-sm btn-info"
+                                           title="Ver consulta">
 
                                             <i class="bi bi-eye"></i>
 
-                                        </button>
+                                        </a>
+
 
                                     </td>
 

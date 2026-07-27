@@ -542,6 +542,8 @@ namespace MediCore.Controllers
             }
         }
 
+
+        //abre la vista para atender la cita, donde se llenan los datos de la atención médica
         [HttpGet]
         public ActionResult Atender(int id)
         {
@@ -551,7 +553,10 @@ namespace MediCore.Controllers
             {
                 try
                 {
-                    var cita = db.Citas.FirstOrDefault(c => c.id_cita == id);
+                    var cita = db.Citas
+                        .Include(c => c.Pacientes)
+                        .Include(c => c.Doctores)
+                        .FirstOrDefault(c => c.id_cita == id);
 
                     if (cita == null)
                     {
@@ -561,31 +566,202 @@ namespace MediCore.Controllers
 
                     if (cita.estado != "PENDIENTE")
                     {
-                        TempData["Error"] = "Solo se pueden atender citas pendientes.";
+                        TempData["Error"] =
+                            "Solo se pueden atender citas pendientes.";
+
                         return RedirectToAction("Index");
                     }
 
-                    cita.estado = "ATENDIDA";
+                    // Buscar expediente del paciente
+                    var expediente = db.Expedientes
+                        .FirstOrDefault(e =>
+                            e.id_paciente == cita.id_paciente);
 
-                    db.SaveChanges();
+                    if (expediente == null)
+                    {
+                        TempData["Error"] =
+                            "El paciente no tiene un expediente clínico.";
 
-                    RegistrarEvento(
-                        db,
-                        "Atender",
-                        $"La cita #{id} fue marcada como ATENDIDA."
-                    );
+                        return RedirectToAction("Index");
+                    }
 
-                    TempData["Success"] = "La cita fue marcada como atendida.";
+                    var model = new AtencionCitaModel
+                    {
+                        IdCita = cita.id_cita,
+                        IdPaciente = cita.id_paciente,
+                        IdDoctor = cita.id_doctor,
+                        IdExpediente = expediente.id_expediente,
 
-                    return RedirectToAction("Index");
+                        NombrePaciente = cita.Pacientes.nombre_completo,
+                        NombreDoctor = cita.Doctores.nombre_completo,
+                        FechaCita = cita.fecha_cita,
+                        Motivo = cita.motivo
+                    };
+
+                    return View(model);
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Atender", ex);
+                    RegistrarError(db, "Atender GET", ex);
 
-                    TempData["Error"] = "Ocurrió un error al atender la cita.";
+                    TempData["Error"] =
+                        "Ocurrió un error al cargar la atención de la cita.";
 
                     return RedirectToAction("Index");
+                }
+            }
+        }
+
+        //procesa la atención de la cita, registrando el historial médico y marcando la cita como atendida
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Atender(AtencionCitaModel model)
+        {
+            ViewBag.ActiveMenu = "Citas";
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            using (var db = new MediCoreEntities())
+            {
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var cita = db.Citas
+                            .Include(c => c.Pacientes)
+                            .Include(c => c.Doctores)
+                            .FirstOrDefault(c => c.id_cita == model.IdCita);
+
+                        if (cita == null)
+                        {
+                            TempData["Error"] = "La cita no existe.";
+                            return RedirectToAction("Index");
+                        }
+
+                        if (cita.estado != "PENDIENTE")
+                        {
+                            TempData["Error"] =
+                                "La cita ya fue atendida o cancelada.";
+
+                            return RedirectToAction("Index");
+                        }
+
+                        var expediente = db.Expedientes
+                            .FirstOrDefault(e =>
+                                e.id_paciente == cita.id_paciente);
+
+                        if (expediente == null)
+                        {
+                            TempData["Error"] =
+                                "El paciente no tiene un expediente clínico.";
+
+                            return RedirectToAction("Index");
+                        }
+
+                        // evita registrar dos historiales para la misma cita
+                        bool historialExistente = db.HistorialMedico
+                            .Any(h => h.id_cita == cita.id_cita);
+
+                        if (historialExistente)
+                        {
+                            TempData["Error"] =
+                                "Esta cita ya tiene un registro en el historial médico.";
+
+                            return RedirectToAction("Index");
+                        }
+
+                        var historial = new HistorialMedico
+                        {
+                            id_expediente = expediente.id_expediente,
+                            id_cita = cita.id_cita,
+                            id_doctor = cita.id_doctor,
+
+                            fecha_consulta = DateTime.Now,
+
+                            sintomas = string.IsNullOrWhiteSpace(model.Sintomas)
+                                ? null
+                                : model.Sintomas.Trim(),
+
+                            diagnostico = model.Diagnostico.Trim(),
+
+                            tratamiento = string.IsNullOrWhiteSpace(model.Tratamiento)
+                                ? null
+                                : model.Tratamiento.Trim(),
+
+                            observaciones = string.IsNullOrWhiteSpace(model.Observaciones)
+                                ? null
+                                : model.Observaciones.Trim(),
+
+                            medicamentos = string.IsNullOrWhiteSpace(model.Medicamentos)
+                                ? null
+                                : model.Medicamentos.Trim(),
+
+                            proxima_cita = model.ProximaCita
+                        };
+
+                        db.HistorialMedico.Add(historial);
+
+                        // la cita es atendida hasta que el registro clínico se completa.
+                        cita.estado = "ATENDIDA";
+
+                        db.SaveChanges();
+
+                        transaction.Commit();
+
+                        RegistrarEvento(
+                            db,
+                            "Atender",
+                            $"Cita #{cita.id_cita} atendida. " +
+                            $"Historial médico #{historial.id_historial} registrado."
+                        );
+
+                        TempData["Success"] =
+                            "La atención médica fue registrada correctamente.";
+
+                        return RedirectToAction(
+                            "Details",
+                            "Expedientes",
+                            new { id = expediente.id_expediente }
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+
+                        RegistrarError(db, "Atender POST", ex);
+
+                        ModelState.AddModelError(
+                            "",
+                            "Ocurrió un error al registrar la atención médica."
+                        );
+
+                        // Recuperamos estos datos porque no debemos confiar
+                        // en los valores enviados desde el navegador.
+                        var cita = db.Citas
+                            .Include(c => c.Pacientes)
+                            .Include(c => c.Doctores)
+                            .FirstOrDefault(c => c.id_cita == model.IdCita);
+
+                        if (cita != null)
+                        {
+                            model.NombrePaciente =
+                                cita.Pacientes.nombre_completo;
+
+                            model.NombreDoctor =
+                                cita.Doctores.nombre_completo;
+
+                            model.FechaCita =
+                                cita.fecha_cita;
+
+                            model.Motivo =
+                                cita.motivo;
+                        }
+
+                        return View(model);
+                    }
                 }
             }
         }

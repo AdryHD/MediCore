@@ -12,210 +12,210 @@
 
 <body>
 
-@* ========== TOPBAR ========== *@
-<div id="topbar">
-    <div class="topbar-inner">
-        <div class="topbar-left">
-            <i class="bi bi-heart-pulse-fill topbar-icon"></i>
-            <span class="topbar-name">MediCore</span>
-            <span class="topbar-sep">—</span>
-            <span class="topbar-tagline">Sistema de Gestión Médica</span>
-        </div>
-        <div class="topbar-right">
-            <span><i class="bi bi-telephone-fill me-1"></i>Soporte: (506) 1234-5678</span>
-            <span class="topbar-divider"></span>
-            <span><i class="bi bi-envelope-fill me-1"></i>soporte@medicore.hn</span>
-            <span class="topbar-divider"></span>
-            <span><i class="bi bi-clock-fill me-1"></i>Lun–Vie 7:00–17:00</span>
-        </div>
-    </div>
-</div>
-
-<div id="app">
-
-    @* ========== SIDEBAR ========== *@
-    <div id="sidebar" class="active">
-        <div class="sidebar-wrapper active">
-
-            <div class="sidebar-header">
-                <a href="@Url.Action("Principal", "Home")" class="logo-link">
-                    <img src="~/Content/images/LogoMediCore.png" alt="MediCore" class="logo-img">
-                </a>
+    @* ========== TOPBAR ========== *@
+    <div id="topbar">
+        <div class="topbar-inner">
+            <div class="topbar-left">
+                <i class="bi bi-heart-pulse-fill topbar-icon"></i>
+                <span class="topbar-name">MediCore</span>
+                <span class="topbar-sep">—</span>
+                <span class="topbar-tagline">Sistema de Gestión Médica</span>
             </div>
-
-            <div class="sidebar-menu">
-                <ul class="menu">
-                    <li class="sidebar-title">Menú Principal</li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">
-                        <a href="@Url.Action("Principal", "Home")" class="sidebar-link">
-                            <i class="bi bi-grid-fill"></i>
-                            <span>Inicio</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-title">Gestión Médica</li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Citas" ? "active" : "")">
-                        <a href="@Url.Action("Index", "Citas")" class="sidebar-link">
-                            <i class="bi bi-calendar2-check"></i>
-                            <span>Citas</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Pacientes" ? "active" : "")">
-                        <a href="@Url.Action("Index", "Pacientes")" class="sidebar-link">
-                            <i class="bi bi-people"></i>
-                            <span>Pacientes</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Doctores" ? "active" : "")">
-                        <a href="@Url.Action("Index", "Doctores")" class="sidebar-link">
-                            <i class="bi bi-person-badge"></i>
-                            <span>Doctores</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Especialidades" ? "active" : "")">
-                        <a href="@Url.Action("Index", "Especialidades")" class="sidebar-link">
-                            <i class="bi bi-award"></i>
-                            <span>Especialidades</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Horarios" ? "active" : "")">
-                        <a href="@Url.Action("Index", "HorariosMedicos")" class="sidebar-link">
-                            <i class="bi bi-clock"></i>
-                            <span>Horarios</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-title">Expedientes</li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Expedientes" ? "active" : "")">
-
-                        <a href="@Url.Action("Index","Expedientes")"
-                           class="sidebar-link">
-
-                            <i class="bi bi-folder2-open"></i>
-
-                            <span>Expedientes</span>
-
-                        </a>
-
-                    </li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Historial" ? "active" : "")">
-                        <a href="#" class="sidebar-link">
-                            <i class="bi bi-journal-medical"></i>
-                            <span>Historial Médico</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-title">Administración</li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Usuarios" ? "active" : "")">
-                        <a href="@Url.Action("Index", "Usuarios")" class="sidebar-link">
-                            <i class="bi bi-people-fill"></i>
-                            <span>Usuarios</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-item @(ViewBag.ActiveMenu == "Bitacora" ? "active" : "")">
-                        <a href="#" class="sidebar-link">
-                            <i class="bi bi-journal-text"></i>
-                            <span>Bitácora</span>
-                        </a>
-                    </li>
-
-                </ul>
+            <div class="topbar-right">
+                <span><i class="bi bi-telephone-fill me-1"></i>Soporte: (506) 1234-5678</span>
+                <span class="topbar-divider"></span>
+                <span><i class="bi bi-envelope-fill me-1"></i>soporte@medicore.hn</span>
+                <span class="topbar-divider"></span>
+                <span><i class="bi bi-clock-fill me-1"></i>Lun–Vie 7:00–17:00</span>
             </div>
-
         </div>
     </div>
 
-    @* ========== CONTENIDO PRINCIPAL ========== *@
-    <div id="main">
+    <div id="app">
 
-        @* Navbar superior *@
-        <header class="mb-3">
-            <nav class="navbar navbar-expand px-3 border-bottom">
-                <a href="#" class="burger-btn d-block">
-                    <i class="bi bi-justify fs-3"></i>
-                </a>
-                <div class="navbar-nav ms-auto">
-                    <div class="nav-item dropdown me-1">
-                        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
-                            <div class="navbar-avatar">@(Session["Nombre"] != null && Session["Nombre"].ToString().Length > 0 ? string.Join("", Session["Nombre"].ToString().Split(' ').Where(p => p.Length > 0).Take(2).Select(p => char.ToUpper(p[0]))) : "US")</div>
-                            <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem;">@(Session["Nombre"] ?? "Usuario")</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width:180px;">
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center gap-2" href="@Url.Action("Index", "Perfil")">
-                                    <i class="bi bi-person"></i> Configuración
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="@Url.Action("Index", "Home")">
-                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
-                                </a>
-                            </li>
+        @* ========== SIDEBAR ========== *@
+        <div id="sidebar" class="active">
+            <div class="sidebar-wrapper active">
+
+                <div class="sidebar-header">
+                    <a href="@Url.Action("Principal", "Home")" class="logo-link">
+                        <img src="~/Content/images/LogoMediCore.png" alt="MediCore" class="logo-img">
+                    </a>
+                </div>
+
+                <div class="sidebar-menu">
+                    <ul class="menu">
+                        <li class="sidebar-title">Menú Principal</li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">
+                            <a href="@Url.Action("Principal", "Home")" class="sidebar-link">
+                                <i class="bi bi-grid-fill"></i>
+                                <span>Inicio</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-title">Gestión Médica</li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Citas" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Citas")" class="sidebar-link">
+                                <i class="bi bi-calendar2-check"></i>
+                                <span>Citas</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Pacientes" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Pacientes")" class="sidebar-link">
+                                <i class="bi bi-people"></i>
+                                <span>Pacientes</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Doctores" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Doctores")" class="sidebar-link">
+                                <i class="bi bi-person-badge"></i>
+                                <span>Doctores</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Especialidades" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Especialidades")" class="sidebar-link">
+                                <i class="bi bi-award"></i>
+                                <span>Especialidades</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Horarios" ? "active" : "")">
+                            <a href="@Url.Action("Index", "HorariosMedicos")" class="sidebar-link">
+                                <i class="bi bi-clock"></i>
+                                <span>Horarios</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-title">Expedientes</li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Expedientes" ? "active" : "")">
+
+                            <a href="@Url.Action("Index","Expedientes")"
+                               class="sidebar-link">
+
+                                <i class="bi bi-folder2-open"></i>
+
+                                <span>Expedientes</span>
+
+                            </a>
+
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "HistorialMedico" ? "active" : "")">
+                            <a href="@Url.Action("Index", "HistorialMedico")" class="sidebar-link">
+                                <i class="bi bi-journal-medical"></i>
+                                <span>Historial Médico</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-title">Administración</li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Usuarios" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Usuarios")" class="sidebar-link">
+                                <i class="bi bi-people-fill"></i>
+                                <span>Usuarios</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.ActiveMenu == "Bitacora" ? "active" : "")">
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-journal-text"></i>
+                                <span>Bitácora</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        @* ========== CONTENIDO PRINCIPAL ========== *@
+        <div id="main">
+
+            @* Navbar superior *@
+            <header class="mb-3">
+                <nav class="navbar navbar-expand px-3 border-bottom">
+                    <a href="#" class="burger-btn d-block">
+                        <i class="bi bi-justify fs-3"></i>
+                    </a>
+                    <div class="navbar-nav ms-auto">
+                        <div class="nav-item dropdown me-1">
+                            <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                                <div class="navbar-avatar">@(Session["Nombre"] != null && Session["Nombre"].ToString().Length > 0 ? string.Join("", Session["Nombre"].ToString().Split(' ').Where(p => p.Length > 0).Take(2).Select(p => char.ToUpper(p[0]))) : "US")</div>
+                                <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem;">@(Session["Nombre"] ?? "Usuario")</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width:180px;">
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" href="@Url.Action("Index", "Perfil")">
+                                        <i class="bi bi-person"></i> Configuración
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="@Url.Action("Index", "Home")">
+                                        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+
+            @* Contenido de la vista *@
+            <div class="main-content container-fluid">
+                @RenderBody()
+            </div>
+
+            @* Footer *@
+            <footer class="main-footer">
+                <div class="footer-top">
+                    <div class="footer-col footer-col-brand">
+                        <div class="footer-brand-text">
+                            <i class="bi bi-heart-pulse-fill"></i> MediCore
+                        </div>
+                        <p class="footer-tagline">Cuidamos tu salud,<br>gestionamos tu bienestar.</p>
+                    </div>
+                    <div class="footer-col">
+                        <h6 class="footer-col-title">Sistema</h6>
+                        <ul class="footer-links">
+                            <li><i class="bi bi-grid-fill"></i> Panel de control</li>
+                            <li><i class="bi bi-people-fill"></i> Gestión de pacientes</li>
+                            <li><i class="bi bi-calendar-check"></i> Citas médicas</li>
+                            <li><i class="bi bi-folder2-open"></i> Expedientes</li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h6 class="footer-col-title">Contacto</h6>
+                        <ul class="footer-links">
+                            <li><i class="bi bi-telephone-fill"></i> (506) 1234-5678</li>
+                            <li><i class="bi bi-envelope-fill"></i> soporte@medicore.hn</li>
+                            <li><i class="bi bi-clock-fill"></i> Lun–Vie 7:00–17:00</li>
                         </ul>
                     </div>
                 </div>
-            </nav>
-        </header>
+                <div class="footer-bottom">
+                    <span>&copy; @DateTime.Now.Year MediCore &mdash; Sistema de Gestión Médica. Todos los derechos reservados.</span>
+                    <span class="footer-version">v1.0.0</span>
+                </div>
+            </footer>
 
-        @* Contenido de la vista *@
-        <div class="main-content container-fluid">
-            @RenderBody()
         </div>
-
-        @* Footer *@
-        <footer class="main-footer">
-            <div class="footer-top">
-                <div class="footer-col footer-col-brand">
-                    <div class="footer-brand-text">
-                        <i class="bi bi-heart-pulse-fill"></i> MediCore
-                    </div>
-                    <p class="footer-tagline">Cuidamos tu salud,<br>gestionamos tu bienestar.</p>
-                </div>
-                <div class="footer-col">
-                    <h6 class="footer-col-title">Sistema</h6>
-                    <ul class="footer-links">
-                        <li><i class="bi bi-grid-fill"></i> Panel de control</li>
-                        <li><i class="bi bi-people-fill"></i> Gestión de pacientes</li>
-                        <li><i class="bi bi-calendar-check"></i> Citas médicas</li>
-                        <li><i class="bi bi-folder2-open"></i> Expedientes</li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h6 class="footer-col-title">Contacto</h6>
-                    <ul class="footer-links">
-                        <li><i class="bi bi-telephone-fill"></i> (506) 1234-5678</li>
-                        <li><i class="bi bi-envelope-fill"></i> soporte@medicore.hn</li>
-                        <li><i class="bi bi-clock-fill"></i> Lun–Vie 7:00–17:00</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <span>&copy; @DateTime.Now.Year MediCore &mdash; Sistema de Gestión Médica. Todos los derechos reservados.</span>
-                <span class="footer-version">v1.0.0</span>
-            </div>
-        </footer>
 
     </div>
 
-</div>
-
-@Scripts.Render("~/bundles/jquery")
-<script src="~/Scripts/perfect-scrollbar.min.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/perfect-scrollbar.min.js")).Ticks"></script>
-<script src="~/Scripts/bootstrap.bundle.min.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/bootstrap.bundle.min.js")).Ticks"></script>
-<script src="~/Scripts/mazer-main.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/mazer-main.js")).Ticks"></script>
-<script src="~/Scripts/layout-sidebar.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/layout-sidebar.js")).Ticks"></script>
-@RenderSection("scripts", required: false)
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/perfect-scrollbar.min.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/perfect-scrollbar.min.js")).Ticks"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/bootstrap.bundle.min.js")).Ticks"></script>
+    <script src="~/Scripts/mazer-main.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/mazer-main.js")).Ticks"></script>
+    <script src="~/Scripts/layout-sidebar.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/layout-sidebar.js")).Ticks"></script>
+    @RenderSection("scripts", required: false)
 </body>
 
 </html>

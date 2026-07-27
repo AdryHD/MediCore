@@ -129,6 +129,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\HistorialMedicoController.cs" />
     <Compile Include="Controllers\CitasController.cs" />
     <Compile Include="Controllers\ExpedientesController.cs" />
     <Compile Include="Controllers\DoctoresController.cs" />
@@ -193,6 +194,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CitaFormModel.cs" />
+    <Compile Include="Models\AtencionCitaModel.cs" />
     <Compile Include="Models\DoctorFormModel.cs" />
     <Compile Include="Models\ExpedienteFormModel.cs" />
     <Compile Include="Models\EspecialidadFormModel.cs" />
@@ -305,6 +307,9 @@
     <Content Include="Views\Expedientes\Index.cshtml" />
     <Content Include="Views\Expedientes\Details.cshtml" />
     <Content Include="Views\Expedientes\Edit.cshtml" />
+    <Content Include="Views\Citas\Atender.cshtml" />
+    <Content Include="Views\HistorialMedico\Index.cshtml" />
+    <Content Include="Views\HistorialMedico\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

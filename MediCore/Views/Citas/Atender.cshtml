@@ -1,0 +1,304 @@
+@model MediCore.Models.AtencionCitaModel
+
+@{
+    ViewBag.Title = "Atender Cita";
+}
+
+<div class="page-heading">
+
+    <span class="section-eyebrow">
+        ATENCIÓN MÉDICA
+    </span>
+
+    <h3>Atender Cita</h3>
+
+    <p class="text-subtitle text-muted">
+        Registre la información clínica correspondiente a la consulta.
+    </p>
+
+</div>
+
+
+<section class="section">
+
+    <!-- INFORMACIÓN DE LA CITA -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+
+            <h4 class="card-title">
+                <i class="bi bi-calendar-check me-2"></i>
+                Información de la cita
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+
+                    <small class="text-muted">
+                        Paciente
+                    </small>
+
+                    <div class="fw-bold">
+                        @Model.NombrePaciente
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+
+                    <small class="text-muted">
+                        Doctor
+                    </small>
+
+                    <div class="fw-bold">
+                        @Model.NombreDoctor
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+
+                    <small class="text-muted">
+                        Fecha de la cita
+                    </small>
+
+                    <div class="fw-bold">
+                        @Model.FechaCita.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <small class="text-muted">
+                    Motivo de consulta
+                </small>
+
+                <div class="fw-bold">
+
+                    @(string.IsNullOrWhiteSpace(Model.Motivo)
+                        ? "No especificado"
+                        : Model.Motivo)
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REGISTRO CLÍNICO -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h4 class="card-title">
+                <i class="bi bi-clipboard2-pulse me-2"></i>
+                Registro Clínico
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            @using (Html.BeginForm("Atender", "Citas", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.IdCita)
+                @Html.HiddenFor(m => m.IdPaciente)
+                @Html.HiddenFor(m => m.IdDoctor)
+                @Html.HiddenFor(m => m.IdExpediente)
+
+                @Html.HiddenFor(m => m.NombrePaciente)
+                @Html.HiddenFor(m => m.NombreDoctor)
+                @Html.HiddenFor(m => m.FechaCita)
+                @Html.HiddenFor(m => m.Motivo)
+
+
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new { @class = "text-danger mb-3" })
+
+
+                <div class="mb-3">
+
+                    @Html.LabelFor(
+                        m => m.Sintomas,
+                        new { @class = "form-label" })
+
+                    @Html.TextAreaFor(
+                        m => m.Sintomas,
+                        new
+                        {
+                            @class = "form-control",
+                            rows = "3",
+                            placeholder = "Describa los síntomas presentados por el paciente..."
+                        })
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    @Html.LabelFor(
+                        m => m.Diagnostico,
+                        new { @class = "form-label" })
+
+                    <span class="text-danger">*</span>
+
+                    @Html.TextAreaFor(
+                        m => m.Diagnostico,
+                        new
+                        {
+                            @class = "form-control",
+                            rows = "3",
+                            placeholder = "Ingrese el diagnóstico médico..."
+                        })
+
+                    @Html.ValidationMessageFor(
+                        m => m.Diagnostico,
+                        "",
+                        new { @class = "text-danger" })
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    @Html.LabelFor(
+                        m => m.Tratamiento,
+                        new { @class = "form-label" })
+
+                    @Html.TextAreaFor(
+                        m => m.Tratamiento,
+                        new
+                        {
+                            @class = "form-control",
+                            rows = "3",
+                            placeholder = "Indique el tratamiento recomendado..."
+                        })
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        @Html.LabelFor(
+                            m => m.Medicamentos,
+                            new { @class = "form-label" })
+
+                        @Html.TextAreaFor(
+                            m => m.Medicamentos,
+                            new
+                            {
+                                @class = "form-control",
+                                rows = "3",
+                                placeholder = "Medicamentos y dosis..."
+                            })
+
+                        <small class="text-muted">
+                            Opcional
+                        </small>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        @Html.LabelFor(
+                            m => m.Observaciones,
+                            new { @class = "form-label" })
+
+                        @Html.TextAreaFor(
+                            m => m.Observaciones,
+                            new
+                            {
+                                @class = "form-control",
+                                rows = "3",
+                                placeholder = "Observaciones adicionales..."
+                            })
+
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        @Html.LabelFor(
+                            m => m.ProximaCita,
+                            new { @class = "form-label" })
+
+                        @Html.TextBoxFor(
+                            m => m.ProximaCita,
+                            "{0:yyyy-MM-dd}",
+                            new
+                            {
+                                @class = "form-control",
+                                type = "date"
+                            })
+
+                        <small class="text-muted">
+                            Opcional
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="text-end mt-4">
+
+                    <a href="@Url.Action("Index", "Citas")"
+                       class="btn btn-secondary">
+
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="btn btn-success">
+
+                        <i class="bi bi-heart-pulse me-1"></i>
+                        Finalizar Atención
+
+                    </button>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</section>
+
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+}
