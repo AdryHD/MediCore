@@ -16,6 +16,13 @@
 
     <div class="auth-divider"><span>Acceso al sistema</span></div>
 
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-light-success" role="alert" style="font-size:0.9rem;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        </div>
+    }
+
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-light-danger" role="alert" style="font-size:0.9rem;">

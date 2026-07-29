@@ -3,6 +3,7 @@ using MediCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -62,6 +63,12 @@ namespace MediCore.Controllers
                     Session["NombreRol"] = ObtenerNombreRol(db, usuario.id_rol);
 
                     RegistrarEvento(db, usuario.Consecutivo, "Index", string.Format("Inicio de sesión exitoso para el correo '{0}'.", correoLimpio));
+
+                    if (usuario.FechaExpiracionTemp.HasValue)
+                    {
+                        TempData["Info"] = "Recuerde cambiar su contraseña temporal.";
+                        return RedirectToAction("Index", "Perfil");
+                    }
 
                     return RedirectToAction("Principal");
                 }
@@ -171,7 +178,7 @@ namespace MediCore.Controllers
             }
 
             TempData["Success"] = "Si el correo está registrado, recibirás instrucciones para recuperar el acceso.";
-            return RedirectToAction("RecuperarAcceso");
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Panel principal (requiere autenticación)
@@ -245,62 +252,15 @@ namespace MediCore.Controllers
             var nombreMostrar = string.IsNullOrWhiteSpace(nombreUsuario) ? "usuario" : nombreUsuario;
             var horaExpiracion = expiracion.ToString("HH:mm");
 
-            var cuerpoHtml = string.Format(
-                @"<!DOCTYPE html>
-<html lang=""es"">
-<body style=""margin:0;padding:0;background-color:#f2f4f8;font-family:Segoe UI,Arial,sans-serif;"">
-  <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""background-color:#f2f4f8;padding:32px 0;"">
-    <tr>
-      <td align=""center"">
-        <table role=""presentation"" width=""480"" cellpadding=""0"" cellspacing=""0"" style=""background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);"">
-          <tr>
-            <td style=""background-color:#2d499d;padding:24px 32px;"">
-              <span style=""color:#ffffff;font-size:20px;font-weight:600;"">MediCore</span>
-            </td>
-          </tr>
-          <tr>
-            <td style=""padding:32px;"">
-              <h2 style=""margin:0 0 16px 0;color:#1f2937;font-size:20px;"">Recuperación de acceso</h2>
-              <p style=""margin:0 0 16px 0;color:#374151;font-size:15px;line-height:1.5;"">Hola <strong>{0}</strong>,</p>
-              <p style=""margin:0 0 20px 0;color:#374151;font-size:15px;line-height:1.5;"">Hemos generado una contraseña temporal para tu cuenta en MediCore:</p>
-              <div style=""background-color:#f2f4f8;border-radius:8px;padding:16px;text-align:center;margin-bottom:20px;"">
-                <span style=""font-size:24px;font-weight:700;letter-spacing:2px;color:#2d499d;"">{1}</span>
-              </div>
-              <div style=""background-color:#fff4e5;border-left:4px solid #f59e0b;border-radius:4px;padding:12px 16px;margin-bottom:20px;"">
-                <p style=""margin:0;color:#92400e;font-size:14px;line-height:1.5;"">
-                  <strong>⏱ Válida por 30 minutos</strong><br>
-                  Vence hoy a las <strong>{2}</strong>. Pasado ese tiempo dejará de funcionar y deberás solicitar una nueva recuperación de acceso.
-                </p>
-              </div>
-              <p style=""margin:0 0 16px 0;color:#374151;font-size:15px;line-height:1.5;"">Te recomendamos iniciar sesión y cambiarla inmediatamente.</p>
-              <p style=""margin:0;color:#6b7280;font-size:13px;line-height:1.5;"">Si no solicitaste este cambio, comunícate con el administrador.</p>
-            </td>
-          </tr>
-          <tr>
-            <td style=""background-color:#f9fafb;padding:16px 32px;text-align:center;"">
-              <span style=""color:#9ca3af;font-size:12px;"">MediCore &middot; Sistema de Gestión Médica</span>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>",
-                nombreMostrar,
-                contrasennaTemporal,
-                horaExpiracion);
+            var valoresPlantilla = new Dictionary<string, string>
+            {
+                { "NombreUsuario", nombreMostrar },
+                { "ContrasennaTemporal", contrasennaTemporal },
+                { "HoraExpiracion", horaExpiracion }
+            };
 
-            var cuerpoTexto = string.Format(
-                "Hola {0},\n\n" +
-                "Hemos generado una contraseña temporal para tu cuenta en MediCore.\n\n" +
-                "Contraseña temporal: {1}\n\n" +
-                "Válida por 30 minutos (vence hoy a las {2}). Pasado ese tiempo dejará de funcionar y deberás solicitar una nueva recuperación de acceso.\n\n" +
-                "Te recomendamos iniciar sesión y cambiarla inmediatamente.\n\n" +
-                "Si no solicitaste este cambio, comunícate con el administrador.",
-                nombreMostrar,
-                contrasennaTemporal,
-                horaExpiracion);
+            var cuerpoHtml = CargarPlantillaCorreo("RecuperacionAcceso.html", valoresPlantilla);
+            var cuerpoTexto = CargarPlantillaCorreo("RecuperacionAcceso.txt", valoresPlantilla);
 
             using (var message = new MailMessage())
             {
@@ -320,6 +280,24 @@ namespace MediCore.Controllers
                     smtp.Send(message);
                 }
             }
+        }
+
+        /// <summary>
+        /// Carga el contenido de una plantilla de correo desde MediCore/EmailTemplates
+        /// y reemplaza los tokens {{Clave}} por los valores provistos. Las plantillas se
+        /// mantienen como archivos externos (.html/.txt) para no mezclar marcado con código C#.
+        /// </summary>
+        private string CargarPlantillaCorreo(string nombreArchivo, Dictionary<string, string> valores)
+        {
+            var ruta = Server.MapPath("~/EmailTemplates/" + nombreArchivo);
+            var contenido = File.ReadAllText(ruta);
+
+            foreach (var valor in valores)
+            {
+                contenido = contenido.Replace("{{" + valor.Key + "}}", valor.Value);
+            }
+
+            return contenido;
         }
 
         #region Bitácora

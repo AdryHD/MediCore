@@ -1,0 +1,11 @@
+Hola {{NombreUsuario}},
+
+Hemos generado una contraseña temporal para tu cuenta en MediCore.
+
+Contraseña temporal: {{ContrasennaTemporal}}
+
+Válida por 30 minutos (vence hoy a las {{HoraExpiracion}}). Pasado ese tiempo dejará de funcionar y deberás solicitar una nueva recuperación de acceso.
+
+Te recomendamos iniciar sesión y cambiarla inmediatamente.
+
+Si no solicitaste este cambio, comunícate con el administrador.

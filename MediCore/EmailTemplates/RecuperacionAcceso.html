@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<body style="margin:0;padding:0;background-color:#f2f4f8;font-family:Segoe UI,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f2f4f8;padding:32px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+          <tr>
+            <td style="background-color:#2d499d;padding:24px 32px;">
+              <span style="color:#ffffff;font-size:20px;font-weight:600;">MediCore</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px;">
+              <h2 style="margin:0 0 16px 0;color:#1f2937;font-size:20px;">Recuperación de acceso</h2>
+              <p style="margin:0 0 16px 0;color:#374151;font-size:15px;line-height:1.5;">Hola <strong>{{NombreUsuario}}</strong>,</p>
+              <p style="margin:0 0 20px 0;color:#374151;font-size:15px;line-height:1.5;">Hemos generado una contraseña temporal para tu cuenta en MediCore:</p>
+              <div style="background-color:#f2f4f8;border-radius:8px;padding:16px;text-align:center;margin-bottom:20px;">
+                <span style="font-size:24px;font-weight:700;letter-spacing:2px;color:#2d499d;">{{ContrasennaTemporal}}</span>
+              </div>
+              <div style="background-color:#fff4e5;border-left:4px solid #f59e0b;border-radius:4px;padding:12px 16px;margin-bottom:20px;">
+                <p style="margin:0;color:#92400e;font-size:14px;line-height:1.5;">
+                  <strong>⏱ Válida por 30 minutos</strong><br>
+                  Vence hoy a las <strong>{{HoraExpiracion}}</strong>. Pasado ese tiempo dejará de funcionar y deberás solicitar una nueva recuperación de acceso.
+                </p>
+              </div>
+              <p style="margin:0 0 16px 0;color:#374151;font-size:15px;line-height:1.5;">Te recomendamos iniciar sesión y cambiarla inmediatamente.</p>
+              <p style="margin:0;color:#6b7280;font-size:13px;line-height:1.5;">Si no solicitaste este cambio, comunícate con el administrador.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color:#f9fafb;padding:16px 32px;text-align:center;">
+              <span style="color:#9ca3af;font-size:12px;">MediCore &middot; Sistema de Gestión Médica</span>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

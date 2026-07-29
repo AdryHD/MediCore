@@ -238,6 +238,8 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\fonts\bootstrap-icons.woff" />
     <Content Include="Content\fonts\bootstrap-icons.woff2" />
+    <Content Include="EmailTemplates\RecuperacionAcceso.html" />
+    <Content Include="EmailTemplates\RecuperacionAcceso.txt" />
     <EntityDeploy Include="EF\Model1.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>Model1.Designer.cs</LastGenOutput>
