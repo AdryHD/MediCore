@@ -1,8 +1,10 @@
 using MediCore.EF;
 using MediCore.Models;
+using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
 
 namespace MediCore.Controllers
@@ -12,6 +14,7 @@ namespace MediCore.Controllers
     {
         private const string NombreControlador = "Pacientes";
         private const int TamanoPagina = 10;
+        private readonly UtilitarioService _utilitario = new UtilitarioService();
 
         // GET: Pacientes
         public ActionResult Index(string q, string estado, int page = 1)
@@ -56,7 +59,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Index", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cargar los pacientes.";
                     return View(new List<Pacientes>());
                 }
@@ -121,7 +124,9 @@ namespace MediCore.Controllers
 
                         transaction.Commit();
 
-                        RegistrarEvento(db, "Create", string.Format("Paciente '{0}' (Cédula: {1}) creado con Id: {2}.", paciente.nombre_completo, paciente.cedula, paciente.id_paciente));
+                        _utilitario.RegistrarEvento(
+                        NombreControlador,
+                        MethodBase.GetCurrentMethod().Name, string.Format("Paciente '{0}' (Cédula: {1}) creado con Id: {2}.", paciente.nombre_completo, paciente.cedula, paciente.id_paciente));
 
                         TempData["Success"] = "Paciente registrado correctamente.";
                         return RedirectToAction("Index");
@@ -129,7 +134,7 @@ namespace MediCore.Controllers
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        RegistrarError(db, "Create", ex);
+                        _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                         ModelState.AddModelError("", "Ocurrió un error al registrar el paciente. Intente nuevamente.");
                         return View(model);
                     }
@@ -226,14 +231,16 @@ namespace MediCore.Controllers
 
                     db.SaveChanges();
 
-                    RegistrarEvento(db, "Edit", string.Format("Paciente '{0}' (Id: {1}) actualizado.", paciente.nombre_completo, paciente.id_paciente));
+                    _utilitario.RegistrarEvento(
+                        NombreControlador,
+                        MethodBase.GetCurrentMethod().Name, string.Format("Paciente '{0}' (Id: {1}) actualizado.", paciente.nombre_completo, paciente.id_paciente));
 
                     TempData["Success"] = "Paciente actualizado correctamente.";
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Edit", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     ModelState.AddModelError("", "Ocurrió un error al actualizar el paciente. Intente nuevamente.");
                     return View(model);
                 }
@@ -301,13 +308,15 @@ namespace MediCore.Controllers
                     paciente.estado = "INACTIVO";
                     db.SaveChanges();
 
-                    RegistrarEvento(db, "Delete", string.Format("Paciente Id: {0} desactivado.", paciente.id_paciente));
+                    _utilitario.RegistrarEvento(
+                        NombreControlador,
+                        MethodBase.GetCurrentMethod().Name, string.Format("Paciente Id: {0} desactivado.", paciente.id_paciente));
 
                     TempData["Success"] = "El paciente fue desactivado correctamente y ya no aparecerá disponible para nuevas citas.";
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Delete", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al desactivar el paciente.";
                 }
 
@@ -335,14 +344,16 @@ namespace MediCore.Controllers
                     paciente.estado = nuevoEstado;
                     db.SaveChanges();
 
-                    RegistrarEvento(db, "CambiarEstado", string.Format("Paciente Id: {0} cambiado a estado '{1}'.", id, nuevoEstado));
+                    _utilitario.RegistrarEvento(
+                        NombreControlador,
+                        MethodBase.GetCurrentMethod().Name, string.Format("Paciente Id: {0} cambiado a estado '{1}'.", id, nuevoEstado));
                     TempData["Success"] = nuevoEstado == "ACTIVO"
                         ? "El paciente fue activado correctamente."
                         : "El paciente fue desactivado correctamente.";
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "CambiarEstado", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cambiar el estado del paciente.";
                 }
 
@@ -381,43 +392,10 @@ namespace MediCore.Controllers
                 ModelState.AddModelError("CorreoElectronico", "Ya existe un paciente registrado con ese correo electrónico.");
             }
         }
+     }
 
-        #region Bitácora
-
-        private int? ObtenerIdUsuarioActual()
-        {
-            return Session["Consecutivo"] as int?;
-        }
-
-        private string ObtenerIp()
-        {
-            return Request != null ? Request.UserHostAddress : null;
-        }
-
-        private void RegistrarEvento(MediCoreEntities db, string accion, string mensaje)
-        {
-            try
-            {
-                db.spRegistrarBitacora("INFO", ObtenerIdUsuarioActual(), NombreControlador, accion, mensaje, null, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        private void RegistrarError(MediCoreEntities db, string accion, Exception ex)
-        {
-            try
-            {
-                db.spRegistrarBitacora("ERROR", ObtenerIdUsuarioActual(), NombreControlador, accion, ex.Message, ex.StackTrace, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        #endregion
     }
-}
+
+       
+
+        

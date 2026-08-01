@@ -17,8 +17,8 @@ namespace MediCore.EF
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Pacientes()
         {
-            this.Expedientes = new HashSet<Expedientes>();
             this.Citas = new HashSet<Citas>();
+            this.Expedientes = new HashSet<Expedientes>();
         }
     
         public int id_paciente { get; set; }
@@ -33,8 +33,8 @@ namespace MediCore.EF
         public System.DateTime fecha_registro { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Expedientes> Expedientes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Citas> Citas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Expedientes> Expedientes { get; set; }
     }
 }

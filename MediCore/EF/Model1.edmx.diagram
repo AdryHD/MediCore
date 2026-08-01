@@ -4,20 +4,34 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="e61eb0a1efa2461c9bf7874ea423b13d" Name="Diagram1">
-        <EntityTypeShape EntityType="MediCoreModel.tbUsuario" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MediCoreModel.Archivos" Width="1.5" PointX="3" PointY="13.625" />
-        <EntityTypeShape EntityType="MediCoreModel.Bitacora" Width="1.5" PointX="3" PointY="6.375" />
-        <EntityTypeShape EntityType="MediCoreModel.Citas" Width="1.5" PointX="3.375" PointY="1" />
-        <EntityTypeShape EntityType="MediCoreModel.HistorialMedico" Width="1.5" PointX="5.625" PointY="1.25" />
-        <EntityTypeShape EntityType="MediCoreModel.Notificaciones" Width="1.5" PointX="3" PointY="10.125" />
-        <EntityTypeShape EntityType="MediCoreModel.tbRol" Width="1.5" PointX="0.75" PointY="5.875" />
-        <AssociationConnector Association="MediCoreModel.FK_Archivos_tbUsuario" />
-        <AssociationConnector Association="MediCoreModel.FK_Bitacora_tbUsuario" />
-        <AssociationConnector Association="MediCoreModel.FK_Citas_CitaAnterior" />
-        <AssociationConnector Association="MediCoreModel.FK_HistorialMedico_Citas" />
-        <AssociationConnector Association="MediCoreModel.FK_Notificaciones_tbUsuario" />
-        <AssociationConnector Association="MediCoreModel.FK_tbUsuario_tbRol" />
+      <Diagram DiagramId="d65f34aba1ae4f13ba57fefc81798c9f" Name="Diagram1">
+        <EntityTypeShape EntityType="MediCoreModel.Archivos" Width="1.5" PointX="5.25" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.Bitacora" Width="1.5" PointX="5.25" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.Citas" Width="1.5" PointX="10.5" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.Doctores" Width="1.5" PointX="8.25" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.Especialidades" Width="1.5" PointX="6" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.Expedientes" Width="1.5" PointX="3" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.HistorialMedico" Width="1.5" PointX="12.75" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.HorariosMedicos" Width="1.5" PointX="10.5" PointY="14" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.Notificaciones" Width="1.5" PointX="5.25" PointY="19.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.Pacientes" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.tbRol" Width="1.5" PointX="0.75" PointY="10" IsExpanded="true" />
+        <EntityTypeShape EntityType="MediCoreModel.tbUsuario" Width="1.5" PointX="3" PointY="8.875" IsExpanded="true" />
+        <AssociationConnector Association="MediCoreModel.FK_Archivos_Expedientes" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_Archivos_tbUsuario" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_Bitacora_tbUsuario" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_Citas_CitaAnterior" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_Citas_Doctores" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_Citas_Pacientes" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_HistorialMedico_Citas" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_Doctores_Especialidades" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_Doctores_tbUsuario" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_HistorialMedico_Doctores" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_HorariosMedicos_Doctores" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_Expedientes_Pacientes" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_HistorialMedico_Expedientes" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_Notificaciones_tbUsuario" ManuallyRouted="false" />
+        <AssociationConnector Association="MediCoreModel.FK_tbUsuario_tbRol" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -27,18 +27,18 @@ namespace MediCore.EF
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<tbUsuario> tbUsuario { get; set; }
-        public virtual DbSet<Especialidades> Especialidades { get; set; }
-        public virtual DbSet<Doctores> Doctores { get; set; }
-        public virtual DbSet<HorariosMedicos> HorariosMedicos { get; set; }
-        public virtual DbSet<Pacientes> Pacientes { get; set; }
-        public virtual DbSet<Expedientes> Expedientes { get; set; }
         public virtual DbSet<Archivos> Archivos { get; set; }
         public virtual DbSet<Bitacora> Bitacora { get; set; }
         public virtual DbSet<Citas> Citas { get; set; }
+        public virtual DbSet<Doctores> Doctores { get; set; }
+        public virtual DbSet<Especialidades> Especialidades { get; set; }
+        public virtual DbSet<Expedientes> Expedientes { get; set; }
         public virtual DbSet<HistorialMedico> HistorialMedico { get; set; }
+        public virtual DbSet<HorariosMedicos> HorariosMedicos { get; set; }
         public virtual DbSet<Notificaciones> Notificaciones { get; set; }
+        public virtual DbSet<Pacientes> Pacientes { get; set; }
         public virtual DbSet<tbRol> tbRol { get; set; }
+        public virtual DbSet<tbUsuario> tbUsuario { get; set; }
     
         public virtual int sp_RegistrarUsuario(string nombre, string cedula, Nullable<System.DateTime> fechaNacimiento, string telefono, string correo, string contrasenna, Nullable<int> idRol)
         {
@@ -71,6 +71,23 @@ namespace MediCore.EF
                 new ObjectParameter("IdRol", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_RegistrarUsuario", nombreParameter, cedulaParameter, fechaNacimientoParameter, telefonoParameter, correoParameter, contrasennaParameter, idRolParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<int>> spCambiarEstadoDoctor(Nullable<int> idDoctor, string nuevoEstado, Nullable<int> idUsuario)
+        {
+            var idDoctorParameter = idDoctor.HasValue ?
+                new ObjectParameter("IdDoctor", idDoctor) :
+                new ObjectParameter("IdDoctor", typeof(int));
+    
+            var nuevoEstadoParameter = nuevoEstado != null ?
+                new ObjectParameter("NuevoEstado", nuevoEstado) :
+                new ObjectParameter("NuevoEstado", typeof(string));
+    
+            var idUsuarioParameter = idUsuario.HasValue ?
+                new ObjectParameter("IdUsuario", idUsuario) :
+                new ObjectParameter("IdUsuario", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("spCambiarEstadoDoctor", idDoctorParameter, nuevoEstadoParameter, idUsuarioParameter);
         }
     
         public virtual ObjectResult<Nullable<int>> spCambiarEstadoEspecialidad(Nullable<int> idEspecialidad, string nuevoEstado, Nullable<int> idUsuario)
@@ -154,23 +171,6 @@ namespace MediCore.EF
                 new ObjectParameter("Contrasenna", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("spRegistrarDoctor", nombreCompletoParameter, cedulaParameter, codigoColegiadoParameter, correoParameter, telefonoParameter, idEspecialidadParameter, contrasennaParameter);
-        }
-    
-        public virtual ObjectResult<Nullable<int>> spCambiarEstadoDoctor(Nullable<int> idDoctor, string nuevoEstado, Nullable<int> idUsuario)
-        {
-            var idDoctorParameter = idDoctor.HasValue ?
-                new ObjectParameter("IdDoctor", idDoctor) :
-                new ObjectParameter("IdDoctor", typeof(int));
-    
-            var nuevoEstadoParameter = nuevoEstado != null ?
-                new ObjectParameter("NuevoEstado", nuevoEstado) :
-                new ObjectParameter("NuevoEstado", typeof(string));
-    
-            var idUsuarioParameter = idUsuario.HasValue ?
-                new ObjectParameter("IdUsuario", idUsuario) :
-                new ObjectParameter("IdUsuario", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("spCambiarEstadoDoctor", idDoctorParameter, nuevoEstadoParameter, idUsuarioParameter);
         }
     
         public virtual ObjectResult<Nullable<int>> spValidarDisponibilidadCita(Nullable<int> idDoctor, Nullable<System.DateTime> fechaCita, Nullable<int> duracionMin, Nullable<int> idCitaExcluir)

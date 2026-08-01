@@ -290,11 +290,13 @@ namespace MediCore.Controllers
         private string CargarPlantillaCorreo(string nombreArchivo, Dictionary<string, string> valores)
         {
             var ruta = Server.MapPath("~/EmailTemplates/" + nombreArchivo);
-            var contenido = File.ReadAllText(ruta);
+
+            // Se agrega System.IO. para evitar la ambigüedad con el método del Controller
+            var contenido = System.IO.File.ReadAllText(ruta);
 
             foreach (var valor in valores)
             {
-                contenido = contenido.Replace("{{" + valor.Key + "}}", valor.Value);
+                contenido = contenido.Replace("{{" + valor.Key + "}}", valor.Value ?? string.Empty);
             }
 
             return contenido;

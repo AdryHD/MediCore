@@ -28,9 +28,9 @@ namespace MediCore.EF
         public string tipo_sangre { get; set; }
         public System.DateTime fecha_apertura { get; set; }
     
-        public virtual Pacientes Pacientes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Archivos> Archivos { get; set; }
+        public virtual Pacientes Pacientes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<HistorialMedico> HistorialMedico { get; set; }
     }

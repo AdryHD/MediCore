@@ -1,5 +1,6 @@
 using MediCore.EF;
 using MediCore.Models;
+using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -17,9 +18,14 @@ namespace MediCore.Controllers
     {
         private const string NombreControlador = "Usuarios";
 
+        // Instancia del servicio de bitácora y utilitarios
+        private readonly UtilitarioService _utilitarioService = new UtilitarioService();
+
         // GET: Usuarios
         public ActionResult Index()
         {
+            ViewBag.ActiveMenu = "Usuarios";
+
             using (var db = new MediCoreEntities())
             {
                 var roles = ObtenerRoles(db);
@@ -52,7 +58,6 @@ namespace MediCore.Controllers
         {
             using (var db = new MediCoreEntities())
             {
-                var idAdmin = Session["Consecutivo"] as int?;
                 var usuario = db.tbUsuario.FirstOrDefault(u => u.Consecutivo == idUsuario);
 
                 if (usuario == null)
@@ -72,15 +77,21 @@ namespace MediCore.Controllers
                     var rolAsignado = roles.FirstOrDefault(r => r.IdRol == idRol);
                     var nombreRolAsignado = rolAsignado != null ? rolAsignado.NombreRol : "DESCONOCIDO";
 
-                    RegistrarEvento(db, idAdmin, "AsignarRol", string.Format(
-                        "Se asignó el rol '{0}' al usuario '{1}' (Consecutivo: {2}).",
-                        nombreRolAsignado, usuario.Nombre, usuario.Consecutivo));
+                    // Registro de bitácora usando UtilitarioService
+                    _utilitarioService.RegistrarEvento(
+                        NombreControlador,
+                        "AsignarRol",
+                        string.Format("Se asignó el rol '{0}' al usuario '{1}' (Consecutivo: {2}).",
+                            nombreRolAsignado, usuario.Nombre, usuario.Consecutivo)
+                    );
 
                     TempData["Success"] = string.Format("Rol actualizado correctamente para {0}.", usuario.Nombre);
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, idAdmin, "AsignarRol", ex);
+                    // Registro de excepción usando UtilitarioService
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "AsignarRol");
+
                     TempData["Error"] = "Ocurrió un error al actualizar el rol. Intente nuevamente.";
                 }
 
@@ -95,43 +106,12 @@ namespace MediCore.Controllers
                 return db.Database.SqlQuery<RolItem>(
                     "SELECT id_rol AS IdRol, nombre_rol AS NombreRol FROM dbo.tbRol ORDER BY nombre_rol").ToList();
             }
-            catch
+            catch (Exception ex)
             {
+                _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "ObtenerRoles");
                 return new List<RolItem>();
             }
         }
-
-        #region Bitácora
-
-        private string ObtenerIp()
-        {
-            return Request != null ? Request.UserHostAddress : null;
-        }
-
-        private void RegistrarEvento(MediCoreEntities db, int? idUsuario, string accion, string mensaje)
-        {
-            try
-            {
-                db.spRegistrarBitacora("INFO", idUsuario, NombreControlador, accion, mensaje, null, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        private void RegistrarError(MediCoreEntities db, int? idUsuario, string accion, Exception ex)
-        {
-            try
-            {
-                db.spRegistrarBitacora("ERROR", idUsuario, NombreControlador, accion, ex.Message, ex.StackTrace, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        #endregion
     }
 }
+

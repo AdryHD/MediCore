@@ -1,8 +1,10 @@
 using MediCore.EF;
 using MediCore.Models;
+using MediCore.Servicios;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
 
 namespace MediCore.Controllers
@@ -11,7 +13,12 @@ namespace MediCore.Controllers
     public class PerfilController : Controller
     {
         private const string NombreControlador = "Perfil";
+        private readonly UtilitarioService _utilitario = new UtilitarioService();
 
+        private int? ObtenerIdUsuarioActual()
+        {
+            return Session["Consecutivo"] as int?;
+        }
         // GET: Perfil
         public ActionResult Index()
         {
@@ -87,14 +94,14 @@ namespace MediCore.Controllers
 
                     Session["Nombre"] = usuario.Nombre;
 
-                    RegistrarEvento(db, idUsuario, "CambiarPerfil", "El usuario actualizó su información de perfil.");
+                    _utilitario.RegistrarEvento(NombreControlador, "CambiarContrasenna", "El usuario actualizó su contraseña.");
 
                     TempData["SuccessPerfil"] = "Su información se actualizó correctamente.";
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, idUsuario, "CambiarPerfil", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     ModelState.AddModelError("", "Ocurrió un error al actualizar su perfil. Intente nuevamente.");
                     return View("Index", model);
                 }
@@ -147,14 +154,14 @@ namespace MediCore.Controllers
                     db.Entry(usuario).State = EntityState.Modified;
                     db.SaveChanges();
 
-                    RegistrarEvento(db, idUsuario, "CambiarContrasenna", "El usuario actualizó su contraseña.");
+                    _utilitario.RegistrarEvento(NombreControlador, "CambiarPerfil", "El usuario actualizó su información de perfil.");
 
                     TempData["SuccessSeguridad"] = "Su contraseña se actualizó correctamente.";
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, idUsuario, "CambiarContrasenna", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     ModelState.AddModelError("", "Ocurrió un error al actualizar su contraseña. Intente nuevamente.");
                     return View("Index", perfilModel);
                 }
@@ -179,42 +186,5 @@ namespace MediCore.Controllers
             }
         }
 
-        #region Bitácora
-
-        private int? ObtenerIdUsuarioActual()
-        {
-            return Session["Consecutivo"] as int?;
-        }
-
-        private string ObtenerIp()
-        {
-            return Request != null ? Request.UserHostAddress : null;
-        }
-
-        private void RegistrarEvento(MediCoreEntities db, int? idUsuario, string accion, string mensaje)
-        {
-            try
-            {
-                db.spRegistrarBitacora("INFO", idUsuario, NombreControlador, accion, mensaje, null, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        private void RegistrarError(MediCoreEntities db, int? idUsuario, string accion, Exception ex)
-        {
-            try
-            {
-                db.spRegistrarBitacora("ERROR", idUsuario, NombreControlador, accion, ex.Message, ex.StackTrace, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        #endregion
     }
 }

@@ -1,8 +1,10 @@
 using MediCore.EF;
 using MediCore.Models;
+using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
 
 namespace MediCore.Controllers
@@ -12,6 +14,7 @@ namespace MediCore.Controllers
     {
         private const string NombreControlador = "HorariosMedicos";
         private const int TamanoPagina = 10;
+        private readonly UtilitarioService _utilitario = new UtilitarioService();
 
         private static readonly Dictionary<byte, string> DiasSemana = new Dictionary<byte, string>
         {
@@ -78,7 +81,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Index", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cargar los horarios médicos.";
                     return View(new List<HorariosMedicos>());
                 }
@@ -131,14 +134,16 @@ namespace MediCore.Controllers
                     db.HorariosMedicos.Add(horario);
                     db.SaveChanges();
 
-                    RegistrarEvento(db, "Create", string.Format("Horario Id: {0} creado para el doctor Id: {1}.", horario.id_horario, horario.id_doctor));
+                    _utilitario.RegistrarEvento(
+                       NombreControlador,
+                       MethodBase.GetCurrentMethod().Name, string.Format("Horario Id: {0} creado para el doctor Id: {1}.", horario.id_horario, horario.id_doctor));
 
                     TempData["Success"] = "Horario médico registrado correctamente.";
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Create", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     ModelState.AddModelError("", "Ocurrió un error al registrar el horario médico. Intente nuevamente.");
                     CargarDoctoresActivos(db, model.IdDoctor);
                     return View(model);
@@ -213,14 +218,16 @@ namespace MediCore.Controllers
 
                     db.SaveChanges();
 
-                    RegistrarEvento(db, "Edit", string.Format("Horario Id: {0} actualizado.", horario.id_horario));
+                    _utilitario.RegistrarEvento(
+                       NombreControlador,
+                       MethodBase.GetCurrentMethod().Name, string.Format("Horario Id: {0} actualizado.", horario.id_horario));
 
                     TempData["Success"] = "Horario médico actualizado correctamente.";
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Edit", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     ModelState.AddModelError("", "Ocurrió un error al actualizar el horario médico. Intente nuevamente.");
                     CargarDoctoresActivos(db, model.IdDoctor);
                     return View(model);
@@ -297,13 +304,15 @@ namespace MediCore.Controllers
                     horario.estado = "INACTIVO";
                     db.SaveChanges();
 
-                    RegistrarEvento(db, "Delete", string.Format("Horario Id: {0} desactivado.", horario.id_horario));
+                    _utilitario.RegistrarEvento(
+                       NombreControlador,
+                       MethodBase.GetCurrentMethod().Name, string.Format("Horario Id: {0} desactivado.", horario.id_horario));
 
                     TempData["Success"] = "El horario médico fue desactivado correctamente y ya no aparecerá disponible para nuevas citas.";
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Delete", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al desactivar el horario médico.";
                 }
 
@@ -331,14 +340,16 @@ namespace MediCore.Controllers
                     horario.estado = nuevoEstado;
                     db.SaveChanges();
 
-                    RegistrarEvento(db, "CambiarEstado", string.Format("Horario Id: {0} cambiado a estado '{1}'.", id, nuevoEstado));
+                    _utilitario.RegistrarEvento(
+                       NombreControlador,
+                       MethodBase.GetCurrentMethod().Name, string.Format("Horario Id: {0} cambiado a estado '{1}'.", id, nuevoEstado));
                     TempData["Success"] = nuevoEstado == "ACTIVO"
                         ? "El horario fue activado correctamente."
                         : "El horario fue desactivado correctamente.";
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "CambiarEstado", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cambiar el estado del horario.";
                 }
 
@@ -386,42 +397,5 @@ namespace MediCore.Controllers
             ViewBag.DiasSemana = DiasSemana;
         }
 
-        #region Bitácora
-
-        private int? ObtenerIdUsuarioActual()
-        {
-            return Session["Consecutivo"] as int?;
-        }
-
-        private string ObtenerIp()
-        {
-            return Request != null ? Request.UserHostAddress : null;
-        }
-
-        private void RegistrarEvento(MediCoreEntities db, string accion, string mensaje)
-        {
-            try
-            {
-                db.spRegistrarBitacora("INFO", ObtenerIdUsuarioActual(), NombreControlador, accion, mensaje, null, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        private void RegistrarError(MediCoreEntities db, string accion, Exception ex)
-        {
-            try
-            {
-                db.spRegistrarBitacora("ERROR", ObtenerIdUsuarioActual(), NombreControlador, accion, ex.Message, ex.StackTrace, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        #endregion
     }
 }

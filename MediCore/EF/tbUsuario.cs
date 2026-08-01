@@ -17,9 +17,9 @@ namespace MediCore.EF
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbUsuario()
         {
-            this.Doctores = new HashSet<Doctores>();
             this.Archivos = new HashSet<Archivos>();
             this.Bitacora = new HashSet<Bitacora>();
+            this.Doctores = new HashSet<Doctores>();
             this.Notificaciones = new HashSet<Notificaciones>();
         }
     
@@ -35,11 +35,11 @@ namespace MediCore.EF
         public Nullable<System.DateTime> FechaExpiracionTemp { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Doctores> Doctores { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Archivos> Archivos { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Bitacora> Bitacora { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Doctores> Doctores { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Notificaciones> Notificaciones { get; set; }
         public virtual tbRol tbRol { get; set; }

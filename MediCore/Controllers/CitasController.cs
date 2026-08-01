@@ -1,5 +1,6 @@
 ﻿using MediCore.EF;
 using MediCore.Models;
+using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace MediCore.Controllers
     {
         private const string NombreControlador = "Citas";
         private const int TamanoPagina = 10;
+        private readonly UtilitarioService _utilitarioService = new UtilitarioService();
 
         public ActionResult Index(
             int? idPaciente,
@@ -142,13 +144,13 @@ namespace MediCore.Controllers
 
                     CargarCombos(db, model);
 
-                    RegistrarEvento(db, "Edit GET", $"Edición de la cita #{id}.");
+                    _utilitarioService.RegistrarEvento(NombreControlador, "Edit GET", $"Edición de la cita #{id}.");
 
                     return View(model);
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Edit GET", ex);
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "Edit GET");
 
                     TempData["Error"] = "Ocurrió un error al cargar la cita.";
 
@@ -178,17 +180,14 @@ namespace MediCore.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    RegistrarEvento(
-                        db,
-                        "Details",
-                        $"Consulta de la cita #{id}."
-                    );
+                    _utilitarioService.RegistrarEvento(NombreControlador, "Details", $"Consulta de la cita #{id}.");
+
 
                     return View(cita);
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Details", ex);
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "Details");
 
                     TempData["Error"] = "Ocurrió un error al consultar la cita.";
 
@@ -263,11 +262,7 @@ namespace MediCore.Controllers
 
                     db.SaveChanges();
 
-                    RegistrarEvento(
-                        db,
-                        "Edit",
-                        $"Se actualizó la cita #{cita.id_cita}."
-                    );
+                    _utilitarioService.RegistrarEvento(NombreControlador, "Edit GET", $"Edición de la cita #{model.IdCita}.");
 
                     TempData["Success"] = "La cita fue actualizada correctamente.";
 
@@ -275,7 +270,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Edit", ex);
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "Edit");
 
                     ModelState.AddModelError("", "Ocurrió un error al actualizar la cita.");
 
@@ -418,11 +413,7 @@ namespace MediCore.Controllers
 
                     db.SaveChanges();
 
-                    RegistrarEvento(
-                        db,
-                        "Create",
-                        $"Cita #{cita.id_cita} registrada."
-                    );
+                    _utilitarioService.RegistrarEvento(NombreControlador, "Create", $"Cita #{cita.id_cita} registrada.");
 
                     TempData["Success"] =
                         "La cita fue registrada correctamente.";
@@ -431,7 +422,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Create", ex);
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "Create");
 
                     ModelState.AddModelError(
                         "",
@@ -602,7 +593,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Atender GET", ex);
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "Atender GET");
 
                     TempData["Error"] =
                         "Ocurrió un error al cargar la atención de la cita.";
@@ -711,12 +702,7 @@ namespace MediCore.Controllers
 
                         transaction.Commit();
 
-                        RegistrarEvento(
-                            db,
-                            "Atender",
-                            $"Cita #{cita.id_cita} atendida. " +
-                            $"Historial médico #{historial.id_historial} registrado."
-                        );
+                        _utilitarioService.RegistrarEvento(NombreControlador, "Edit GET", $"Edición de la cita #{model.IdCita}.");
 
                         TempData["Success"] =
                             "La atención médica fue registrada correctamente.";
@@ -731,7 +717,7 @@ namespace MediCore.Controllers
                     {
                         transaction.Rollback();
 
-                        RegistrarError(db, "Atender POST", ex);
+                        _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "Atender POST");
 
                         ModelState.AddModelError(
                             "",
@@ -793,11 +779,7 @@ namespace MediCore.Controllers
 
                     db.SaveChanges();
 
-                    RegistrarEvento(
-                        db,
-                        "Cancelar",
-                        $"La cita #{id} fue cancelada."
-                    );
+                    _utilitarioService.RegistrarEvento(NombreControlador, "Cancelar", $"La cita #{id} fue cancelada.");
 
                     TempData["Success"] = "La cita fue cancelada correctamente.";
 
@@ -805,7 +787,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Cancelar", ex);
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "Cancelar");
 
                     TempData["Error"] = "Ocurrió un error al cancelar la cita.";
 
@@ -814,42 +796,5 @@ namespace MediCore.Controllers
             }
         }
 
-        #region Bitácora
-
-        private int? ObtenerIdUsuarioActual()
-        {
-            return Session["Consecutivo"] as int?;
-        }
-
-        private string ObtenerIp()
-        {
-            return Request != null ? Request.UserHostAddress : null;
-        }
-
-        private void RegistrarEvento(MediCoreEntities db, string accion, string mensaje)
-        {
-            try
-            {
-                db.spRegistrarBitacora("INFO", ObtenerIdUsuarioActual(), NombreControlador, accion, mensaje, null, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        private void RegistrarError(MediCoreEntities db, string accion, Exception ex)
-        {
-            try
-            {
-                db.spRegistrarBitacora("ERROR", ObtenerIdUsuarioActual(), NombreControlador, accion, ex.Message, ex.StackTrace, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        #endregion
     }
 }

@@ -1,8 +1,10 @@
 using MediCore.EF;
 using MediCore.Models;
+using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
 
 namespace MediCore.Controllers
@@ -12,8 +14,13 @@ namespace MediCore.Controllers
     {
         private const string NombreControlador = "Doctores";
         private const int TamanoPagina = 10;
+        private readonly UtilitarioService _utilitario = new UtilitarioService();
 
-        // GET: Doctores
+        private int? ObtenerIdUsuarioActual()
+        {
+            return Session["Consecutivo"] as int?;
+        }
+
         public ActionResult Index(string q, int? idEspecialidad, string estado, int page = 1)
         {
             ViewBag.ActiveMenu = "Doctores";
@@ -67,7 +74,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Index", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cargar los doctores.";
                     return View(new List<Doctores>());
                 }
@@ -119,7 +126,9 @@ namespace MediCore.Controllers
                     switch (resultado)
                     {
                         case 0:
-                            RegistrarEvento(db, "Create", string.Format("Doctor '{0}' (Cédula: {1}) creado con cuenta de usuario asociada.", model.NombreCompleto, model.Cedula));
+                            _utilitario.RegistrarEvento(
+                        NombreControlador,
+                        MethodBase.GetCurrentMethod().Name, string.Format("Doctor '{0}' (Cédula: {1}) creado con cuenta de usuario asociada.", model.NombreCompleto, model.Cedula));
                             TempData["Success"] = string.Format(
                                 "Doctor registrado correctamente. Cuenta de usuario creada — Correo: {0} / Contraseña temporal: {1}. Compártala de forma segura, no volverá a mostrarse.",
                                 model.Correo.Trim(), contrasenna);
@@ -151,7 +160,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Create", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     ModelState.AddModelError("", "Ocurrió un error al registrar el doctor. Intente nuevamente.");
                     CargarEspecialidades(db, model.IdEspecialidad);
                     return View(model);
@@ -271,15 +280,17 @@ namespace MediCore.Controllers
                     }
 
                     db.SaveChanges();
-
-                    RegistrarEvento(db, "Edit", string.Format("Doctor '{0}' (Id: {1}) actualizado.", doctor.nombre_completo, doctor.id_doctor));
+                    _utilitario.RegistrarEvento(
+                        NombreControlador,
+                        MethodBase.GetCurrentMethod().Name, 
+                        string.Format("Doctor '{0}' (Id: {1}) actualizado.", doctor.nombre_completo, doctor.id_doctor));
 
                     TempData["Success"] = "Doctor actualizado correctamente.";
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "Edit", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     ModelState.AddModelError("", "Ocurrió un error al actualizar el doctor. Intente nuevamente.");
                     CargarEspecialidades(db, model.IdEspecialidad);
                     return View(model);
@@ -301,7 +312,10 @@ namespace MediCore.Controllers
                     switch (resultado)
                     {
                         case 0:
-                            RegistrarEvento(db, "CambiarEstado", string.Format("Doctor Id: {0} cambiado a estado '{1}'.", id, nuevoEstado));
+                        _utilitario.RegistrarEvento(
+                        NombreControlador,
+                        MethodBase.GetCurrentMethod().Name, 
+                        string.Format("Doctor Id: {0} cambiado a estado '{1}'.", id, nuevoEstado));
                             TempData["Success"] = nuevoEstado == "ACTIVO"
                                 ? "El doctor fue activado correctamente."
                                 : "El doctor fue desactivado correctamente y ya no aparecerá disponible para nuevas citas.";
@@ -314,7 +328,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    RegistrarError(db, "CambiarEstado", ex);
+                    _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cambiar el estado del doctor.";
                 }
             }
@@ -350,42 +364,6 @@ namespace MediCore.Controllers
             return new string(chars);
         }
 
-        #region Bitácora
-
-        private int? ObtenerIdUsuarioActual()
-        {
-            return Session["Consecutivo"] as int?;
-        }
-
-        private string ObtenerIp()
-        {
-            return Request != null ? Request.UserHostAddress : null;
-        }
-
-        private void RegistrarEvento(MediCoreEntities db, string accion, string mensaje)
-        {
-            try
-            {
-                db.spRegistrarBitacora("INFO", ObtenerIdUsuarioActual(), NombreControlador, accion, mensaje, null, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        private void RegistrarError(MediCoreEntities db, string accion, Exception ex)
-        {
-            try
-            {
-                db.spRegistrarBitacora("ERROR", ObtenerIdUsuarioActual(), NombreControlador, accion, ex.Message, ex.StackTrace, ObtenerIp());
-            }
-            catch
-            {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
-            }
-        }
-
-        #endregion
+        
     }
 }

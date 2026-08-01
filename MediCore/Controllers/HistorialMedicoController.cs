@@ -1,10 +1,11 @@
 ﻿using MediCore.EF;
 using MediCore.Models;
+using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
-using System.Data.Entity;
 
 
 
@@ -13,6 +14,14 @@ namespace MediCore.Controllers
     [AuthActionFilter]
     public class HistorialMedicoController : Controller
     {
+        private readonly UtilitarioService _utilitario;
+        private const string ControladorNombre = "HistorialMedico";
+
+        public HistorialMedicoController()
+        {
+            _utilitario = new UtilitarioService();
+        }
+
         public ActionResult Index(
             int? idPaciente,
             int? idDoctor,
@@ -20,129 +29,158 @@ namespace MediCore.Controllers
             DateTime? fechaDesde,
             DateTime? fechaHasta)
         {
-            ViewBag.ActiveMenu = "HistorialMedico";
+            ViewBag.ActiveMenu = ControladorNombre;
 
-            using (var db = new MediCoreEntities())
+            try
             {
-                var historial = db.HistorialMedico
-                    .Include(h => h.Expedientes.Pacientes)
-                    .Include(h => h.Doctores)
-                    .Include(h => h.Doctores.Especialidades)
-                    .Include(h => h.Citas)
-                    .AsQueryable();
-
-                // Paciente
-                if (idPaciente.HasValue)
+                using (var db = new MediCoreEntities())
                 {
-                    historial = historial.Where(h =>
-                        h.Expedientes.id_paciente == idPaciente.Value);
-                }
+                    var historial = db.HistorialMedico
+                        .Include(h => h.Expedientes.Pacientes)
+                        .Include(h => h.Doctores)
+                        .Include(h => h.Doctores.Especialidades)
+                        .Include(h => h.Citas)
+                        .AsQueryable();
 
-                // Doctor
-                if (idDoctor.HasValue)
-                {
-                    historial = historial.Where(h =>
-                        h.id_doctor == idDoctor.Value);
-                }
+                    // Paciente
+                    if (idPaciente.HasValue)
+                    {
+                        historial = historial.Where(h =>
+                            h.Expedientes.id_paciente == idPaciente.Value);
+                    }
 
-                // Especialidad
-                if (idEspecialidad.HasValue)
-                {
-                    historial = historial.Where(h =>
-                        h.Doctores.id_especialidad == idEspecialidad.Value);
-                }
+                    // Doctor
+                    if (idDoctor.HasValue)
+                    {
+                        historial = historial.Where(h =>
+                            h.id_doctor == idDoctor.Value);
+                    }
 
-                // Fecha desde
-                if (fechaDesde.HasValue)
-                {
-                    historial = historial.Where(h =>
-                        DbFunctions.TruncateTime(h.fecha_consulta) >=
-                        DbFunctions.TruncateTime(fechaDesde.Value));
-                }
+                    // Especialidad
+                    if (idEspecialidad.HasValue)
+                    {
+                        historial = historial.Where(h =>
+                            h.Doctores.id_especialidad == idEspecialidad.Value);
+                    }
 
-                // Fecha hasta
-                if (fechaHasta.HasValue)
-                {
-                    historial = historial.Where(h =>
-                        DbFunctions.TruncateTime(h.fecha_consulta) <=
-                        DbFunctions.TruncateTime(fechaHasta.Value));
-                }
+                    // Fecha desde
+                    if (fechaDesde.HasValue)
+                    {
+                        historial = historial.Where(h =>
+                            DbFunctions.TruncateTime(h.fecha_consulta) >=
+                            DbFunctions.TruncateTime(fechaDesde.Value));
+                    }
 
-                // Combos
-                ViewBag.Pacientes = new SelectList(
-                    db.Pacientes
-                        .Where(p => p.estado == "ACTIVO")
-                        .OrderBy(p => p.nombre_completo)
-                        .ToList(),
-                    "id_paciente",
-                    "nombre_completo",
-                    idPaciente
-                );
+                    // Fecha hasta
+                    if (fechaHasta.HasValue)
+                    {
+                        historial = historial.Where(h =>
+                            DbFunctions.TruncateTime(h.fecha_consulta) <=
+                            DbFunctions.TruncateTime(fechaHasta.Value));
+                    }
 
-                ViewBag.Doctores = new SelectList(
-                    db.Doctores
-                        .Where(d => d.estado == "ACTIVO")
-                        .OrderBy(d => d.nombre_completo)
-                        .ToList(),
-                    "id_doctor",
-                    "nombre_completo",
-                    idDoctor
-                );
+                    // Combos
+                    ViewBag.Pacientes = new SelectList(
+                        db.Pacientes
+                            .Where(p => p.estado == "ACTIVO")
+                            .OrderBy(p => p.nombre_completo)
+                            .ToList(),
+                        "id_paciente",
+                        "nombre_completo",
+                        idPaciente
+                    );
 
-                ViewBag.Especialidades = new SelectList(
-                    db.Especialidades
-                        .Where(e => e.estado == "ACTIVO")
-                        .OrderBy(e => e.nombre)
-                        .ToList(),
-                    "id_especialidad",
-                    "nombre",
-                    idEspecialidad
-                );
+                    ViewBag.Doctores = new SelectList(
+                        db.Doctores
+                            .Where(d => d.estado == "ACTIVO")
+                            .OrderBy(d => d.nombre_completo)
+                            .ToList(),
+                        "id_doctor",
+                        "nombre_completo",
+                        idDoctor
+                    );
 
-                ViewBag.FechaDesde = fechaDesde;
-                ViewBag.FechaHasta = fechaHasta;
+                    ViewBag.Especialidades = new SelectList(
+                        db.Especialidades
+                            .Where(e => e.estado == "ACTIVO")
+                            .OrderBy(e => e.nombre)
+                            .ToList(),
+                        "id_especialidad",
+                        "nombre",
+                        idEspecialidad
+                    );
 
-                return View(
-                    historial
+                    ViewBag.FechaDesde = fechaDesde;
+                    ViewBag.FechaHasta = fechaHasta;
+
+                    var resultado = historial
                         .OrderByDescending(h => h.fecha_consulta)
-                        .ToList()
-                );
+                        .ToList();
+
+                    _utilitario.RegistrarEvento(
+                        ControladorNombre,
+                        "Index",
+                        $"Consulta de historial médico realizada. Filtros: Paciente={idPaciente}, Doctor={idDoctor}, Especialidad={idEspecialidad}"
+                    );
+
+                    return View(resultado);
+                }
+            }
+            catch (Exception ex)
+            {
+                _utilitario.RegistrarErrorBitacora(ex, ControladorNombre, "Index");
+                TempData["Error"] = "Ocurrió un error al cargar la consulta del historial médico.";
+                return View(new System.Collections.Generic.List<HistorialMedico>());
             }
         }
-
 
         [HttpGet]
         public ActionResult Details(int? id)
         {
-            ViewBag.ActiveMenu = "HistorialMedico";
+            ViewBag.ActiveMenu = ControladorNombre;
 
             if (!id.HasValue)
             {
-                TempData["Error"] =
-                    "Debe seleccionar un registro del historial.";
-
+                TempData["Error"] = "Debe seleccionar un registro del historial.";
                 return RedirectToAction("Index");
             }
 
-            using (var db = new MediCoreEntities())
+            try
             {
-                var historial = db.HistorialMedico
-                    .Include(h => h.Expedientes.Pacientes)
-                    .Include(h => h.Doctores)
-                    .Include(h => h.Doctores.Especialidades)
-                    .Include(h => h.Citas)
-                    .FirstOrDefault(h =>
-                        h.id_historial == id.Value);
-
-                if (historial == null)
+                using (var db = new MediCoreEntities())
                 {
-                    TempData["Error"] =
-                        "El registro del historial médico no existe.";
+                    var historial = db.HistorialMedico
+                        .Include(h => h.Expedientes.Pacientes)
+                        .Include(h => h.Doctores)
+                        .Include(h => h.Doctores.Especialidades)
+                        .Include(h => h.Citas)
+                        .FirstOrDefault(h => h.id_historial == id.Value);
 
-                    return RedirectToAction("Index");
+                    if (historial == null)
+                    {
+                        TempData["Error"] = "El registro del historial médico no existe.";
+                        _utilitario.RegistrarEvento(
+                            ControladorNombre,
+                            "Details",
+                            $"Intento fallido de ver detalle. Historial ID {id} no encontrado."
+                        );
+                        return RedirectToAction("Index");
+                    }
+
+                    _utilitario.RegistrarEvento(
+                        ControladorNombre,
+                        "Details",
+                        $"Consulta detallada del registro de historial ID: {id}"
+                    );
+
+                    return View(historial);
                 }
-
-                return View(historial);
+            }
+            catch (Exception ex)
+            {
+                _utilitario.RegistrarErrorBitacora(ex, ControladorNombre, "Details");
+                TempData["Error"] = "Ocurrió un error al consultar el registro del historial.";
+                return RedirectToAction("Index");
             }
         }
     }
