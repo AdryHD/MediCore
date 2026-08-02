@@ -1,0 +1,84 @@
+﻿@model MediCore.Models.ArchivosFormModel
+@{
+    ViewBag.Title = "Agregar Archivo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-heading">
+    <div class="page-title">
+        <span class="section-eyebrow text-uppercase text-muted fw-bold small">
+            ARCHIVOS DIGITALES
+        </span>
+        <h3 class="mb-1">Registrar Nuevo Archivo</h3>
+        <p class="text-subtitle text-muted">
+            Complete la información para subir un documento al sistema.
+        </p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">
+                <i class="bi bi-cloud-upload me-2"></i>
+                Datos del Archivo
+            </h4>
+        </div>
+
+        <div class="card-body">
+            @using (Html.BeginForm("Create", "Archivos", FormMethod.Post, new { enctype = "multipart/form-data", id = "formArchivo" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Expediente / Paciente</label>
+                        @Html.DropDownListFor(
+                            m => m.Id_Expediente,
+                            (IEnumerable<SelectListItem>)ViewBag.ExpedientesList,
+                            "-- Seleccione un paciente/expediente --",
+                            new { @class = "form-select" }
+                        )
+                        @Html.ValidationMessageFor(m => m.Id_Expediente, "", new { @class = "text-danger small" })
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Nombre del Archivo</label>
+                        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Ej: Resultado_Laboratorio.pdf" })
+                        @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger small" })
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Tipo MIME / Formato</label>
+                        @Html.TextBoxFor(m => m.Tipo_mime, new { @class = "form-control", placeholder = "Ej: application/pdf" })
+                        @Html.ValidationMessageFor(m => m.Tipo_mime, "", new { @class = "text-danger small" })
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Seleccionar Archivo</label>
+                        <input type="file" name="archivoSubido" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <a href="@Url.Action("Index", "Archivos")" class="btn btn-secondary me-2">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Cancelar
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Guardar Archivo
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</section>
