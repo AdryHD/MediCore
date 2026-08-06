@@ -21,6 +21,8 @@
     {
         @Html.AntiForgeryToken()
 
+        @Html.ValidationSummary(false, "", new { @class = "alert alert-light-danger", style = "font-size:0.9rem;" })
+
         <div class="form-group position-relative has-icon-left mb-4">
             @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", @placeholder = "Nombre completo" })
             <div class="form-control-icon"><i class="bi bi-person"></i></div>

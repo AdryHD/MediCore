@@ -4,6 +4,7 @@ using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Data.Entity;
 
@@ -15,6 +16,7 @@ namespace MediCore.Controllers
         private const string NombreControlador = "Citas";
         private const int TamanoPagina = 10;
         private readonly UtilitarioService _utilitarioService = new UtilitarioService();
+        private readonly EmailService _emailService = new EmailService();
 
         public ActionResult Index(
             int? idPaciente,
@@ -199,7 +201,7 @@ namespace MediCore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(CitaFormModel model)
+        public async Task<ActionResult> Edit(CitaFormModel model)
         {
             ViewBag.ActiveMenu = "Citas";
 
@@ -264,7 +266,20 @@ namespace MediCore.Controllers
 
                     _utilitarioService.RegistrarEvento(NombreControlador, "Edit GET", $"Edición de la cita #{model.IdCita}.");
 
-                    TempData["Success"] = "La cita fue actualizada correctamente.";
+                    // El envío de la notificación nunca debe revertir la reprogramación (RF-15).
+                    bool correoEnviado = await _emailService.EnviarReprogramacion(
+                        cita.Pacientes.correo,
+                        cita.Pacientes.nombre_completo,
+                        cita.Doctores.nombre_completo,
+                        cita.Doctores.Especialidades.nombre,
+                        cita.id_cita,
+                        cita.fecha_cita.Date,
+                        cita.fecha_cita.TimeOfDay,
+                        cita.estado);
+
+                    TempData["Success"] = correoEnviado
+                        ? "La cita fue actualizada correctamente. Se notificó al paciente de la reprogramación."
+                        : "La cita fue actualizada correctamente, aunque no fue posible notificar al paciente.";
 
                     return RedirectToAction("Index");
                 }
@@ -385,7 +400,7 @@ namespace MediCore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CitaFormModel model)
+        public async Task<ActionResult> Create(CitaFormModel model)
         {
             ViewBag.ActiveMenu = "Citas";
 
@@ -413,10 +428,26 @@ namespace MediCore.Controllers
 
                     db.SaveChanges();
 
+                    db.Entry(cita).Reference(c => c.Pacientes).Load();
+                    db.Entry(cita).Reference(c => c.Doctores).Load();
+                    db.Entry(cita.Doctores).Reference(d => d.Especialidades).Load();
+
                     _utilitarioService.RegistrarEvento(NombreControlador, "Create", $"Cita #{cita.id_cita} registrada.");
 
-                    TempData["Success"] =
-                        "La cita fue registrada correctamente.";
+                    // El envío de la confirmación nunca debe revertir el registro de la cita (RF-15).
+                    bool correoEnviado = await _emailService.EnviarConfirmacionCita(
+                        cita.Pacientes.correo,
+                        cita.Pacientes.nombre_completo,
+                        cita.Doctores.nombre_completo,
+                        cita.Doctores.Especialidades.nombre,
+                        cita.id_cita,
+                        cita.fecha_cita.Date,
+                        cita.fecha_cita.TimeOfDay,
+                        cita.estado);
+
+                    TempData["Success"] = correoEnviado
+                        ? "La cita fue registrada correctamente. Se envió un correo de confirmación al paciente."
+                        : "La cita fue registrada correctamente, aunque no fue posible enviar el correo de confirmación.";
 
                     return RedirectToAction("Index");
                 }
@@ -753,7 +784,7 @@ namespace MediCore.Controllers
         }
 
         [HttpGet]
-        public ActionResult Cancelar(int id)
+        public async Task<ActionResult> Cancelar(int id)
         {
             ViewBag.ActiveMenu = "Citas";
 
@@ -781,7 +812,20 @@ namespace MediCore.Controllers
 
                     _utilitarioService.RegistrarEvento(NombreControlador, "Cancelar", $"La cita #{id} fue cancelada.");
 
-                    TempData["Success"] = "La cita fue cancelada correctamente.";
+                    // El envío de la notificación nunca debe revertir la cancelación (RF-15).
+                    bool correoEnviado = await _emailService.EnviarCancelacion(
+                        cita.Pacientes.correo,
+                        cita.Pacientes.nombre_completo,
+                        cita.Doctores.nombre_completo,
+                        cita.Doctores.Especialidades.nombre,
+                        cita.id_cita,
+                        cita.fecha_cita.Date,
+                        cita.fecha_cita.TimeOfDay,
+                        cita.estado);
+
+                    TempData["Success"] = correoEnviado
+                        ? "La cita fue cancelada correctamente. Se notificó al paciente."
+                        : "La cita fue cancelada correctamente, aunque no fue posible notificar al paciente.";
 
                     return RedirectToAction("Index");
                 }

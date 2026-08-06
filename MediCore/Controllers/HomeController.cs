@@ -1,13 +1,10 @@
 ﻿using MediCore.EF;
 using MediCore.Models;
+using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace MediCore.Controllers
@@ -15,6 +12,7 @@ namespace MediCore.Controllers
     public class HomeController : Controller
     {
         private const string NombreControlador = "Home";
+        private readonly EmailService _emailService = new EmailService();
 
         // GET: Login
         public ActionResult Index()
@@ -88,7 +86,8 @@ namespace MediCore.Controllers
         }
 
         [HttpPost]
-        public ActionResult Registro(UsuarioModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Registro(UsuarioModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -119,7 +118,13 @@ namespace MediCore.Controllers
 
                     RegistrarEvento(db, null, "Registro", string.Format("Usuario registrado con correo '{0}' (Cédula: {1}).", correoLimpio, cedulaLimpia));
 
-                    TempData["Success"] = "Usuario registrado correctamente. Ya puede iniciar sesión.";
+                    // El envío del correo de bienvenida nunca debe bloquear ni revertir el registro (RF-15).
+                    var usuarioRegistrado = db.tbUsuario.FirstOrDefault(u => u.Correo == correoLimpio);
+                    bool correoEnviado = await _emailService.EnviarBienvenida(correoLimpio, model.Nombre, usuarioRegistrado?.Consecutivo);
+
+                    TempData["Success"] = correoEnviado
+                        ? "Usuario registrado correctamente. Ya puede iniciar sesión."
+                        : "Usuario registrado correctamente, aunque no fue posible enviar el correo de bienvenida. Ya puede iniciar sesión.";
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
@@ -139,7 +144,7 @@ namespace MediCore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult RecuperarAcceso(string correo)
+        public async Task<ActionResult> RecuperarAcceso(string correo)
         {
             if (string.IsNullOrWhiteSpace(correo))
             {
@@ -164,7 +169,7 @@ namespace MediCore.Controllers
                         usuario.FechaExpiracionTemp = expiracion;
                         db.SaveChanges();
 
-                        EnviarCorreoRecuperacion(correoLimpio, usuario.Nombre, contrasennaTemporal, expiracion);
+                        await _emailService.EnviarRecuperacion(correoLimpio, usuario.Nombre, contrasennaTemporal, expiracion, usuario.Consecutivo);
 
                         RegistrarEvento(db, usuario.Consecutivo, "RecuperarAcceso", string.Format("Contraseña temporal generada para el correo '{0}'.", correoLimpio));
                     }
@@ -226,80 +231,6 @@ namespace MediCore.Controllers
             {
                 return null;
             }
-        }
-
-        private void EnviarCorreoRecuperacion(string correoDestino, string nombreUsuario, string contrasennaTemporal, DateTime expiracion)
-        {
-            var smtpHost = ConfigurationManager.AppSettings["SmtpHost"];
-            var smtpPortText = ConfigurationManager.AppSettings["SmtpPort"];
-            var smtpEnableSslText = ConfigurationManager.AppSettings["SmtpEnableSsl"];
-            var smtpUser = ConfigurationManager.AppSettings["SmtpUser"];
-            var smtpAppPassword = ConfigurationManager.AppSettings["SmtpAppPassword"];
-            var fromName = ConfigurationManager.AppSettings["SmtpFromName"];
-
-            if (string.IsNullOrWhiteSpace(smtpHost)
-                || string.IsNullOrWhiteSpace(smtpPortText)
-                || string.IsNullOrWhiteSpace(smtpEnableSslText)
-                || string.IsNullOrWhiteSpace(smtpUser)
-                || string.IsNullOrWhiteSpace(smtpAppPassword))
-            {
-                throw new InvalidOperationException("La configuración SMTP está incompleta en Web.config.");
-            }
-
-            var smtpPort = int.Parse(smtpPortText);
-            var smtpEnableSsl = bool.Parse(smtpEnableSslText);
-
-            var nombreMostrar = string.IsNullOrWhiteSpace(nombreUsuario) ? "usuario" : nombreUsuario;
-            var horaExpiracion = expiracion.ToString("HH:mm");
-
-            var valoresPlantilla = new Dictionary<string, string>
-            {
-                { "NombreUsuario", nombreMostrar },
-                { "ContrasennaTemporal", contrasennaTemporal },
-                { "HoraExpiracion", horaExpiracion }
-            };
-
-            var cuerpoHtml = CargarPlantillaCorreo("RecuperacionAcceso.html", valoresPlantilla);
-            var cuerpoTexto = CargarPlantillaCorreo("RecuperacionAcceso.txt", valoresPlantilla);
-
-            using (var message = new MailMessage())
-            {
-                message.From = new MailAddress(smtpUser, string.IsNullOrWhiteSpace(fromName) ? "MediCore" : fromName);
-                message.To.Add(correoDestino);
-                message.Subject = "Recuperación de acceso - MediCore";
-                message.Body = cuerpoTexto;
-
-                var vistaHtml = AlternateView.CreateAlternateViewFromString(cuerpoHtml, null, "text/html");
-                message.AlternateViews.Add(vistaHtml);
-
-                using (var smtp = new SmtpClient(smtpHost, smtpPort))
-                {
-                    smtp.EnableSsl = smtpEnableSsl;
-                    smtp.Credentials = new NetworkCredential(smtpUser, smtpAppPassword);
-                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtp.Send(message);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Carga el contenido de una plantilla de correo desde MediCore/EmailTemplates
-        /// y reemplaza los tokens {{Clave}} por los valores provistos. Las plantillas se
-        /// mantienen como archivos externos (.html/.txt) para no mezclar marcado con código C#.
-        /// </summary>
-        private string CargarPlantillaCorreo(string nombreArchivo, Dictionary<string, string> valores)
-        {
-            var ruta = Server.MapPath("~/EmailTemplates/" + nombreArchivo);
-
-            // Se agrega System.IO. para evitar la ambigüedad con el método del Controller
-            var contenido = System.IO.File.ReadAllText(ruta);
-
-            foreach (var valor in valores)
-            {
-                contenido = contenido.Replace("{{" + valor.Key + "}}", valor.Value ?? string.Empty);
-            }
-
-            return contenido;
         }
 
         #region Bitácora

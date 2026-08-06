@@ -1,0 +1,17 @@
+Hola {{NombrePaciente}},
+
+Tu cita médica fue registrada correctamente con los siguientes datos:
+
+Número de cita: #{{NumeroCita}}
+Doctor: {{NombreDoctor}}
+Especialidad: {{Especialidad}}
+Fecha: {{Fecha}}
+Hora: {{Hora}}
+Estado: {{Estado}}
+
+Te recomendamos llegar 10 minutos antes de tu hora programada.
+
+Si no solicitaste esta cita, comunícate con nuestro equipo de soporte.
+
+MediCore - Sistema de Gestión Médica
+(506) 1234-5678 · soporte@medicore.hn · Lun-Vie 7:00-17:00

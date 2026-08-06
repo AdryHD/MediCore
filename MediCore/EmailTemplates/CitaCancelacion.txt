@@ -1,0 +1,17 @@
+Hola {{NombrePaciente}},
+
+La siguiente cita médica fue cancelada:
+
+Número de cita: #{{NumeroCita}}
+Doctor: {{NombreDoctor}}
+Especialidad: {{Especialidad}}
+Fecha: {{Fecha}}
+Hora: {{Hora}}
+Estado: {{Estado}}
+
+Si deseas programar una nueva cita, puedes hacerlo desde el sistema en cualquier momento.
+
+Si no solicitaste esta cancelación, comunícate con nuestro equipo de soporte.
+
+MediCore - Sistema de Gestión Médica
+(506) 1234-5678 · soporte@medicore.hn · Lun-Vie 7:00-17:00

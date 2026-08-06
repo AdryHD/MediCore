@@ -531,6 +531,20 @@ BEGIN
 	ALTER TABLE [dbo].[Notificaciones] ADD CONSTRAINT [CK_Notificaciones_Tipo] CHECK ([tipo] IN ('REGISTRO','CITA_PROGRAMADA','CITA_CANCELADA','RECUPERACION'))
 END
 GO
+
+-- Migracion RF-15: se agrega el tipo CITA_REPROGRAMADA para notificar reprogramaciones de citas.
+IF EXISTS (
+	SELECT 1 FROM sys.check_constraints
+	WHERE name = 'CK_Notificaciones_Tipo'
+	AND definition NOT LIKE '%CITA_REPROGRAMADA%'
+)
+BEGIN
+	ALTER TABLE [dbo].[Notificaciones] DROP CONSTRAINT [CK_Notificaciones_Tipo]
+	ALTER TABLE [dbo].[Notificaciones] ADD CONSTRAINT [CK_Notificaciones_Tipo]
+		CHECK ([tipo] IN ('REGISTRO','CITA_PROGRAMADA','CITA_CANCELADA','CITA_REPROGRAMADA','RECUPERACION'))
+END
+GO
+
 IF OBJECT_ID(N'dbo.CK_Notificaciones_Estado', N'C') IS NULL
 BEGIN
 	ALTER TABLE [dbo].[Notificaciones] ADD CONSTRAINT [CK_Notificaciones_Estado] CHECK ([estado] IN ('ENVIADO','FALLIDO'))
@@ -829,12 +843,12 @@ BEGIN
 END
 GO
 
+ALTER TABLE HistorialMedico
+ADD medicamentos NVARCHAR(MAX) NULL,
+    proxima_cita DATETIME NULL;
+
+
 USE [master]
 GO
 ALTER DATABASE [MediCore] SET  READ_WRITE
 GO
-
-
-ALTER TABLE HistorialMedico
-ADD medicamentos NVARCHAR(MAX) NULL,
-    proxima_cita DATETIME NULL;

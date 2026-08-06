@@ -1,0 +1,11 @@
+Hola {{NombreUsuario}},
+
+Tu cuenta fue creada correctamente en el Sistema de Gestión Médica MediCore, asociada al correo:
+{{Correo}}
+
+Ya puedes iniciar sesión con tu correo y la contraseña que registraste.
+
+Si no realizaste este registro, comunícate con nuestro equipo de soporte.
+
+MediCore - Sistema de Gestión Médica
+(506) 1234-5678 · soporte@medicore.hn · Lun-Vie 7:00-17:00

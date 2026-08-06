@@ -212,6 +212,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Scripts\archivos.js" />
     <Compile Include="Servicios\UtilitarioService.cs" />
+    <Compile Include="Servicios\EmailService.cs" />
     <None Include="Views\Archivos\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -245,6 +246,14 @@
     <Content Include="Content\fonts\bootstrap-icons.woff2" />
     <Content Include="EmailTemplates\RecuperacionAcceso.html" />
     <Content Include="EmailTemplates\RecuperacionAcceso.txt" />
+    <Content Include="EmailTemplates\Bienvenida.html" />
+    <Content Include="EmailTemplates\Bienvenida.txt" />
+    <Content Include="EmailTemplates\CitaConfirmacion.html" />
+    <Content Include="EmailTemplates\CitaConfirmacion.txt" />
+    <Content Include="EmailTemplates\CitaCancelacion.html" />
+    <Content Include="EmailTemplates\CitaCancelacion.txt" />
+    <Content Include="EmailTemplates\CitaReprogramacion.html" />
+    <Content Include="EmailTemplates\CitaReprogramacion.txt" />
     <EntityDeploy Include="EF\Model1.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>Model1.Designer.cs</LastGenOutput>
