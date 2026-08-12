@@ -210,9 +210,26 @@
     <Compile Include="Models\GestionUsuarioModel.cs" />
     <Compile Include="Models\RolItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="EF\Model1.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model1.edmx</DependentUpon>
+      <LastGenOutput>Model1.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="EF\Model1.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model1.edmx</DependentUpon>
+      <LastGenOutput>Model1.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\archivos.js" />
     <Compile Include="Servicios\UtilitarioService.cs" />
     <Compile Include="Servicios\EmailService.cs" />
+    <EntityDeploy Include="EF\Model1.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Model1.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="EF\Model1.edmx.diagram">
+      <DependentUpon>Model1.edmx</DependentUpon>
+    </Content>
     <None Include="Views\Archivos\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -224,16 +241,6 @@
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\LogoMediCore.png" />
     <Content Include="Content\panel.css" />
-    <Content Include="EF\Model1.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Model1.edmx</DependentUpon>
-      <LastGenOutput>Model1.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="EF\Model1.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Model1.edmx</DependentUpon>
-      <LastGenOutput>Model1.cs</LastGenOutput>
-    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -254,13 +261,6 @@
     <Content Include="EmailTemplates\CitaCancelacion.txt" />
     <Content Include="EmailTemplates\CitaReprogramacion.html" />
     <Content Include="EmailTemplates\CitaReprogramacion.txt" />
-    <EntityDeploy Include="EF\Model1.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Model1.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="EF\Model1.edmx.diagram">
-      <DependentUpon>Model1.edmx</DependentUpon>
-    </Content>
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\citas.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />

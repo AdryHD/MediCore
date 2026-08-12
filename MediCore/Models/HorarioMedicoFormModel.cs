@@ -3,11 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MediCore.Models
 {
-    /// <summary>
-    /// ViewModel utilizado para los formularios de creación y edición de
-    /// horarios médicos (RF-03). Se mantiene separado de la entidad EF para
-    /// poder aplicar validaciones de UI sin afectar el modelo de datos.
-    /// </summary>
+
     public class HorarioMedicoFormModel
     {
         public int IdHorario { get; set; }
@@ -32,9 +28,7 @@ namespace MediCore.Models
         [Display(Name = "Hora de fin")]
         public TimeSpan HoraFin { get; set; }
 
-        [Required(ErrorMessage = "La duración de la cita es obligatoria.")]
-        [Range(15, 480, ErrorMessage = "La duración de la cita debe estar entre 15 y 480 minutos.")]
         [Display(Name = "Duración de la cita (minutos)")]
-        public int DuracionCita { get; set; }
+        public int DuracionCita { get; set; } = 30;
     }
 }

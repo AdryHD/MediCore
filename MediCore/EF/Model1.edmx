@@ -133,10 +133,10 @@
           <Property Name="fecha_nacimiento" Type="date" Nullable="false" />
           <Property Name="sexo" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="telefono" Type="nvarchar" MaxLength="20" />
-          <Property Name="correo" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="direccion" Type="nvarchar" MaxLength="255" />
           <Property Name="estado" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="fecha_registro" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="correo" Type="nvarchar" MaxLength="150" Nullable="false" />
         </EntityType>
         <EntityType Name="tbRol">
           <Key>
@@ -612,10 +612,10 @@
           <Property Name="fecha_nacimiento" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="sexo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="correo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="direccion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="estado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="fecha_registro" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="correo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Citas" Relationship="Self.FK_Citas_Pacientes" FromRole="Pacientes" ToRole="Citas" />
           <NavigationProperty Name="Expedientes" Relationship="Self.FK_Expedientes_Pacientes" FromRole="Pacientes" ToRole="Expedientes" />
         </EntityType>
@@ -827,7 +827,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="MediCoreEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="MediCoreEntities2" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Archivos" EntityType="Self.Archivos" />
           <EntitySet Name="Bitacora" EntityType="Self.Bitacora" />
           <EntitySet Name="Citas" EntityType="Self.Citas" />
@@ -949,7 +949,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="MediCoreModelStoreContainer" CdmEntityContainer="MediCoreEntities">
+        <EntityContainerMapping StorageEntityContainer="MediCoreModelStoreContainer" CdmEntityContainer="MediCoreEntities2">
           <EntitySetMapping Name="Archivos">
             <EntityTypeMapping TypeName="MediCoreModel.Archivos">
               <MappingFragment StoreEntitySet="Archivos">
@@ -1086,10 +1086,10 @@
                 <ScalarProperty Name="fecha_nacimiento" ColumnName="fecha_nacimiento" />
                 <ScalarProperty Name="sexo" ColumnName="sexo" />
                 <ScalarProperty Name="telefono" ColumnName="telefono" />
-                <ScalarProperty Name="correo" ColumnName="correo" />
                 <ScalarProperty Name="direccion" ColumnName="direccion" />
                 <ScalarProperty Name="estado" ColumnName="estado" />
                 <ScalarProperty Name="fecha_registro" ColumnName="fecha_registro" />
+                <ScalarProperty Name="correo" ColumnName="correo" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

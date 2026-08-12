@@ -127,7 +127,7 @@ namespace MediCore.Controllers
                         dia_semana = model.DiaSemana,
                         hora_inicio = model.HoraInicio,
                         hora_fin = model.HoraFin,
-                        duracion_cita_min = model.DuracionCita,
+                        duracion_cita_min = 30,
                         estado = "ACTIVO"
                     };
 
@@ -214,7 +214,7 @@ namespace MediCore.Controllers
                     horario.dia_semana = model.DiaSemana;
                     horario.hora_inicio = model.HoraInicio;
                     horario.hora_fin = model.HoraFin;
-                    horario.duracion_cita_min = model.DuracionCita;
+                    horario.duracion_cita_min = 30;
 
                     db.SaveChanges();
 

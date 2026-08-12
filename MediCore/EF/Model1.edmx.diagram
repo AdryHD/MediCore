@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="d65f34aba1ae4f13ba57fefc81798c9f" Name="Diagram1">
+      <Diagram DiagramId="9dc07a6269e64920b2028fe07123c32d" Name="Diagram1">
         <EntityTypeShape EntityType="MediCoreModel.Archivos" Width="1.5" PointX="5.25" PointY="7.25" IsExpanded="true" />
         <EntityTypeShape EntityType="MediCoreModel.Bitacora" Width="1.5" PointX="5.25" PointY="11.5" IsExpanded="true" />
         <EntityTypeShape EntityType="MediCoreModel.Citas" Width="1.5" PointX="10.5" PointY="8.875" IsExpanded="true" />
