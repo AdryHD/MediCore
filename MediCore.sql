@@ -1,4 +1,4 @@
-USE [master]
+﻿USE [master]
 GO
 
 IF NOT EXISTS (SELECT 1 FROM sys.databases WHERE name = N'MediCore')
@@ -86,8 +86,6 @@ BEGIN
 END
 GO
 
--- Migracion: tbUsuario es solo para personal interno, por lo que todo usuario debe tener un rol.
--- Se asigna RECEPCIONISTA (rol minimo) a cualquier usuario existente sin rol y se vuelve la columna obligatoria.
 IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('dbo.tbUsuario') AND name = 'id_rol' AND is_nullable = 1)
 BEGIN
 	DECLARE @IdRolRecepcionista INT;
@@ -273,7 +271,6 @@ BEGIN
 	ALTER TABLE [dbo].[Pacientes] ADD CONSTRAINT [CK_Pacientes_Estado] CHECK ([estado] IN ('ACTIVO','INACTIVO'))
 END
 GO
-
 
 IF COL_LENGTH('dbo.Pacientes', 'id_usuario') IS NOT NULL
 BEGIN
@@ -532,7 +529,6 @@ BEGIN
 END
 GO
 
--- Migracion RF-15: se agrega el tipo CITA_REPROGRAMADA para notificar reprogramaciones de citas.
 IF EXISTS (
 	SELECT 1 FROM sys.check_constraints
 	WHERE name = 'CK_Notificaciones_Tipo'
@@ -843,10 +839,379 @@ BEGIN
 END
 GO
 
-ALTER TABLE HistorialMedico
-ADD medicamentos NVARCHAR(MAX) NULL,
-    proxima_cita DATETIME NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.tbUsuario WHERE Correo = 'recepcion1@medicore.com')
+BEGIN
+    DECLARE @r1 INT; SELECT @r1=id_rol FROM dbo.tbRol WHERE nombre_rol='RECEPCIONISTA';
+    INSERT INTO dbo.tbUsuario (id_rol,Nombre,Cedula,FechaNacimiento,Telefono,Correo,Contrasenna,Estado)
+    VALUES (@r1,'Laura Jiménez Solís','106780001','1990-03-15','88001001','recepcion1@medicore.com','Laura123',1);
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.tbUsuario WHERE Correo = 'recepcion2@medicore.com')
+BEGIN
+    DECLARE @r2 INT; SELECT @r2=id_rol FROM dbo.tbRol WHERE nombre_rol='RECEPCIONISTA';
+    INSERT INTO dbo.tbUsuario (id_rol,Nombre,Cedula,FechaNacimiento,Telefono,Correo,Contrasenna,Estado)
+    VALUES (@r2,'Carlos Mora Vega','205670002','1985-07-22','88002002','recepcion2@medicore.com','Carlos123',1);
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.tbUsuario WHERE Correo = 'recepcion3@medicore.com')
+BEGIN
+    DECLARE @r3 INT; SELECT @r3=id_rol FROM dbo.tbRol WHERE nombre_rol='RECEPCIONISTA';
+    INSERT INTO dbo.tbUsuario (id_rol,Nombre,Cedula,FechaNacimiento,Telefono,Correo,Contrasenna,Estado)
+    VALUES (@r3,'Sofía Ramírez Torres','304560003','1992-11-08','88003003','recepcion3@medicore.com','Sofia123',1);
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.tbUsuario WHERE Correo = 'recepcion4@medicore.com')
+BEGIN
+    DECLARE @r4 INT; SELECT @r4=id_rol FROM dbo.tbRol WHERE nombre_rol='RECEPCIONISTA';
+    INSERT INTO dbo.tbUsuario (id_rol,Nombre,Cedula,FechaNacimiento,Telefono,Correo,Contrasenna,Estado)
+    VALUES (@r4,'Andrés Campos Rojas','401230004','1988-01-30','88004004','recepcion4@medicore.com','Andres123',1);
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.tbUsuario WHERE Correo = 'recepcion5@medicore.com')
+BEGIN
+    DECLARE @r5 INT; SELECT @r5=id_rol FROM dbo.tbRol WHERE nombre_rol='RECEPCIONISTA';
+    INSERT INTO dbo.tbUsuario (id_rol,Nombre,Cedula,FechaNacimiento,Telefono,Correo,Contrasenna,Estado)
+    VALUES (@r5,'María Vargas Núñez','502340005','1995-06-17','88005005','recepcion5@medicore.com','Maria123',1);
+END
+GO
 
+IF NOT EXISTS (SELECT 1 FROM dbo.Especialidades WHERE nombre='Medicina General')
+    INSERT INTO dbo.Especialidades (nombre,descripcion,estado,fecha_creacion)
+    VALUES ('Medicina General','Atención médica primaria y preventiva','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Especialidades WHERE nombre='Cardiología')
+    INSERT INTO dbo.Especialidades (nombre,descripcion,estado,fecha_creacion)
+    VALUES ('Cardiología','Diagnóstico y tratamiento de enfermedades del corazón','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Especialidades WHERE nombre='Pediatría')
+    INSERT INTO dbo.Especialidades (nombre,descripcion,estado,fecha_creacion)
+    VALUES ('Pediatría','Atención médica para niños y adolescentes','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Especialidades WHERE nombre='Ginecología')
+    INSERT INTO dbo.Especialidades (nombre,descripcion,estado,fecha_creacion)
+    VALUES ('Ginecología','Salud del sistema reproductivo femenino','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Especialidades WHERE nombre='Dermatología')
+    INSERT INTO dbo.Especialidades (nombre,descripcion,estado,fecha_creacion)
+    VALUES ('Dermatología','Diagnóstico y tratamiento de enfermedades de la piel','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Especialidades WHERE nombre='Neurología')
+    INSERT INTO dbo.Especialidades (nombre,descripcion,estado,fecha_creacion)
+    VALUES ('Neurología','Enfermedades del sistema nervioso central y periférico','ACTIVO',GETDATE());
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Doctores WHERE cedula='108900010')
+BEGIN
+    DECLARE @esp1 INT; SELECT @esp1=id_especialidad FROM dbo.Especialidades WHERE nombre='Medicina General';
+    EXEC dbo.spRegistrarDoctor @NombreCompleto='Dr. Juan Pablo Herrera Ulate',@Cedula='108900010',
+         @CodigoColegiado='MED-1001',@Correo='jherrera@medicore.com',@Telefono='89101001',
+         @IdEspecialidad=@esp1,@Contrasenna='Juan1001';
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Doctores WHERE cedula='205800020')
+BEGIN
+    DECLARE @esp2 INT; SELECT @esp2=id_especialidad FROM dbo.Especialidades WHERE nombre='Cardiología';
+    EXEC dbo.spRegistrarDoctor @NombreCompleto='Dra. Ana Lucía Brenes Fallas',@Cedula='205800020',
+         @CodigoColegiado='MED-1002',@Correo='abrenes@medicore.com',@Telefono='89202002',
+         @IdEspecialidad=@esp2,@Contrasenna='Ana1002';
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Doctores WHERE cedula='304700030')
+BEGIN
+    DECLARE @esp3 INT; SELECT @esp3=id_especialidad FROM dbo.Especialidades WHERE nombre='Pediatría';
+    EXEC dbo.spRegistrarDoctor @NombreCompleto='Dr. Roberto Sáenz Quesada',@Cedula='304700030',
+         @CodigoColegiado='MED-1003',@Correo='rsaenz@medicore.com',@Telefono='89303003',
+         @IdEspecialidad=@esp3,@Contrasenna='Roberto103';
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Doctores WHERE cedula='401600040')
+BEGIN
+    DECLARE @esp4 INT; SELECT @esp4=id_especialidad FROM dbo.Especialidades WHERE nombre='Ginecología';
+    EXEC dbo.spRegistrarDoctor @NombreCompleto='Dra. Patricia Solano Méndez',@Cedula='401600040',
+         @CodigoColegiado='MED-1004',@Correo='psolano@medicore.com',@Telefono='89404004',
+         @IdEspecialidad=@esp4,@Contrasenna='Patricia104';
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Doctores WHERE cedula='502500050')
+BEGIN
+    DECLARE @esp5 INT; SELECT @esp5=id_especialidad FROM dbo.Especialidades WHERE nombre='Dermatología';
+    EXEC dbo.spRegistrarDoctor @NombreCompleto='Dr. Marcos Delgado Arce',@Cedula='502500050',
+         @CodigoColegiado='MED-1005',@Correo='mdelgado@medicore.com',@Telefono='89505005',
+         @IdEspecialidad=@esp5,@Contrasenna='Marcos1005';
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Doctores WHERE cedula='601400060')
+BEGIN
+    DECLARE @esp6 INT; SELECT @esp6=id_especialidad FROM dbo.Especialidades WHERE nombre='Neurología';
+    EXEC dbo.spRegistrarDoctor @NombreCompleto='Dra. Valeria Castro Ugalde',@Cedula='601400060',
+         @CodigoColegiado='MED-1006',@Correo='vcastro@medicore.com',@Telefono='89606006',
+         @IdEspecialidad=@esp6,@Contrasenna='Valeria106';
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Pacientes WHERE cedula='110200101')
+    INSERT INTO dbo.Pacientes (nombre_completo,cedula,fecha_nacimiento,sexo,telefono,correo,direccion,estado,fecha_registro)
+    VALUES ('Diego Alvarado Pérez','110200101','1980-04-12','M','87001001','dalvarado@gmail.com','San José, Montes de Oca, 50m norte del parque','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Pacientes WHERE cedula='209100202')
+    INSERT INTO dbo.Pacientes (nombre_completo,cedula,fecha_nacimiento,sexo,telefono,correo,direccion,estado,fecha_registro)
+    VALUES ('Gabriela Fonseca López','209100202','1995-09-25','F','87002002','gfonseca@gmail.com','Alajuela, La Unión, frente a la iglesia','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Pacientes WHERE cedula='308000303')
+    INSERT INTO dbo.Pacientes (nombre_completo,cedula,fecha_nacimiento,sexo,telefono,correo,direccion,estado,fecha_registro)
+    VALUES ('Esteban Quirós Arias','308000303','2010-02-14','M','87003003','equiros@gmail.com','Heredia, San Pablo, residencial Los Pinos','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Pacientes WHERE cedula='407900404')
+    INSERT INTO dbo.Pacientes (nombre_completo,cedula,fecha_nacimiento,sexo,telefono,correo,direccion,estado,fecha_registro)
+    VALUES ('Natalia Espinoza Bolaños','407900404','1975-12-01','F','87004004','nespinoza@gmail.com','Cartago, Tres Ríos, 100m sur del estadio','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Pacientes WHERE cedula='506800505')
+    INSERT INTO dbo.Pacientes (nombre_completo,cedula,fecha_nacimiento,sexo,telefono,correo,direccion,estado,fecha_registro)
+    VALUES ('Fernando Monge Zuñiga','506800505','1988-07-30','M','87005005','fmonge@gmail.com','Limón, Puerto Viejo, barrio El Centro','ACTIVO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Pacientes WHERE cedula='605700606')
+    INSERT INTO dbo.Pacientes (nombre_completo,cedula,fecha_nacimiento,sexo,telefono,correo,direccion,estado,fecha_registro)
+    VALUES ('Isabella Ruiz Montoya','605700606','2018-05-20','F','87006006','iruiz@gmail.com','Guanacaste, Liberia, contiguo al hospital','ACTIVO',GETDATE());
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.HorariosMedicos hm JOIN dbo.Doctores d ON hm.id_doctor=d.id_doctor WHERE d.cedula='108900010' AND hm.dia_semana=1)
+BEGIN
+    DECLARE @dh1 INT; SELECT @dh1=id_doctor FROM dbo.Doctores WHERE cedula='108900010';
+    INSERT INTO dbo.HorariosMedicos (id_doctor,dia_semana,hora_inicio,hora_fin,duracion_cita_min,estado)
+    VALUES (@dh1,1,'08:00','12:00',30,'ACTIVO');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HorariosMedicos hm JOIN dbo.Doctores d ON hm.id_doctor=d.id_doctor WHERE d.cedula='205800020' AND hm.dia_semana=2)
+BEGIN
+    DECLARE @dh2 INT; SELECT @dh2=id_doctor FROM dbo.Doctores WHERE cedula='205800020';
+    INSERT INTO dbo.HorariosMedicos (id_doctor,dia_semana,hora_inicio,hora_fin,duracion_cita_min,estado)
+    VALUES (@dh2,2,'09:00','13:00',45,'ACTIVO');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HorariosMedicos hm JOIN dbo.Doctores d ON hm.id_doctor=d.id_doctor WHERE d.cedula='304700030' AND hm.dia_semana=3)
+BEGIN
+    DECLARE @dh3 INT; SELECT @dh3=id_doctor FROM dbo.Doctores WHERE cedula='304700030';
+    INSERT INTO dbo.HorariosMedicos (id_doctor,dia_semana,hora_inicio,hora_fin,duracion_cita_min,estado)
+    VALUES (@dh3,3,'07:00','11:00',30,'ACTIVO');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HorariosMedicos hm JOIN dbo.Doctores d ON hm.id_doctor=d.id_doctor WHERE d.cedula='401600040' AND hm.dia_semana=4)
+BEGIN
+    DECLARE @dh4 INT; SELECT @dh4=id_doctor FROM dbo.Doctores WHERE cedula='401600040';
+    INSERT INTO dbo.HorariosMedicos (id_doctor,dia_semana,hora_inicio,hora_fin,duracion_cita_min,estado)
+    VALUES (@dh4,4,'13:00','17:00',30,'ACTIVO');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HorariosMedicos hm JOIN dbo.Doctores d ON hm.id_doctor=d.id_doctor WHERE d.cedula='502500050' AND hm.dia_semana=5)
+BEGIN
+    DECLARE @dh5 INT; SELECT @dh5=id_doctor FROM dbo.Doctores WHERE cedula='502500050';
+    INSERT INTO dbo.HorariosMedicos (id_doctor,dia_semana,hora_inicio,hora_fin,duracion_cita_min,estado)
+    VALUES (@dh5,5,'10:00','14:00',30,'ACTIVO');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HorariosMedicos hm JOIN dbo.Doctores d ON hm.id_doctor=d.id_doctor WHERE d.cedula='601400060' AND hm.dia_semana=1)
+BEGIN
+    DECLARE @dh6 INT; SELECT @dh6=id_doctor FROM dbo.Doctores WHERE cedula='601400060';
+    INSERT INTO dbo.HorariosMedicos (id_doctor,dia_semana,hora_inicio,hora_fin,duracion_cita_min,estado)
+    VALUES (@dh6,1,'14:00','18:00',45,'ACTIVO');
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Citas c JOIN dbo.Pacientes p ON c.id_paciente=p.id_paciente JOIN dbo.Doctores d ON c.id_doctor=d.id_doctor WHERE p.cedula='110200101' AND d.cedula='108900010' AND c.fecha_cita='2026-08-18 08:00')
+BEGIN
+    DECLARE @cp1 INT,@cd1 INT;
+    SELECT @cp1=id_paciente FROM dbo.Pacientes WHERE cedula='110200101';
+    SELECT @cd1=id_doctor  FROM dbo.Doctores  WHERE cedula='108900010';
+    INSERT INTO dbo.Citas (id_paciente,id_doctor,fecha_cita,duracion_min,motivo,estado,fecha_creacion)
+    VALUES (@cp1,@cd1,'2026-08-18 08:00',30,'Consulta general por dolor de cabeza persistente','PENDIENTE',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Citas c JOIN dbo.Pacientes p ON c.id_paciente=p.id_paciente JOIN dbo.Doctores d ON c.id_doctor=d.id_doctor WHERE p.cedula='209100202' AND d.cedula='205800020' AND c.fecha_cita='2026-08-19 09:00')
+BEGIN
+    DECLARE @cp2 INT,@cd2 INT;
+    SELECT @cp2=id_paciente FROM dbo.Pacientes WHERE cedula='209100202';
+    SELECT @cd2=id_doctor  FROM dbo.Doctores  WHERE cedula='205800020';
+    INSERT INTO dbo.Citas (id_paciente,id_doctor,fecha_cita,duracion_min,motivo,estado,fecha_creacion)
+    VALUES (@cp2,@cd2,'2026-08-19 09:00',45,'Control cardíaco semestral','CONFIRMADA',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Citas c JOIN dbo.Pacientes p ON c.id_paciente=p.id_paciente JOIN dbo.Doctores d ON c.id_doctor=d.id_doctor WHERE p.cedula='308000303' AND d.cedula='304700030' AND c.fecha_cita='2026-08-20 07:30')
+BEGIN
+    DECLARE @cp3 INT,@cd3 INT;
+    SELECT @cp3=id_paciente FROM dbo.Pacientes WHERE cedula='308000303';
+    SELECT @cd3=id_doctor  FROM dbo.Doctores  WHERE cedula='304700030';
+    INSERT INTO dbo.Citas (id_paciente,id_doctor,fecha_cita,duracion_min,motivo,estado,fecha_creacion)
+    VALUES (@cp3,@cd3,'2026-08-20 07:30',30,'Vacunación y revisión de peso y talla','PROGRAMADA',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Citas c JOIN dbo.Pacientes p ON c.id_paciente=p.id_paciente JOIN dbo.Doctores d ON c.id_doctor=d.id_doctor WHERE p.cedula='407900404' AND d.cedula='401600040' AND c.fecha_cita='2026-08-21 13:00')
+BEGIN
+    DECLARE @cp4 INT,@cd4 INT;
+    SELECT @cp4=id_paciente FROM dbo.Pacientes WHERE cedula='407900404';
+    SELECT @cd4=id_doctor  FROM dbo.Doctores  WHERE cedula='401600040';
+    INSERT INTO dbo.Citas (id_paciente,id_doctor,fecha_cita,duracion_min,motivo,estado,fecha_creacion)
+    VALUES (@cp4,@cd4,'2026-08-21 13:00',30,'Control prenatal tercer trimestre','PENDIENTE',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Citas c JOIN dbo.Pacientes p ON c.id_paciente=p.id_paciente JOIN dbo.Doctores d ON c.id_doctor=d.id_doctor WHERE p.cedula='506800505' AND d.cedula='502500050' AND c.fecha_cita='2026-08-22 10:00')
+BEGIN
+    DECLARE @cp5 INT,@cd5 INT;
+    SELECT @cp5=id_paciente FROM dbo.Pacientes WHERE cedula='506800505';
+    SELECT @cd5=id_doctor  FROM dbo.Doctores  WHERE cedula='502500050';
+    INSERT INTO dbo.Citas (id_paciente,id_doctor,fecha_cita,duracion_min,motivo,estado,fecha_creacion)
+    VALUES (@cp5,@cd5,'2026-08-22 10:00',30,'Evaluación de dermatitis en antebrazo derecho','PENDIENTE',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Citas c JOIN dbo.Pacientes p ON c.id_paciente=p.id_paciente JOIN dbo.Doctores d ON c.id_doctor=d.id_doctor WHERE p.cedula='605700606' AND d.cedula='601400060' AND c.fecha_cita='2026-08-25 14:00')
+BEGIN
+    DECLARE @cp6 INT,@cd6 INT;
+    SELECT @cp6=id_paciente FROM dbo.Pacientes WHERE cedula='605700606';
+    SELECT @cd6=id_doctor  FROM dbo.Doctores  WHERE cedula='601400060';
+    INSERT INTO dbo.Citas (id_paciente,id_doctor,fecha_cita,duracion_min,motivo,estado,fecha_creacion)
+    VALUES (@cp6,@cd6,'2026-08-25 14:00',45,'Evaluación neurológica por convulsiones febriles','CONFIRMADA',GETDATE());
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='110200101')
+BEGIN
+    DECLARE @ep1 INT; SELECT @ep1=id_paciente FROM dbo.Pacientes WHERE cedula='110200101';
+    INSERT INTO dbo.Expedientes (id_paciente,alergias,antecedentes,tipo_sangre,fecha_apertura)
+    VALUES (@ep1,'Ninguna conocida','Hipertensión arterial diagnosticada en 2018','O+',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='209100202')
+BEGIN
+    DECLARE @ep2 INT; SELECT @ep2=id_paciente FROM dbo.Pacientes WHERE cedula='209100202';
+    INSERT INTO dbo.Expedientes (id_paciente,alergias,antecedentes,tipo_sangre,fecha_apertura)
+    VALUES (@ep2,'Penicilina','Arritmia cardíaca leve desde 2020','A-',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='308000303')
+BEGIN
+    DECLARE @ep3 INT; SELECT @ep3=id_paciente FROM dbo.Pacientes WHERE cedula='308000303';
+    INSERT INTO dbo.Expedientes (id_paciente,alergias,antecedentes,tipo_sangre,fecha_apertura)
+    VALUES (@ep3,'Polen y polvo','Asma leve controlado con broncodilatador','B+',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='407900404')
+BEGIN
+    DECLARE @ep4 INT; SELECT @ep4=id_paciente FROM dbo.Pacientes WHERE cedula='407900404';
+    INSERT INTO dbo.Expedientes (id_paciente,alergias,antecedentes,tipo_sangre,fecha_apertura)
+    VALUES (@ep4,'Ibuprofeno','Diabetes gestacional en embarazo anterior','AB+',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='506800505')
+BEGIN
+    DECLARE @ep5 INT; SELECT @ep5=id_paciente FROM dbo.Pacientes WHERE cedula='506800505';
+    INSERT INTO dbo.Expedientes (id_paciente,alergias,antecedentes,tipo_sangre,fecha_apertura)
+    VALUES (@ep5,'Mariscos','Sin antecedentes relevantes','O-',GETDATE());
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='605700606')
+BEGIN
+    DECLARE @ep6 INT; SELECT @ep6=id_paciente FROM dbo.Pacientes WHERE cedula='605700606';
+    INSERT INTO dbo.Expedientes (id_paciente,alergias,antecedentes,tipo_sangre,fecha_apertura)
+    VALUES (@ep6,'Ninguna','Convulsiones febriles desde los 6 meses de edad','A+',GETDATE());
+END
+GO
+
+IF COL_LENGTH('dbo.HistorialMedico','medicamentos') IS NULL
+    EXEC sp_executesql N'ALTER TABLE dbo.HistorialMedico ADD medicamentos NVARCHAR(MAX) NULL, proxima_cita DATETIME NULL';
+GO
+EXEC sp_executesql N'
+UPDATE hm SET medicamentos=''Ibuprofeno 400mg cada 8 horas por 5 dias'', proxima_cita=''2026-08-18 08:00''
+FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula=''110200101'' AND hm.fecha_consulta=''2026-07-10 08:30'' AND hm.medicamentos IS NULL;
+UPDATE hm SET medicamentos=''Propranolol 40mg cada 12 horas'', proxima_cita=''2026-08-19 09:00''
+FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula=''209100202'' AND hm.fecha_consulta=''2026-06-15 09:30'' AND hm.medicamentos IS NULL;
+UPDATE hm SET medicamentos=''Salbutamol inhalador 100mcg segun necesidad'', proxima_cita=''2026-08-20 07:30''
+FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula=''308000303'' AND hm.fecha_consulta=''2026-05-20 07:00'' AND hm.medicamentos IS NULL;
+UPDATE hm SET medicamentos=''Acido folico 5mg diario, hierro 300mg diario'', proxima_cita=''2026-08-21 13:00''
+FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula=''407900404'' AND hm.fecha_consulta=''2026-07-01 13:00'' AND hm.medicamentos IS NULL;
+UPDATE hm SET medicamentos=''Hidrocortisona crema 1% dos veces al dia por 10 dias'', proxima_cita=''2026-08-22 10:00''
+FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula=''506800505'' AND hm.fecha_consulta=''2026-07-25 10:00'' AND hm.medicamentos IS NULL;
+UPDATE hm SET medicamentos=''Diazepam rectal 5mg si convulsion mayor a 5 min'', proxima_cita=''2026-08-25 14:00''
+FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula=''605700606'' AND hm.fecha_consulta=''2026-07-30 14:00'' AND hm.medicamentos IS NULL;
+';
+
+IF NOT EXISTS (SELECT 1 FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='110200101' AND hm.fecha_consulta='2026-07-10 08:30')
+BEGIN
+    DECLARE @he1 INT,@hd1 INT;
+    SELECT @he1=e.id_expediente FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='110200101';
+    SELECT @hd1=id_doctor FROM dbo.Doctores WHERE cedula='108900010';
+    INSERT INTO dbo.HistorialMedico (id_expediente,id_cita,id_doctor,fecha_consulta,sintomas,diagnostico,tratamiento,observaciones)
+    VALUES (@he1,NULL,@hd1,'2026-07-10 08:30','Cefalea frontal bilateral de 3 días, sin fiebre','Cefalea tensional','Reposo, hidratación y analgésico oral por 5 días','Control en 2 semanas si persisten síntomas');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='209100202' AND hm.fecha_consulta='2026-06-15 09:30')
+BEGIN
+    DECLARE @he2 INT,@hd2 INT;
+    SELECT @he2=e.id_expediente FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='209100202';
+    SELECT @hd2=id_doctor FROM dbo.Doctores WHERE cedula='205800020';
+    INSERT INTO dbo.HistorialMedico (id_expediente,id_cita,id_doctor,fecha_consulta,sintomas,diagnostico,tratamiento,observaciones)
+    VALUES (@he2,NULL,@hd2,'2026-06-15 09:30','Palpitaciones ocasionales y cansancio leve al subir escaleras','Arritmia supraventricular paroxística','Monitoreo Holter 24h y ajuste de medicación','Se solicita electrocardiograma de control');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='308000303' AND hm.fecha_consulta='2026-05-20 07:00')
+BEGIN
+    DECLARE @he3 INT,@hd3 INT;
+    SELECT @he3=e.id_expediente FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='308000303';
+    SELECT @hd3=id_doctor FROM dbo.Doctores WHERE cedula='304700030';
+    INSERT INTO dbo.HistorialMedico (id_expediente,id_cita,id_doctor,fecha_consulta,sintomas,diagnostico,tratamiento,observaciones)
+    VALUES (@he3,NULL,@hd3,'2026-05-20 07:00','Tos seca nocturna, sibilancias leves','Asma bronquial leve intermitente','Broncodilatador de rescate según necesidad','Evitar mascotas y polvo. Vacunas al día');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='407900404' AND hm.fecha_consulta='2026-07-01 13:00')
+BEGIN
+    DECLARE @he4 INT,@hd4 INT;
+    SELECT @he4=e.id_expediente FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='407900404';
+    SELECT @hd4=id_doctor FROM dbo.Doctores WHERE cedula='401600040';
+    INSERT INTO dbo.HistorialMedico (id_expediente,id_cita,id_doctor,fecha_consulta,sintomas,diagnostico,tratamiento,observaciones)
+    VALUES (@he4,NULL,@hd4,'2026-07-01 13:00','Semana 28, glucemia en ayunas 105 mg/dL','Embarazo 28 semanas, control rutinario','Dieta hipoglucémica y monitoreo de glucemia diaria','Presión arterial dentro de parámetros normales');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='506800505' AND hm.fecha_consulta='2026-07-25 10:00')
+BEGIN
+    DECLARE @he5 INT,@hd5 INT;
+    SELECT @he5=e.id_expediente FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='506800505';
+    SELECT @hd5=id_doctor FROM dbo.Doctores WHERE cedula='502500050';
+    INSERT INTO dbo.HistorialMedico (id_expediente,id_cita,id_doctor,fecha_consulta,sintomas,diagnostico,tratamiento,observaciones)
+    VALUES (@he5,NULL,@hd5,'2026-07-25 10:00','Lesiones eritematosas pruriginosas en antebrazo derecho','Dermatitis de contacto alérgica','Evitar irritantes, corticoide tópico','Se recomienda prueba de alergia cutánea');
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.HistorialMedico hm JOIN dbo.Expedientes e ON hm.id_expediente=e.id_expediente JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='605700606' AND hm.fecha_consulta='2026-07-30 14:00')
+BEGIN
+    DECLARE @he6 INT,@hd6 INT;
+    SELECT @he6=e.id_expediente FROM dbo.Expedientes e JOIN dbo.Pacientes p ON e.id_paciente=p.id_paciente WHERE p.cedula='605700606';
+    SELECT @hd6=id_doctor FROM dbo.Doctores WHERE cedula='601400060';
+    INSERT INTO dbo.HistorialMedico (id_expediente,id_cita,id_doctor,fecha_consulta,sintomas,diagnostico,tratamiento,observaciones)
+    VALUES (@he6,NULL,@hd6,'2026-07-30 14:00','Episodio convulsivo febril 2 min, temperatura 38.8°C','Convulsión febril simple','Manejo antipirético y observación neurológica','Sin recurrencia en 72 horas. EEG programado');
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Notificaciones WHERE correo_destino='dalvarado@gmail.com' AND tipo='CITA_PROGRAMADA')
+    INSERT INTO dbo.Notificaciones (correo_destino,tipo,asunto,cuerpo,estado,fecha_envio)
+    VALUES ('dalvarado@gmail.com','CITA_PROGRAMADA','Confirmación de cita médica - MediCore','Estimado Diego, su cita con el Dr. Juan Pablo Herrera está programada para el 18 de agosto de 2026 a las 08:00 a.m.','ENVIADO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Notificaciones WHERE correo_destino='gfonseca@gmail.com' AND tipo='CITA_PROGRAMADA')
+    INSERT INTO dbo.Notificaciones (correo_destino,tipo,asunto,cuerpo,estado,fecha_envio)
+    VALUES ('gfonseca@gmail.com','CITA_PROGRAMADA','Confirmación de cita médica - MediCore','Estimada Gabriela, su cita con la Dra. Ana Lucía Brenes está confirmada para el 19 de agosto de 2026 a las 09:00 a.m.','ENVIADO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Notificaciones WHERE correo_destino='equiros@gmail.com' AND tipo='CITA_PROGRAMADA')
+    INSERT INTO dbo.Notificaciones (correo_destino,tipo,asunto,cuerpo,estado,fecha_envio)
+    VALUES ('equiros@gmail.com','CITA_PROGRAMADA','Recordatorio de cita pediátrica - MediCore','Estimada familia Quirós, la cita de Esteban con el Dr. Roberto Sáenz es el 20 de agosto de 2026 a las 07:30 a.m.','ENVIADO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Notificaciones WHERE correo_destino='nespinoza@gmail.com' AND tipo='CITA_PROGRAMADA')
+    INSERT INTO dbo.Notificaciones (correo_destino,tipo,asunto,cuerpo,estado,fecha_envio)
+    VALUES ('nespinoza@gmail.com','CITA_PROGRAMADA','Recordatorio de control prenatal - MediCore','Estimada Natalia, su control prenatal con la Dra. Patricia Solano es el 21 de agosto de 2026 a la 01:00 p.m.','ENVIADO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Notificaciones WHERE correo_destino='fmonge@gmail.com' AND tipo='CITA_PROGRAMADA')
+    INSERT INTO dbo.Notificaciones (correo_destino,tipo,asunto,cuerpo,estado,fecha_envio)
+    VALUES ('fmonge@gmail.com','CITA_PROGRAMADA','Confirmación de cita dermatológica - MediCore','Estimado Fernando, su cita con el Dr. Marcos Delgado está programada para el 22 de agosto de 2026 a las 10:00 a.m.','ENVIADO',GETDATE());
+GO
+IF NOT EXISTS (SELECT 1 FROM dbo.Notificaciones WHERE correo_destino='iruiz@gmail.com' AND tipo='CITA_PROGRAMADA')
+    INSERT INTO dbo.Notificaciones (correo_destino,tipo,asunto,cuerpo,estado,fecha_envio)
+    VALUES ('iruiz@gmail.com','CITA_PROGRAMADA','Confirmación de evaluación neurológica - MediCore','Estimada familia Ruiz, la cita de Isabella con la Dra. Valeria Castro es el 25 de agosto de 2026 a las 02:00 p.m.','ENVIADO',GETDATE());
+GO
 
 USE [master]
 GO
