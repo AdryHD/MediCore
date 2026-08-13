@@ -32,7 +32,7 @@
                 </div>
                 <div class="stats-info">
                     <h6 class="label">Total Pacientes</h6>
-                    <h4 class="value">—</h4>
+                    <h4 class="value" id="stat-pacientes">—</h4>
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="stats-info">
                     <h6 class="label">Total Doctores</h6>
-                    <h4 class="value">—</h4>
+                    <h4 class="value" id="stat-doctores">—</h4>
                 </div>
             </div>
         </div>
@@ -56,7 +56,7 @@
                 </div>
                 <div class="stats-info">
                     <h6 class="label">Citas Hoy</h6>
-                    <h4 class="value">—</h4>
+                    <h4 class="value" id="stat-citas-hoy">—</h4>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@
                 </div>
                 <div class="stats-info">
                     <h6 class="label">Citas Pendientes</h6>
-                    <h4 class="value">—</h4>
+                    <h4 class="value" id="stat-citas-pendientes">—</h4>
                 </div>
             </div>
         </div>
@@ -98,15 +98,14 @@
                                     <th>Estado</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="tabla-proximas-citas">
                                 <tr>
                                     <td colspan="6" class="empty-state-cell">
                                         <div class="empty-state">
                                             <div class="empty-state-icon-wrap">
                                                 <i class="bi bi-calendar3"></i>
                                             </div>
-                                            <p class="empty-state-title">Sin citas registradas</p>
-                                            <p class="empty-state-sub">Aún no hay citas programadas en el sistema.</p>
+                                            <p class="empty-state-title">Cargando citas...</p>
                                         </div>
                                     </td>
                                 </tr>

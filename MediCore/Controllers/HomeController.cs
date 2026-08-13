@@ -193,6 +193,63 @@ namespace MediCore.Controllers
             return View();
         }
 
+        // GET: Indicadores del dashboard (JSON)
+        [AuthActionFilter]
+        public ActionResult GetIndicadores()
+        {
+            using (var db = new MediCoreEntities())
+            {
+                try
+                {
+                    var hoy = DateTime.Today;
+                    var manana = hoy.AddDays(1);
+
+                    var totalPacientes = db.Pacientes.Count();
+                    var totalDoctores = db.Doctores.Count();
+                    var citasHoy = db.Citas.Count(c => c.fecha_cita >= hoy && c.fecha_cita < manana);
+                    var citasPendientes = db.Citas.Count(c => c.estado == "Pendiente");
+
+                    var proximasCitas = db.Citas
+                        .Where(c => c.fecha_cita >= hoy)
+                        .OrderBy(c => c.fecha_cita)
+                        .Take(10)
+                        .Select(c => new
+                        {
+                            id_cita = c.id_cita,
+                            paciente = c.Pacientes.nombre_completo,
+                            doctor = c.Doctores.nombre_completo,
+                            especialidad = c.Doctores.Especialidades.nombre,
+                            fecha_cita = c.fecha_cita,
+                            estado = c.estado
+                        })
+                        .ToList()
+                        .Select(c => new
+                        {
+                            c.id_cita,
+                            c.paciente,
+                            c.doctor,
+                            c.especialidad,
+                            fecha_cita = c.fecha_cita.ToString("dd/MM/yyyy HH:mm"),
+                            c.estado
+                        });
+
+                    return Json(new
+                    {
+                        totalPacientes,
+                        totalDoctores,
+                        citasHoy,
+                        citasPendientes,
+                        proximasCitas
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    RegistrarError(db, null, "GetIndicadores", ex);
+                    return Json(new { error = "Error al obtener indicadores." }, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+
         public ActionResult Logout()
         {
             Session.Clear();
