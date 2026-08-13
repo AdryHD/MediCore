@@ -60,6 +60,11 @@ namespace MediCore.Controllers
                     Session["Nombre"] = usuario.Nombre;
                     Session["NombreRol"] = ObtenerNombreRol(db, usuario.id_rol);
 
+                    // Si el usuario es doctor, guardar su id_doctor en sesión
+                    var doctor = db.Doctores.FirstOrDefault(d => d.id_usuario == usuario.Consecutivo && d.estado == "ACTIVO");
+                    if (doctor != null)
+                        Session["IdDoctor"] = doctor.id_doctor;
+
                     RegistrarEvento(db, usuario.Consecutivo, "Index", string.Format("Inicio de sesión exitoso para el correo '{0}'.", correoLimpio));
 
                     if (usuario.FechaExpiracionTemp.HasValue)

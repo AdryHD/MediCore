@@ -39,6 +39,20 @@ namespace MediCore.Controllers
                         query = query.Where(p => p.estado == estado);
                     }
 
+                    // Si el usuario es doctor, ver solo los pacientes con citas asignadas
+                    var idDoctorSesion = Session["IdDoctor"] as int?;
+                    var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+                    if (esDoctorRol && idDoctorSesion.HasValue)
+                    {
+                        var idsPacientes = db.Citas
+                            .Where(c => c.id_doctor == idDoctorSesion.Value)
+                            .Select(c => c.id_paciente)
+                            .Distinct()
+                            .ToList();
+                        query = query.Where(p => idsPacientes.Contains(p.id_paciente));
+                    }
+                    ViewBag.EsDoctor = esDoctorRol;
+
                     int totalRegistros = query.Count();
                     if (page < 1) page = 1;
                     int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)TamanoPagina);
@@ -71,6 +85,11 @@ namespace MediCore.Controllers
         public ActionResult Create()
         {
             ViewBag.ActiveMenu = "Pacientes";
+            if ((Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR")
+            {
+                TempData["Error"] = "No tiene permisos para registrar pacientes.";
+                return RedirectToAction("Index");
+            }
             return View(new PacienteFormModel());
         }
 
@@ -325,6 +344,7 @@ namespace MediCore.Controllers
         }
 
         // POST: Pacientes/CambiarEstado
+        [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CambiarEstado(int id, string nuevoEstado)

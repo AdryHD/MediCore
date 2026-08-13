@@ -10,6 +10,8 @@ using System.Web.Mvc;
 
 namespace MediCore.Controllers
 {
+    [AuthActionFilter]
+    [DoctorOAdminActionFilter]
     public class ExpedientesController : Controller
     {
         private readonly UtilitarioService _utilitario;
@@ -32,6 +34,18 @@ namespace MediCore.Controllers
                         .Include(e => e.Pacientes)
                         .Include(e => e.HistorialMedico)
                         .AsQueryable();
+
+                    // Si el usuario es doctor, ver solo expedientes de sus pacientes asignados
+                    var idDoctorSesion = Session["IdDoctor"] as int?;
+                    var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+                    if (esDoctorRol && idDoctorSesion.HasValue)
+                    {
+                        var idsPacientes = db.Citas
+                            .Where(c => c.id_doctor == idDoctorSesion.Value)
+                            .Select(c => c.id_paciente).Distinct().ToList();
+                        expedientes = expedientes.Where(e => idsPacientes.Contains(e.id_paciente));
+                    }
+                    ViewBag.EsDoctor = esDoctorRol;
 
                     // Filtro por nombre o cédula
                     if (!string.IsNullOrWhiteSpace(buscar))

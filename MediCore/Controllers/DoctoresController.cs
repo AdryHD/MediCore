@@ -23,6 +23,9 @@ namespace MediCore.Controllers
 
         public ActionResult Index(string q, int? idEspecialidad, string estado, int page = 1)
         {
+            if ((Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR")
+                return RedirectToAction("Principal", "Home");
+
             ViewBag.ActiveMenu = "Doctores";
 
             using (var db = new MediCoreEntities())
@@ -82,6 +85,7 @@ namespace MediCore.Controllers
         }
 
         // GET: Doctores/Create
+        [AdminActionFilter]
         [HttpGet]
         public ActionResult Create()
         {
@@ -96,6 +100,7 @@ namespace MediCore.Controllers
         }
 
         // POST: Doctores/Create
+        [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(DoctorFormModel model)
@@ -169,6 +174,7 @@ namespace MediCore.Controllers
         }
 
         // GET: Doctores/Edit/5
+        [AdminActionFilter]
         [HttpGet]
         public ActionResult Edit(int id)
         {
@@ -202,6 +208,7 @@ namespace MediCore.Controllers
         }
 
         // POST: Doctores/Edit
+        [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(DoctorFormModel model)
@@ -299,6 +306,7 @@ namespace MediCore.Controllers
         }
 
         // POST: Doctores/CambiarEstado
+        [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CambiarEstado(int id, string nuevoEstado)

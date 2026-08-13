@@ -7,6 +7,8 @@
     var diasSemana = ViewBag.DiasSemana as System.Collections.Generic.Dictionary<byte, string>;
     int paginaActual = ViewBag.PaginaActual ?? 1;
     int totalPaginas = ViewBag.TotalPaginas ?? 0;
+    bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
+    bool esDoctor = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
 }
 
 <div class="page-heading">
@@ -15,9 +17,12 @@
         <h3>Horarios Médicos</h3>
     </div>
     <div>
+        @if (esAdmin)
+        {
         <a href="@Url.Action("Create", "HorariosMedicos")" class="btn btn-primary">
             <i class="bi bi-plus-lg me-1"></i>Nuevo Horario
         </a>
+        }
     </div>
 </div>
 
@@ -42,10 +47,13 @@
             @using (Html.BeginForm("Index", "HorariosMedicos", FormMethod.Get))
             {
                 <div class="row g-2 align-items-end">
+                    @if (!esDoctor)
+                    {
                     <div class="col-12 col-md-4">
                         <label class="form-label">Doctor</label>
                         @Html.DropDownList("idDoctor", (SelectList)ViewBag.Doctores, "Todos", new { @class = "form-select" })
                     </div>
+                    }
                     <div class="col-12 col-md-3">
                         <label class="form-label">Día de la semana</label>
                         <select name="diaSemana" class="form-select">
@@ -119,13 +127,15 @@
                                         }
                                     </td>
                                     <td class="text-end">
+                                        @if (esAdmin)
+                                        {
                                         <a href="@Url.Action("Details", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="@Url.Action("Edit", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-primary" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        @if (item.estado == "ACTIVO")
+                                        if (item.estado == "ACTIVO")
                                         {
                                             <a href="@Url.Action("Delete", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-danger" title="Desactivar">
                                                 <i class="bi bi-toggle-off"></i>
@@ -142,6 +152,7 @@
                                                     <i class="bi bi-toggle-on"></i>
                                                 </button>
                                             }
+                                        }
                                         }
                                     </td>
                                 </tr>

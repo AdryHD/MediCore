@@ -3,6 +3,7 @@ using MediCore.Models;
 using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Web;
@@ -11,6 +12,7 @@ using System.Web.Mvc;
 namespace MediCore.Controllers
 {
     [AuthActionFilter]
+    [DoctorOAdminActionFilter]
     public class ArchivosController : Controller
     {
         private const string NombreControlador = "Archivos";
@@ -25,9 +27,27 @@ namespace MediCore.Controllers
             {
                 try
                 {
-                    var archivos = db.Archivos
-                        .OrderBy(a => a.nombre)
-                        .ToList();
+                    var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+                    var idDoctorSesion = Session["IdDoctor"] as int?;
+
+                    List<Archivos> archivos;
+                    if (esDoctorRol && idDoctorSesion.HasValue)
+                    {
+                        var idsPacientes = db.Citas
+                            .Where(c => c.id_doctor == idDoctorSesion.Value)
+                            .Select(c => c.id_paciente).Distinct().ToList();
+                        archivos = db.Archivos
+                            .Include("Expedientes")
+                            .Where(a => a.id_expediente != null &&
+                                        idsPacientes.Contains(a.Expedientes.id_paciente))
+                            .OrderBy(a => a.nombre)
+                            .ToList();
+                    }
+                    else
+                    {
+                        archivos = db.Archivos.OrderBy(a => a.nombre).ToList();
+                    }
+                    ViewBag.EsDoctor = esDoctorRol;
 
                     _utilitario.RegistrarEvento(
                         NombreControlador,
@@ -141,6 +161,7 @@ namespace MediCore.Controllers
         }
 
         // GET: Archivos/Edit
+        [AdminActionFilter]
         [HttpGet]
         public ActionResult Edit(int id)
         {
@@ -172,6 +193,7 @@ namespace MediCore.Controllers
         }
 
         // POST: Archivos/Edit
+        [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ArchivosFormModel model, HttpPostedFileBase archivoSubido)
@@ -243,6 +265,7 @@ namespace MediCore.Controllers
         }
 
         // POST: Archivos/CambiarEstado
+        [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CambiarEstado(int id, string nuevoEstado)

@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Especialidades";
     ViewBag.ActiveMenu = "Especialidades";
+    bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
 }
 
 <div class="page-heading">
@@ -10,9 +11,12 @@
         <h3>Especialidades</h3>
     </div>
     <div>
+        @if (esAdmin)
+        {
         <a href="@Url.Action("Create", "Especialidades")" class="btn btn-primary">
             <i class="bi bi-plus-lg me-1"></i>Nueva Especialidad
         </a>
+        }
     </div>
 </div>
 
@@ -70,10 +74,12 @@
                                     </td>
                                     <td>@item.fecha_creacion.ToString("dd/MM/yyyy")</td>
                                     <td class="text-end">
+                                        @if (esAdmin)
+                                        {
                                         <a href="@Url.Action("Edit", "Especialidades", new { id = item.id_especialidad })" class="btn btn-action btn-light-primary" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        @if (item.estado == "ACTIVO")
+                                        if (item.estado == "ACTIVO")
                                         {
                                             using (Html.BeginForm("CambiarEstado", "Especialidades", FormMethod.Post, new { id = "form-estado-" + item.id_especialidad, style = "display:inline-block;" }))
                                             {
@@ -97,6 +103,7 @@
                                                     <i class="bi bi-toggle-on"></i>
                                                 </button>
                                             }
+                                        }
                                         }
                                     </td>
                                 </tr>

@@ -2,6 +2,8 @@
 @{
     ViewBag.Title = "Archivos";
     ViewBag.ActiveMenu = "Archivos";
+    bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
+    bool esDoctor = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
 }
 
 <div class="page-heading">
@@ -116,10 +118,12 @@
                                         <a href="@Url.Action("Details", "Archivos", new { id = item.id_archivo })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                             <i class="bi bi-eye"></i>
                                         </a>
+                                        @if (esAdmin)
+                                        {
                                         <a href="@Url.Action("Edit", "Archivos", new { id = item.id_archivo })" class="btn btn-action btn-light-primary" title="Editar archivo">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        @using (Html.BeginForm("CambiarEstado", "Archivos", FormMethod.Post, new { @class = "d-inline" }))
+                                        using (Html.BeginForm("CambiarEstado", "Archivos", FormMethod.Post, new { @class = "d-inline" }))
                                         {
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@item.id_archivo" />
@@ -129,6 +133,7 @@
                                                     title="@(item.estado == "ACTIVO" ? "Desactivar" : "Activar")">
                                                 <i class="bi @(item.estado == "ACTIVO" ? "bi-toggle-off" : "bi-toggle-on")"></i>
                                             </button>
+                                        }
                                         }
                                     </td>
                                 </tr>

@@ -207,6 +207,8 @@
     <Compile Include="Models\PerfilModel.cs" />
     <Compile Include="Models\AuthActionFilter.cs" />
     <Compile Include="Models\AdminActionFilter.cs" />
+    <Compile Include="Models\CrearUsuarioModel.cs" />
+    <Compile Include="Models\DoctorOAdminActionFilter.cs" />
     <Compile Include="Models\DateTimeModelBinder.cs" />
     <Compile Include="Models\BitacoraListaModel.cs" />
     <Compile Include="Models\GestionUsuarioModel.cs" />

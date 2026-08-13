@@ -92,15 +92,9 @@
 
                             @Html.LabelFor(m => m.Fecha)
 
-                            @Html.TextBoxFor(
-                                m => m.Fecha,
-                                "{0:yyyy-MM-dd}",
-                                new
-                                {
-                                    @class = "form-control",
-                                    type = "date",
-                                    id = "Fecha"
-                                })
+                            <select name="Fecha" id="Fecha" class="form-select">
+                                <option value="">-- Seleccione un doctor primero --</option>
+                            </select>
 
                             @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger" })
 
@@ -198,6 +192,6 @@
 
     @Scripts.Render("~/bundles/jqueryval")
 
-    <script src="~/Scripts/citas.js"></script>
+    <script src="~/Scripts/citas.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/citas.js")).Ticks"></script>
 
 }

@@ -1,0 +1,14 @@
+Hola {{NombreUsuario}},
+
+El administrador ha creado tu cuenta en MediCore con el rol de {{NombreRol}}.
+
+Tus credenciales de acceso:
+- Correo: {{Correo}}
+- Contraseña temporal: {{ContrasennaTemporal}}
+
+IMPORTANTE: Esta contraseña es válida por 24 horas y vence el {{FechaExpiracion}}.
+Inicia sesión y cámbiala antes de que expire.
+
+Si no esperabas este correo, comunícate con el administrador del sistema.
+
+-- MediCore · Sistema de Gestión Médica

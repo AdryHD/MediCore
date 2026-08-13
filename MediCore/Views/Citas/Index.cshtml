@@ -2,6 +2,8 @@
 @{
     ViewBag.Title = "Gestión de Citas";
     ViewBag.ActiveMenu = "Citas";
+    bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
+    bool esDoctor = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
 }
 
 <style>
@@ -146,9 +148,12 @@
                                             <a href="@Url.Action("Edit", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-primary" title="Editar">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
+                                            if (esAdmin || esDoctor)
+                                            {
                                             <a href="@Url.Action("Atender", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-success" title="Atender">
                                                 <i class="bi bi-heart-fill"></i>
                                             </a>
+                                            }
                                             <a href="@Url.Action("Cancelar", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-danger btn-confirmar-cancelar" title="Cancelar"
                                                data-cita-id="@item.id_cita">
                                                 <i class="bi bi-x-circle"></i>
@@ -159,9 +164,12 @@
                                             <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-secondary" title="Ver">
                                                 <i class="bi bi-eye"></i>
                                             </a>
+                                            if (esAdmin || esDoctor)
+                                            {
                                             <a href="@Url.Action("Index", "Expedientes", new { idCita = item.id_cita })" class="btn btn-action btn-light-primary" title="Ver expediente">
                                                 <i class="bi bi-folder2-open"></i>
                                             </a>
+                                            }
                                         }
                                         else
                                         {

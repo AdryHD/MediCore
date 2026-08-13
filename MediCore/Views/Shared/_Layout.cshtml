@@ -70,6 +70,13 @@
                             </a>
                         </li>
 
+                        @{ 
+                            bool sidebarAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
+                            bool sidebarDoctor = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+                        }
+
+                        @if (!sidebarDoctor)
+                        {
                         <li class="sidebar-item @(ViewBag.ActiveMenu == "Doctores" ? "active" : "")">
                             <a href="@Url.Action("Index", "Doctores")" class="sidebar-link">
                                 <i class="bi bi-person-badge"></i>
@@ -83,6 +90,7 @@
                                 <span>Especialidades</span>
                             </a>
                         </li>
+                        }
 
                         <li class="sidebar-item @(ViewBag.ActiveMenu == "Horarios" ? "active" : "")">
                             <a href="@Url.Action("Index", "HorariosMedicos")" class="sidebar-link">
@@ -91,6 +99,8 @@
                             </a>
                         </li>
 
+                        @if (sidebarAdmin || sidebarDoctor)
+                        {
                         <li class="sidebar-title">Expedientes</li>
 
                         <li class="sidebar-item @(ViewBag.ActiveMenu == "Expedientes" ? "active" : "")">
@@ -119,8 +129,10 @@
                                 <span>Archivos</span>
                             </a>
                         </li>
+                        }
 
-
+                        @if (sidebarAdmin)
+                        {
                         <li class="sidebar-title">Administración</li>
 
                         <li class="sidebar-item @(ViewBag.ActiveMenu == "Usuarios" ? "active" : "")">
@@ -136,6 +148,7 @@
                                 <span>Bitácora</span>
                             </a>
                         </li>
+                        }
 
                     </ul>
                 </div>

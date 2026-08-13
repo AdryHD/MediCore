@@ -38,6 +38,13 @@ namespace MediCore.Controllers
                 {
                     var query = db.HorariosMedicos.AsQueryable();
 
+                    // Si el usuario es doctor, ver solo sus propios horarios
+                    var idDoctorSesion = Session["IdDoctor"] as int?;
+                    var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+                    if (esDoctorRol && idDoctorSesion.HasValue)
+                        idDoctor = idDoctorSesion.Value;
+                    ViewBag.EsDoctor = esDoctorRol;
+
                     if (idDoctor.HasValue && idDoctor.Value > 0)
                     {
                         query = query.Where(h => h.id_doctor == idDoctor.Value);
@@ -89,6 +96,7 @@ namespace MediCore.Controllers
         }
 
         // GET: HorariosMedicos/Create
+        [AdminActionFilter]
         [HttpGet]
         public ActionResult Create()
         {
@@ -103,6 +111,7 @@ namespace MediCore.Controllers
         }
 
         // POST: HorariosMedicos/Create
+        [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(HorarioMedicoFormModel model)
@@ -152,6 +161,7 @@ namespace MediCore.Controllers
         }
 
         // GET: HorariosMedicos/Edit/5
+        [AdminActionFilter]
         [HttpGet]
         public ActionResult Edit(int id)
         {
@@ -184,6 +194,7 @@ namespace MediCore.Controllers
         }
 
         // POST: HorariosMedicos/Edit
+        [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(HorarioMedicoFormModel model)
@@ -236,6 +247,7 @@ namespace MediCore.Controllers
         }
 
         // GET: HorariosMedicos/Details/5
+        [AdminActionFilter]
         public ActionResult Details(int id)
         {
             ViewBag.ActiveMenu = "Horarios";
@@ -321,6 +333,7 @@ namespace MediCore.Controllers
         }
 
         // POST: HorariosMedicos/CambiarEstado
+        [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CambiarEstado(int id, string nuevoEstado)

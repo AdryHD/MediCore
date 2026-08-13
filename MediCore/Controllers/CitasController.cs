@@ -59,6 +59,13 @@ namespace MediCore.Controllers
                         DbFunctions.TruncateTime(fecha.Value));
                 }
 
+                // Si el usuario es doctor, ver solo sus propias citas
+                var idDoctorSesion = Session["IdDoctor"] as int?;
+                var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+                if (esDoctorRol && idDoctorSesion.HasValue)
+                    citas = citas.Where(c => c.id_doctor == idDoctorSesion.Value);
+                ViewBag.EsDoctor = esDoctorRol;
+
                 // Combos para los filtros
                 var pacientes = db.Pacientes
     .Where(p => p.estado == "ACTIVO")
@@ -295,6 +302,52 @@ namespace MediCore.Controllers
         }
 
 
+
+        //esto lo va a usar ajax
+        // Devuelve los próximos 60 días en los que el doctor tiene horario activo
+        [HttpGet]
+        public JsonResult ObtenerFechasDisponibles(int idDoctor)
+        {
+            using (var db = new MediCoreEntities())
+            {
+                try
+                {
+                    // Días de la semana en que el doctor tiene horario
+                    var diasConHorario = db.HorariosMedicos
+                        .Where(h => h.id_doctor == idDoctor && h.estado == "ACTIVO")
+                        .Select(h => h.dia_semana)
+                        .ToList();
+
+                    if (!diasConHorario.Any())
+                        return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+
+                    var nombresdia = new string[] { "", "Lun", "Mar", "Mi\u00e9", "Jue", "Vie", "S\u00e1b", "Dom" };
+                    var fechas = new List<object>();
+                    DateTime hoy = DateTime.Today.AddDays(1); // desde mañana
+
+                    for (int i = 0; i < 60; i++)
+                    {
+                        DateTime dia = hoy.AddDays(i);
+                        int diaSemana = (int)dia.DayOfWeek == 0 ? 7 : (int)dia.DayOfWeek;
+
+                        if (diasConHorario.Contains((byte)diaSemana))
+                        {
+                            fechas.Add(new
+                            {
+                                valor = dia.ToString("yyyy-MM-dd"),
+                                texto = nombresdia[diaSemana] + " " + dia.ToString("dd/MM/yyyy")
+                            });
+                        }
+                    }
+
+                    return Json(fechas, JsonRequestBehavior.AllowGet);
+                }
+                catch
+                {
+                    return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
 
         //esto lo va a usar ajax
         [HttpGet]
@@ -566,6 +619,7 @@ namespace MediCore.Controllers
 
 
         //abre la vista para atender la cita, donde se llenan los datos de la atención médica
+        [DoctorOAdminActionFilter]
         [HttpGet]
         public ActionResult Atender(int id)
         {
@@ -635,6 +689,7 @@ namespace MediCore.Controllers
         }
 
         //procesa la atención de la cita, registrando el historial médico y marcando la cita como atendida
+        [DoctorOAdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Atender(AtencionCitaModel model)

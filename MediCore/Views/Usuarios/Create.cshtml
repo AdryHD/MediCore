@@ -1,0 +1,117 @@
+@model MediCore.Models.CrearUsuarioModel
+@{
+    var rol = (Model.RolNombre ?? "").ToUpper();
+    bool esDoctor = rol == "DOCTOR";
+    bool esAdmin  = rol == "ADMINISTRADOR";
+
+    string rolLabel  = esDoctor ? "Doctor" : esAdmin ? "Administrador" : "Recepcionista";
+    string rolColor  = esDoctor ? "#166534" : esAdmin ? "#5b21b6" : "#92400e";
+    string rolBg     = esDoctor ? "#dcfce7" : esAdmin ? "#ede9fe"  : "#fef3c7";
+    string rolBorder = esDoctor ? "#86efac" : esAdmin ? "#c4b5fd"  : "#fcd34d";
+    string rolIcon   = esDoctor ? "bi-person-badge" : esAdmin ? "bi-shield-fill" : "bi-person-workspace";
+
+    ViewBag.Title = "Nuevo " + rolLabel;
+    ViewBag.ActiveMenu = "Usuarios";
+
+    var especialidades = ViewBag.Especialidades as System.Web.Mvc.SelectList;
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">ADMINISTRACIÓN</span>
+        <h3>Nuevo <span style="color:@rolColor;">@rolLabel</span></h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "Usuarios")" class="btn btn-light">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-@(esDoctor ? "9" : "7")">
+            <div class="card">
+                <div class="card-header d-flex align-items-center gap-2">
+                    <span style="display:inline-flex;align-items:center;gap:.4rem;padding:.2rem .75rem;border-radius:50rem;font-size:.82rem;font-weight:700;background:@rolBg;color:@rolColor;border:1.5px solid @rolBorder;">
+                        <i class="bi @rolIcon"></i>@rolLabel
+                    </span>
+                    <span style="color:#374151;font-size:15px;">Datos del nuevo usuario</span>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Create", "Usuarios", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.RolNombre)
+                        @Html.HiddenFor(m => m.IdRol)
+
+                        if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-light-danger mb-3">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                @Html.ValidationSummary(true)
+                            </div>
+                        }
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Nombre completo <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Nombre completo" })
+                                @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Cédula <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(m => m.Cedula, new { @class = "form-control", placeholder = "Número de cédula" })
+                                @Html.ValidationMessageFor(m => m.Cedula, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Teléfono</label>
+                                @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", placeholder = "Teléfono" })
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(m => m.Correo, new { @class = "form-control", placeholder = "correo@ejemplo.com" })
+                                @Html.ValidationMessageFor(m => m.Correo, "", new { @class = "text-danger small" })
+                            </div>
+
+                            @if (esDoctor)
+                            {
+                            <div class="col-12">
+                                <hr style="border-color:#86efac;" />
+                                <p class="fw-semibold mb-0" style="color:#166534;"><i class="bi bi-person-badge me-1"></i>Información médica</p>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Código colegiado <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(m => m.CodigoColegiado, new { @class = "form-control", placeholder = "Código colegiado" })
+                                @Html.ValidationMessageFor(m => m.CodigoColegiado, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Especialidad <span class="text-danger">*</span></label>
+                                @Html.DropDownListFor(m => m.IdEspecialidad,
+                                    especialidades ?? new System.Web.Mvc.SelectList(new List<object>()),
+                                    "-- Seleccione --",
+                                    new { @class = "form-select" })
+                                @Html.ValidationMessageFor(m => m.IdEspecialidad, "", new { @class = "text-danger small" })
+                            </div>
+                            }
+                        </div>
+
+                        <div class="mt-4 mb-0" style="background:#eff6ff;border-left:4px solid #3b82f6;border-radius:4px;padding:12px 16px;">
+                            <i class="bi bi-info-circle-fill me-2" style="color:#2563eb;"></i>
+                            <span style="color:#1e3a8a;font-size:14px;">
+                                El sistema generará una <strong>contraseña temporal válida por 24 horas</strong> y la enviará al correo ingresado.
+                            </span>
+                        </div>
+
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn" style="background:@rolBg;color:@rolColor;border:1.5px solid @rolBorder;font-weight:600;">
+                                <i class="bi bi-check-lg me-1"></i>Crear @rolLabel
+                            </button>
+                            <a href="@Url.Action("Index", "Usuarios")" class="btn btn-light">Cancelar</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace MediCore.Controllers
@@ -146,6 +147,148 @@ namespace MediCore.Controllers
 
                 return RedirectToAction("Index");
             }
+        }
+
+        // GET: Usuarios/Create?rol=DOCTOR|ADMINISTRADOR|RECEPCIONISTA
+        public ActionResult Create(string rol)
+        {
+            if (string.IsNullOrWhiteSpace(rol))
+                return RedirectToAction("Index");
+
+            rol = rol.Trim().ToUpper();
+            var rolesValidos = new[] { "ADMINISTRADOR", "DOCTOR", "RECEPCIONISTA" };
+            if (!rolesValidos.Contains(rol))
+                return RedirectToAction("Index");
+
+            using (var db = new MediCoreEntities())
+            {
+                var roles = ObtenerRoles(db);
+                var rolItem = roles.FirstOrDefault(r => r.NombreRol.ToUpper() == rol);
+                if (rolItem == null)
+                {
+                    TempData["Error"] = "Rol no encontrado.";
+                    return RedirectToAction("Index");
+                }
+
+                if (rol == "DOCTOR")
+                {
+                    ViewBag.Especialidades = new SelectList(
+                        db.Especialidades.Where(e => e.estado == "ACTIVO").OrderBy(e => e.nombre).ToList(),
+                        "id_especialidad", "nombre");
+                }
+
+                var model = new CrearUsuarioModel { RolNombre = rol, IdRol = rolItem.IdRol };
+                return View(model);
+            }
+        }
+
+        // POST: Usuarios/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(CrearUsuarioModel model)
+        {
+            var rol = (model.RolNombre ?? "").Trim().ToUpper();
+
+            if (rol == "DOCTOR")
+            {
+                if (string.IsNullOrWhiteSpace(model.CodigoColegiado))
+                    ModelState.AddModelError("CodigoColegiado", "El código colegiado es obligatorio.");
+                if (!model.IdEspecialidad.HasValue || model.IdEspecialidad.Value <= 0)
+                    ModelState.AddModelError("IdEspecialidad", "Debe seleccionar una especialidad.");
+            }
+
+            using (var db = new MediCoreEntities())
+            {
+                if (!ModelState.IsValid)
+                {
+                    if (rol == "DOCTOR")
+                        ViewBag.Especialidades = new SelectList(
+                            db.Especialidades.Where(e => e.estado == "ACTIVO").OrderBy(e => e.nombre).ToList(),
+                            "id_especialidad", "nombre", model.IdEspecialidad);
+                    return View(model);
+                }
+
+                var correo = model.Correo.Trim();
+                var cedula = model.Cedula.Trim();
+
+                if (db.tbUsuario.Any(u => u.Correo == correo || u.Cedula == cedula))
+                {
+                    ModelState.AddModelError("", "Ya existe un usuario con ese correo o cédula.");
+                    if (rol == "DOCTOR")
+                        ViewBag.Especialidades = new SelectList(
+                            db.Especialidades.Where(e => e.estado == "ACTIVO").OrderBy(e => e.nombre).ToList(),
+                            "id_especialidad", "nombre", model.IdEspecialidad);
+                    return View(model);
+                }
+
+                try
+                {
+                    string contrasenna = GenerarContrasennaTemporal();
+                    DateTime expiracion = DateTime.Now.AddHours(24);
+
+                    if (rol == "DOCTOR")
+                    {
+                        int resultado = db.spRegistrarDoctor(
+                            model.Nombre.Trim(), cedula,
+                            model.CodigoColegiado.Trim(), correo,
+                            string.IsNullOrWhiteSpace(model.Telefono) ? null : model.Telefono.Trim(),
+                            model.IdEspecialidad.Value, contrasenna).FirstOrDefault() ?? -1;
+
+                        if (resultado != 0)
+                        {
+                            string[] errDr = { "", "Especialidad inválida.", "Cédula duplicada.", "Código colegiado duplicado.", "Correo duplicado." };
+                            ModelState.AddModelError("", resultado < errDr.Length ? errDr[resultado] : "Error al registrar el doctor.");
+                            ViewBag.Especialidades = new SelectList(
+                                db.Especialidades.Where(e => e.estado == "ACTIVO").OrderBy(e => e.nombre).ToList(),
+                                "id_especialidad", "nombre", model.IdEspecialidad);
+                            return View(model);
+                        }
+                    }
+                    else
+                    {
+                        db.sp_RegistrarUsuario(model.Nombre.Trim(), cedula, null,
+                            string.IsNullOrWhiteSpace(model.Telefono) ? "" : model.Telefono.Trim(),
+                            correo, contrasenna, model.IdRol);
+                    }
+
+                    // Establecer FechaExpiracionTemp (24h)
+                    var nuevoUsuario = db.tbUsuario.FirstOrDefault(u => u.Correo == correo);
+                    if (nuevoUsuario != null)
+                    {
+                        nuevoUsuario.FechaExpiracionTemp = expiracion;
+                        db.Entry(nuevoUsuario).State = EntityState.Modified;
+                        db.SaveChanges();
+
+                        var emailService = new EmailService();
+                        await emailService.EnviarCredencialesAdmin(correo, model.Nombre.Trim(), rol, contrasenna, expiracion, nuevoUsuario.Consecutivo);
+                    }
+
+                    _utilitarioService.RegistrarEvento(NombreControlador, "Create",
+                        string.Format("Usuario '{0}' ({1}) creado con rol '{2}'.", model.Nombre, correo, rol));
+
+                    TempData["Success"] = string.Format(
+                        "Usuario '{0}' creado con rol {1}. Se envió el correo con credenciales (válidas 24 horas).",
+                        model.Nombre.Trim(), rol);
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "Create");
+                    ModelState.AddModelError("", "Ocurrió un error al crear el usuario. Intente nuevamente.");
+                    if (rol == "DOCTOR")
+                        ViewBag.Especialidades = new SelectList(
+                            db.Especialidades.Where(e => e.estado == "ACTIVO").OrderBy(e => e.nombre).ToList(),
+                            "id_especialidad", "nombre", model.IdEspecialidad);
+                    return View(model);
+                }
+            }
+        }
+
+        private static string GenerarContrasennaTemporal()
+        {
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+            var rng = new Random();
+            return new string(Enumerable.Range(0, 8).Select(_ => chars[rng.Next(chars.Length)]).ToArray());
         }
 
         private List<RolItem> ObtenerRoles(MediCoreEntities db)

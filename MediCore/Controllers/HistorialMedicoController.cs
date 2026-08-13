@@ -12,6 +12,7 @@ using System.Web.Mvc;
 namespace MediCore.Controllers
 {
     [AuthActionFilter]
+    [DoctorOAdminActionFilter]
     public class HistorialMedicoController : Controller
     {
         private readonly UtilitarioService _utilitario;
@@ -41,6 +42,13 @@ namespace MediCore.Controllers
                         .Include(h => h.Doctores.Especialidades)
                         .Include(h => h.Citas)
                         .AsQueryable();
+
+                    // Si el usuario es doctor, ver solo el historial de sus pacientes
+                    var idDoctorSesion = Session["IdDoctor"] as int?;
+                    var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+                    if (esDoctorRol && idDoctorSesion.HasValue)
+                        historial = historial.Where(h => h.id_doctor == idDoctorSesion.Value);
+                    ViewBag.EsDoctor = esDoctorRol;
 
                     // Paciente
                     if (idPaciente.HasValue)

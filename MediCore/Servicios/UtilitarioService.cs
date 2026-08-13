@@ -18,6 +18,17 @@ namespace MediCore.Servicios
             return null;
         }
 
+        public int? ObtenerIdDoctor()
+        {
+            return HttpContext.Current?.Session?["IdDoctor"] as int?;
+        }
+
+        public bool EsDoctor()
+        {
+            var rol = (HttpContext.Current?.Session?["NombreRol"] as string ?? "").ToUpper();
+            return rol == "DOCTOR";
+        }
+
         private string ObtenerIp()
         {
             return HttpContext.Current?.Request?.UserHostAddress;

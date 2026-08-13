@@ -3,6 +3,8 @@
     ViewBag.Title = "Pacientes";
     ViewBag.ActiveMenu = "Pacientes";
 
+    bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
+    bool esDoctor = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
     int paginaActual = ViewBag.PaginaActual ?? 1;
     int totalPaginas = ViewBag.TotalPaginas ?? 0;
 }
@@ -13,9 +15,12 @@
         <h3>Pacientes</h3>
     </div>
     <div>
+        @if (!esDoctor)
+        {
         <a href="@Url.Action("Create", "Pacientes")" class="btn btn-primary">
             <i class="bi bi-plus-lg me-1"></i>Nuevo Paciente
         </a>
+        }
     </div>
 </div>
 
@@ -114,12 +119,17 @@
                                         </a>
                                         @if (item.estado == "ACTIVO")
                                         {
+                                            if (esAdmin)
+                                            {
                                             <a href="@Url.Action("Delete", "Pacientes", new { id = item.id_paciente })" class="btn btn-action btn-light-danger" title="Desactivar">
                                                 <i class="bi bi-toggle-off"></i>
                                             </a>
+                                            }
                                         }
                                         else
                                         {
+                                            if (esAdmin)
+                                            {
                                             using (Html.BeginForm("CambiarEstado", "Pacientes", FormMethod.Post, new { style = "display:inline-block;" }))
                                             {
                                                 @Html.AntiForgeryToken()
@@ -128,6 +138,7 @@
                                                 <button type="submit" class="btn btn-action btn-light-success" title="Activar">
                                                     <i class="bi bi-toggle-on"></i>
                                                 </button>
+                                            }
                                             }
                                         }
                                     </td>

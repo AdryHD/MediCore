@@ -2,7 +2,7 @@
 
     $("#IdEspecialidad").change(cargarDoctores);
 
-    $("#IdDoctor").change(cargarHorarios);
+    $("#IdDoctor").change(cargarFechas);
 
     $("#Fecha").change(cargarHorarios);
 
@@ -13,7 +13,9 @@ function cargarDoctores() {
     let idEspecialidad = $("#IdEspecialidad").val();
 
     $("#IdDoctor").empty();
-    $("#Hora").empty();
+    $("#Fecha").empty().append($('<option>', { value: "", text: "-- Seleccione un doctor primero --" }));
+    $("#Hora").empty().append($('<option>', { value: "", text: "-- Seleccione una hora --" }));
+    $("#Duracion").val("0");
 
     if (idEspecialidad === "") {
 
@@ -59,7 +61,47 @@ function cargarDoctores() {
             });
 
             if (doctorSeleccionado != "")
-                cargarHorarios();
+                cargarFechas();
+
+        });
+
+}
+
+function cargarFechas() {
+
+    let idDoctor = $("#IdDoctor").val();
+
+    $("#Fecha").empty();
+    $("#Hora").empty().append($('<option>', { value: "", text: "-- Seleccione una hora --" }));
+    $("#Duracion").val("0");
+
+    if (idDoctor === "") {
+        $("#Fecha").append($('<option>', { value: "", text: "-- Seleccione un doctor primero --" }));
+        return;
+    }
+
+    $("#Fecha").append($('<option>', { value: "", text: "Cargando fechas..." }));
+
+    $.get("/Citas/ObtenerFechasDisponibles",
+        { idDoctor: idDoctor },
+        function (data) {
+
+            $("#Fecha").empty();
+
+            if (data.length === 0) {
+                $("#Fecha").append($('<option>', { value: "", text: "-- Sin fechas disponibles --" }));
+                return;
+            }
+
+            $("#Fecha").append($('<option>', { value: "", text: "-- Seleccione una fecha --" }));
+
+            $.each(data, function (i, fecha) {
+                var option = $('<option>', {
+                    value: fecha.valor,
+                    text: fecha.texto
+                });
+                $("#Fecha").append(option);
+            });
 
         });
 

@@ -105,6 +105,23 @@ namespace MediCore.Servicios
             return EnviarCorreoAsync(correoDestino, "Bienvenido a MediCore", cuerpoHtml, cuerpoTexto, "REGISTRO", idUsuarioDestino);
         }
 
+        public Task<bool> EnviarCredencialesAdmin(string correoDestino, string nombreUsuario, string nombreRol, string contrasennaTemporal, DateTime expiracion, int? idUsuarioDestino = null)
+        {
+            var valores = new Dictionary<string, string>
+            {
+                { "NombreUsuario", string.IsNullOrWhiteSpace(nombreUsuario) ? "usuario" : nombreUsuario },
+                { "NombreRol", nombreRol },
+                { "Correo", correoDestino },
+                { "ContrasennaTemporal", contrasennaTemporal },
+                { "FechaExpiracion", expiracion.ToString("dd/MM/yyyy HH:mm") }
+            };
+
+            var cuerpoHtml = CargarPlantillaCorreo("CredencialesAdmin.html", valores);
+            var cuerpoTexto = CargarPlantillaCorreo("CredencialesAdmin.txt", valores);
+
+            return EnviarCorreoAsync(correoDestino, "Credenciales de acceso - MediCore", cuerpoHtml, cuerpoTexto, "CREDENCIALES_ADMIN", idUsuarioDestino);
+        }
+
         public Task<bool> EnviarRecuperacion(string correoDestino, string nombreUsuario, string contrasennaTemporal, DateTime expiracion, int? idUsuarioDestino = null)
         {
             var valores = new Dictionary<string, string>
