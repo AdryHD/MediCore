@@ -1,30 +1,20 @@
-
 @model MediCore.EF.Archivos
-
 @{
     ViewBag.Title = "Detalle del Archivo";
+    ViewBag.ActiveMenu = "Archivos";
 }
 
-<div class="page-heading d-flex justify-content-between align-items-center mb-4">
+<div class="page-heading">
     <div>
-        <span class="section-eyebrow text-uppercase text-muted fw-bold small">
-            EXPEDIENTE DIGITAL
-        </span>
-        <h3 class="mb-1">@Model.nombre</h3>
-        <p class="text-subtitle text-muted mb-0">
-            Detalles técnicos y contenido del archivo cargado.
-        </p>
+        <span class="section-eyebrow">ARCHIVOS DIGITALES</span>
+        <h3>@Model.nombre</h3>
     </div>
-
     <div>
-        <a href="@Url.Action("Index", "Archivos")" class="btn btn-secondary">
-            <i class="bi bi-arrow-left me-1"></i>
-            Regresar
+        <a href="@Url.Action("Index", "Archivos")" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Regresar
         </a>
-
         <a href="@Url.Action("Edit", "Archivos", new { id = Model.id_archivo })" class="btn btn-primary">
-            <i class="bi bi-pencil-square me-1"></i>
-            Editar Archivo
+            <i class="bi bi-pencil-square me-1"></i>Editar
         </a>
     </div>
 </div>
@@ -34,10 +24,7 @@
 
     <div class="card mb-4">
         <div class="card-header">
-            <h4 class="card-title">
-                <i class="bi bi-file-earmark-medical me-2"></i>
-                Información del Archivo
-            </h4>
+            <h4><i class="bi bi-file-earmark-medical me-2" style="color:#01C0BA;"></i>Información del Archivo</h4>
         </div>
 
         <div class="card-body">
@@ -58,11 +45,11 @@
                     <div class="mt-1">
                         @if (Model.estado == "ACTIVO")
                         {
-                            <span class="badge bg-success fs-6">ACTIVO</span>
+                            <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
                         }
                         else
                         {
-                            <span class="badge bg-danger fs-6">@Model.estado</span>
+                            <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Inactivo</span>
                         }
                     </div>
                 </div>
@@ -104,10 +91,7 @@
 
     <div class="card mb-4">
         <div class="card-header">
-            <h4 class="card-title">
-                <i class="bi bi-link-45deg me-2"></i>
-                Origen y Relación
-            </h4>
+            <h4><i class="bi bi-link-45deg me-2" style="color:#01C0BA;"></i>Origen y Relación</h4>
         </div>
 
         <div class="card-body">
@@ -161,10 +145,7 @@
 
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">
-                <i class="bi bi-download me-2"></i>
-                Contenido del Archivo
-            </h4>
+            <h4><i class="bi bi-download me-2" style="color:#01C0BA;"></i>Contenido del Archivo</h4>
         </div>
 
         <div class="card-body text-center py-4">
@@ -173,7 +154,7 @@
                 <i class="bi bi-file-earmark-check text-success fs-1"></i>
                 <p class="mt-2 mb-3">El archivo binario se encuentra almacenado correctamente en el sistema.</p>
 
-                <a href="@Url.Action("Descargar", "Archivos", new { id = Model.id_archivo })" class="btn btn-outline-primary">
+                <a href="@Url.Action("Descargar", "Archivos", new { id = Model.id_archivo })" class="btn btn-primary">
                     <i class="bi bi-download me-1"></i>
                     Descargar Archivo
                 </a>

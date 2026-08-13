@@ -14,13 +14,20 @@
 (function () {
     function estadoBadge(estado) {
         var clases = {
-            'Pendiente': 'warning',
-            'Confirmada': 'success',
-            'Cancelada': 'danger',
-            'Completada': 'secondary'
+            'Pendiente': 'pending',
+            'Confirmada': 'done',
+            'Cancelada': 'canceled',
+            'Completada': 'done'
         };
-        var cls = clases[estado] || 'secondary';
-        return '<span class="badge bg-' + cls + '">' + (estado || '—') + '</span>';
+        var icons = {
+            'Pendiente': 'bi-hourglass-split',
+            'Confirmada': 'bi-check-circle',
+            'Cancelada': 'bi-slash-circle',
+            'Completada': 'bi-check-circle'
+        };
+        var cls = clases[estado] || 'pending';
+        var icon = icons[estado] || 'bi-hourglass-split';
+        return '<span class="badge-status ' + cls + '"><i class="bi ' + icon + '"></i>' + (estado || '—') + '</span>';
     }
 
     function cargarIndicadores() {

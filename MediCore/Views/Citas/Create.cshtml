@@ -1,44 +1,32 @@
 @model MediCore.Models.CitaFormModel
-
 @{
     ViewBag.Title = "Registrar Cita";
+    ViewBag.ActiveMenu = "Citas";
 }
 
 <div class="page-heading">
-    <div class="page-title">
-
-        <div class="row">
-
-            <div class="col-12">
-
-                <h3>Registrar Cita</h3>
-
-                <p class="text-subtitle text-muted">
-                    Agende una nueva cita médica.
-                </p>
-
-            </div>
-
-        </div>
-
+    <div>
+        <span class="section-eyebrow">GESTIÓN MÉDICA</span>
+        <h3>Registrar Cita</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "Citas")" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
     </div>
 </div>
 
-    <section class="section">
-
-        <div class="card">
-
-            <div class="card-header">
-                <h4 class="card-title">Información de la cita</h4>
-            </div>
-
-            <div class="card-body">
-
-                @using (Html.BeginForm("Create", "Citas", FormMethod.Post))
-                {
+<section class="section">
+    <div class="card">
+        <div class="card-header">
+            <h4><i class="bi bi-calendar2-plus me-2" style="color:#01C0BA;"></i>Información de la Cita</h4>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Create", "Citas", FormMethod.Post))
+            {
                     @Html.AntiForgeryToken()
 
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.ValidationSummary(true, "", new { @class = "alert alert-light-danger" })
 
                     <div class="row">
 
@@ -178,11 +166,8 @@
 
                     <div class="text-end">
 
-                        <a href="@Url.Action("Index","Citas")"
-                           class="btn btn-secondary">
-
+                        <a href="@Url.Action("Index", "Citas")" class="btn btn-light-secondary">
                             Cancelar
-
                         </a>
 
                         <button type="submit"

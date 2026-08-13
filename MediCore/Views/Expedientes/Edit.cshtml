@@ -1,26 +1,20 @@
 
 @model MediCore.EF.Expedientes
-
 @{
     ViewBag.Title = "Editar Expediente";
+    ViewBag.ActiveMenu = "Expedientes";
 }
 
 <div class="page-heading">
-
-    <div class="page-title">
-
-        <span class="section-eyebrow">
-            EXPEDIENTES
-        </span>
-
+    <div>
+        <span class="section-eyebrow">EXPEDIENTES</span>
         <h3>Editar Expediente</h3>
-
-        <p class="text-subtitle text-muted">
-            Actualice la información general del expediente clínico.
-        </p>
-
     </div>
-
+    <div>
+        <a href="@Url.Action("Details", "Expedientes", new { id = Model.id_expediente })" class="btn btn-light-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Cancelar
+        </a>
+    </div>
 </div>
 
 
@@ -30,10 +24,7 @@
 
         <div class="card-header">
 
-            <h4 class="card-title">
-                <i class="bi bi-folder2-open me-2"></i>
-                Información del expediente
-            </h4>
+            <h4><i class="bi bi-folder2-open me-2" style="color:#01C0BA;"></i>Información del Expediente</h4>
 
         </div>
 
@@ -164,15 +155,8 @@
 
                 <div class="text-end mt-4">
 
-                    <a href="@Url.Action(
-                                "Details",
-                                "Expedientes",
-                                new { id = Model.id_expediente })"
-                       class="btn btn-secondary">
-
-                        <i class="bi bi-arrow-left"></i>
-                        Cancelar
-
+                    <a href="@Url.Action("Details", "Expedientes", new { id = Model.id_expediente })" class="btn btn-light-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Cancelar
                     </a>
 
                     <button type="submit"
