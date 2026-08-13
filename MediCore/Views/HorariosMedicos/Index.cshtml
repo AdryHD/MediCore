@@ -1,4 +1,4 @@
-@model IEnumerable<MediCore.EF.HorariosMedicos>
+﻿@model IEnumerable<MediCore.EF.HorariosMedicos>
 @{
     ViewBag.Title = "Horarios Médicos";
     ViewBag.ActiveMenu = "Horarios";
@@ -119,15 +119,15 @@
                                         }
                                     </td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-light-secondary btn-sm" title="Ver detalle">
+                                        <a href="@Url.Action("Details", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="@Url.Action("Edit", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-light-secondary btn-sm" title="Editar">
+                                        <a href="@Url.Action("Edit", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-primary" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         @if (item.estado == "ACTIVO")
                                         {
-                                            <a href="@Url.Action("Delete", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-light-danger btn-sm" title="Desactivar">
+                                            <a href="@Url.Action("Delete", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-danger" title="Desactivar">
                                                 <i class="bi bi-toggle-off"></i>
                                             </a>
                                         }
@@ -138,7 +138,7 @@
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@item.id_horario" />
                                                 <input type="hidden" name="nuevoEstado" value="ACTIVO" />
-                                                <button type="submit" class="btn btn-light-success btn-sm" title="Activar">
+                                                <button type="submit" class="btn btn-action btn-light-success" title="Activar">
                                                     <i class="bi bi-toggle-on"></i>
                                                 </button>
                                             }

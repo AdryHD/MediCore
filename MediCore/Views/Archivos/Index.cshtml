@@ -1,4 +1,4 @@
-@model IEnumerable<MediCore.EF.Archivos>
+﻿@model IEnumerable<MediCore.EF.Archivos>
 @{
     ViewBag.Title = "Archivos";
     ViewBag.ActiveMenu = "Archivos";
@@ -113,10 +113,10 @@
                                         }
                                     </td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "Archivos", new { id = item.id_archivo })" class="btn btn-light-secondary btn-sm" title="Ver detalle">
+                                        <a href="@Url.Action("Details", "Archivos", new { id = item.id_archivo })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="@Url.Action("Edit", "Archivos", new { id = item.id_archivo })" class="btn btn-light-secondary btn-sm" title="Editar archivo">
+                                        <a href="@Url.Action("Edit", "Archivos", new { id = item.id_archivo })" class="btn btn-action btn-light-primary" title="Editar archivo">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         @using (Html.BeginForm("CambiarEstado", "Archivos", FormMethod.Post, new { @class = "d-inline" }))
@@ -125,7 +125,7 @@
                                             <input type="hidden" name="id" value="@item.id_archivo" />
                                             <input type="hidden" name="nuevoEstado" value="@(item.estado == "ACTIVO" ? "INACTIVO" : "ACTIVO")" />
                                             <button type="submit"
-                                                    class="btn btn-sm @(item.estado == "ACTIVO" ? "btn-light-danger" : "btn-light-success")"
+                                                    class="btn btn-action @(item.estado == "ACTIVO" ? "btn-light-danger" : "btn-light-success")"
                                                     title="@(item.estado == "ACTIVO" ? "Desactivar" : "Activar")">
                                                 <i class="bi @(item.estado == "ACTIVO" ? "bi-toggle-off" : "bi-toggle-on")"></i>
                                             </button>

@@ -1,4 +1,4 @@
-@model IEnumerable<MediCore.EF.HistorialMedico>
+﻿@model IEnumerable<MediCore.EF.HistorialMedico>
 @{
     ViewBag.Title = "Historial Médico";
     ViewBag.ActiveMenu = "HistorialMedico";
@@ -88,7 +88,7 @@
                                     <td>@item.Doctores.Especialidades.nombre</td>
                                     <td>@item.diagnostico</td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "HistorialMedico", new { id = item.id_historial })" class="btn btn-light-secondary btn-sm" title="Ver consulta">
+                                        <a href="@Url.Action("Details", "HistorialMedico", new { id = item.id_historial })" class="btn btn-action btn-light-secondary" title="Ver consulta">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     </td>

@@ -1,4 +1,4 @@
-@model IEnumerable<MediCore.EF.Expedientes>
+﻿@model IEnumerable<MediCore.EF.Expedientes>
 @{
     ViewBag.Title = "Expedientes";
     ViewBag.ActiveMenu = "Expedientes";
@@ -104,10 +104,10 @@
                                         <span class="badge-status done"><i class="bi bi-clipboard2-pulse"></i>@item.HistorialMedico.Count</span>
                                     </td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "Expedientes", new { id = item.id_expediente })" class="btn btn-light-secondary btn-sm" title="Ver expediente">
+                                        <a href="@Url.Action("Details", "Expedientes", new { id = item.id_expediente })" class="btn btn-action btn-light-secondary" title="Ver expediente">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="@Url.Action("Edit", "Expedientes", new { id = item.id_expediente })" class="btn btn-light-secondary btn-sm" title="Editar expediente">
+                                        <a href="@Url.Action("Edit", "Expedientes", new { id = item.id_expediente })" class="btn btn-action btn-light-primary" title="Editar expediente">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                     </td>

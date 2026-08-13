@@ -1,4 +1,4 @@
-@model MediCore.EF.Expedientes
+﻿@model MediCore.EF.Expedientes
 @{
     ViewBag.Title = "Detalle del Expediente";
     ViewBag.ActiveMenu = "Expedientes";
@@ -238,7 +238,7 @@
                                         }
                                     </td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "HistorialMedico", new { id = historial.id_historial })" class="btn btn-light-secondary btn-sm" title="Ver consulta">
+                                        <a href="@Url.Action("Details", "HistorialMedico", new { id = historial.id_historial })" class="btn btn-action btn-light-secondary" title="Ver consulta">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     </td>

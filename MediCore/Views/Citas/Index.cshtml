@@ -99,52 +99,55 @@
                                     <td>@item.fecha_cita.ToString("dd/MM/yyyy HH:mm")</td>
                                     <td>@item.duracion_min min</td>
                                     <td>
-                                        @if (item.estado == "PENDIENTE")
-                                        {
-                                            <span class="badge-status pending"><i class="bi bi-hourglass-split"></i>Pendiente</span>
+                                        @{
+                                            string badgeClass, badgeIcon, badgeText;
+                                            switch (item.estado?.ToUpper())
+                                            {
+                                                case "PENDIENTE":
+                                                    badgeClass = "pending"; badgeIcon = "bi-hourglass-split"; badgeText = "Pendiente"; break;
+                                                case "ATENDIDA":
+                                                    badgeClass = "done"; badgeIcon = "bi-check-circle-fill"; badgeText = "Atendida"; break;
+                                                case "CANCELADA":
+                                                    badgeClass = "canceled"; badgeIcon = "bi-slash-circle"; badgeText = "Cancelada"; break;
+                                                case "CONFIRMADA":
+                                                    badgeClass = "confirmed"; badgeIcon = "bi-check2-circle"; badgeText = "Confirmada"; break;
+                                                case "PROGRAMADA":
+                                                    badgeClass = "programmed"; badgeIcon = "bi-calendar-check"; badgeText = "Programada"; break;
+                                                default:
+                                                    badgeClass = "pending"; badgeIcon = "bi-circle"; badgeText = item.estado?.ToLower() ?? "—"; break;
+                                            }
                                         }
-                                        else if (item.estado == "ATENDIDA")
-                                        {
-                                            <span class="badge-status done"><i class="bi bi-check-circle"></i>Atendida</span>
-                                        }
-                                        else if (item.estado == "CANCELADA")
-                                        {
-                                            <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Cancelada</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge-status canceled">@item.estado</span>
-                                        }
+                                        <span class="badge-status @badgeClass"><i class="bi @badgeIcon"></i>@badgeText</span>
                                     </td>
                                     <td class="text-end">
                                         @if (item.estado == "PENDIENTE")
                                         {
-                                            <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-light-secondary btn-sm" title="Ver detalle">
+                                            <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="@Url.Action("Edit", "Citas", new { id = item.id_cita })" class="btn btn-light-secondary btn-sm" title="Editar">
+                                            <a href="@Url.Action("Edit", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-primary" title="Editar">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
-                                            <a href="@Url.Action("Atender", "Citas", new { id = item.id_cita })" class="btn btn-light-success btn-sm" title="Atender">
+                                            <a href="@Url.Action("Atender", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-success" title="Atender">
                                                 <i class="bi bi-heart-pulse-fill"></i>
                                             </a>
-                                            <a href="@Url.Action("Cancelar", "Citas", new { id = item.id_cita })" class="btn btn-light-danger btn-sm btn-confirmar-cancelar" title="Cancelar"
+                                            <a href="@Url.Action("Cancelar", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-danger btn-confirmar-cancelar" title="Cancelar"
                                                data-cita-id="@item.id_cita">
                                                 <i class="bi bi-x-circle"></i>
                                             </a>
                                         }
                                         else if (item.estado == "ATENDIDA")
                                         {
-                                            <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-light-secondary btn-sm" title="Ver">
+                                            <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-secondary" title="Ver">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="@Url.Action("Index", "Expedientes", new { idCita = item.id_cita })" class="btn btn-light-secondary btn-sm" title="Expediente">
+                                            <a href="@Url.Action("Index", "Expedientes", new { idCita = item.id_cita })" class="btn btn-action btn-light-primary" title="Ver expediente">
                                                 <i class="bi bi-folder2-open"></i>
                                             </a>
                                         }
                                         else
                                         {
-                                            <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-light-secondary btn-sm" title="Ver">
+                                            <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-secondary" title="Ver">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                         }

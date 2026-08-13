@@ -1,4 +1,4 @@
-@model IEnumerable<MediCore.EF.Especialidades>
+﻿@model IEnumerable<MediCore.EF.Especialidades>
 @{
     ViewBag.Title = "Especialidades";
     ViewBag.ActiveMenu = "Especialidades";
@@ -70,7 +70,7 @@
                                     </td>
                                     <td>@item.fecha_creacion.ToString("dd/MM/yyyy")</td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Edit", "Especialidades", new { id = item.id_especialidad })" class="btn btn-light-secondary btn-sm" title="Editar">
+                                        <a href="@Url.Action("Edit", "Especialidades", new { id = item.id_especialidad })" class="btn btn-action btn-light-primary" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         @if (item.estado == "ACTIVO")
@@ -80,7 +80,7 @@
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@item.id_especialidad" />
                                                 <input type="hidden" name="nuevoEstado" value="INACTIVO" />
-                                                <button type="button" class="btn btn-light-danger btn-sm btn-confirmar-estado" title="Desactivar"
+                                                <button type="button" class="btn btn-action btn-light-danger btn-confirmar-estado" title="Desactivar"
                                                         data-form-id="form-estado-@item.id_especialidad" data-nombre="@item.nombre">
                                                     <i class="bi bi-toggle-off"></i>
                                                 </button>
@@ -93,7 +93,7 @@
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@item.id_especialidad" />
                                                 <input type="hidden" name="nuevoEstado" value="ACTIVO" />
-                                                <button type="submit" class="btn btn-light-success btn-sm" title="Activar">
+                                                <button type="submit" class="btn btn-action btn-light-success" title="Activar">
                                                     <i class="bi bi-toggle-on"></i>
                                                 </button>
                                             }
