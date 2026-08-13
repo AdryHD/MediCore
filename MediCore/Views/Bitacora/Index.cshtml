@@ -1,0 +1,319 @@
+@model IEnumerable<MediCore.Models.BitacoraListaModel>
+@{
+    ViewBag.Title = "Bitácora del Sistema";
+    ViewBag.ActiveMenu = "Bitacora";
+
+    int paginaActual  = ViewBag.PaginaActual  ?? 1;
+    int totalPaginas  = ViewBag.TotalPaginas  ?? 1;
+    int totalRegistros = ViewBag.TotalRegistros ?? 0;
+}
+
+<style>
+    .badge-nivel { display:inline-flex; align-items:center; gap:.3rem; padding:.25rem .65rem; border-radius:50rem; font-size:.72rem; font-weight:700; letter-spacing:.03em; white-space:nowrap; }
+    .badge-nivel-info  { background:#e0f2fe; color:#075985; }
+    .badge-nivel-error { background:#fff5f5; color:#9b1c1c; }
+    .bitacora-stack-trace { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:1rem; font-size:.75rem; color:#475569; white-space:pre-wrap; word-break:break-all; max-height:260px; overflow-y:auto; }
+    .bitacora-detalle-meta { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:.6rem 1rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1rem 1.2rem; margin-bottom:1.2rem; }
+    .bitacora-meta-item { display:flex; flex-direction:column; gap:.15rem; }
+    .bitacora-meta-label { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; display:flex; align-items:center; gap:.3rem; }
+    .bitacora-meta-val { font-size:.82rem; color:#1e293b; font-weight:500; }
+    .bitacora-detalle-seccion { margin-bottom:1rem; }
+    .bitacora-detalle-seccion-titulo { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#64748b; margin-bottom:.4rem; }
+    .bitacora-detalle-texto { font-size:.85rem; color:#334155; line-height:1.6; margin:0; }
+    .bitacora-mensaje { max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+</style>
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">ADMINISTRACIÓN</span>
+        <h3>Bitácora del Sistema</h3>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-light-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<section class="section">
+
+    @* ─── Panel de filtros ─── *@
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="bi bi-funnel me-2 text-secondary"></i>
+            <strong>Filtros de búsqueda</strong>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Index", "Bitacora", FormMethod.Get))
+            {
+                <div class="row g-2 align-items-end">
+
+                    <div class="col-12 col-md-2">
+                        <label class="form-label">Nivel</label>
+                        <select name="nivel" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="INFO"  @(ViewBag.FiltroNivel == "INFO"  ? "selected" : "")>INFO</option>
+                            <option value="ERROR" @(ViewBag.FiltroNivel == "ERROR" ? "selected" : "")>ERROR</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-2">
+                        <label class="form-label">Módulo</label>
+                        <select name="controlador" class="form-select">
+                            <option value="">Todos</option>
+                            @{
+                                var modulos = new[]
+                                {
+                                    "Citas", "Pacientes", "Doctores", "Especialidades",
+                                    "HorariosMedicos", "Expedientes", "HistorialMedico",
+                                    "Archivos", "Usuarios", "Bitacora", "Perfil", "Home"
+                                };
+                                foreach (var mod in modulos)
+                                {
+                                    <option value="@mod" @(ViewBag.FiltroControlador == mod ? "selected" : "")>@mod</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-2">
+                        <label class="form-label">Usuario</label>
+                        <input type="text" name="usuario" class="form-control"
+                               placeholder="Nombre del usuario" value="@ViewBag.FiltroUsuario" />
+                    </div>
+
+                    <div class="col-12 col-md-2">
+                        <label class="form-label">Desde</label>
+                        <input type="date" name="fechaDesde" class="form-control"
+                               value="@(ViewBag.FiltroFechaDesde != null ? ((DateTime)ViewBag.FiltroFechaDesde).ToString("yyyy-MM-dd") : "")" />
+                    </div>
+
+                    <div class="col-12 col-md-2">
+                        <label class="form-label">Hasta</label>
+                        <input type="date" name="fechaHasta" class="form-control"
+                               value="@(ViewBag.FiltroFechaHasta != null ? ((DateTime)ViewBag.FiltroFechaHasta).ToString("yyyy-MM-dd") : "")" />
+                    </div>
+
+                    <div class="col-12 col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-sm flex-fill">
+                            <i class="bi bi-search me-1"></i>Buscar
+                        </button>
+                        <a href="@Url.Action("Index", "Bitacora")" class="btn btn-light-secondary btn-sm flex-fill">
+                            <i class="bi bi-x-lg me-1"></i>Limpiar
+                        </a>
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+
+    @* ─── Tabla de registros ─── *@
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-journal-text me-2 text-primary"></i>
+                <strong>Registros de auditoría</strong>
+            </div>
+            <span class="text-muted small">@totalRegistros registro(s) encontrado(s)</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:155px">Fecha y hora</th>
+                        <th style="width:90px">Nivel</th>
+                        <th>Usuario</th>
+                        <th>Módulo</th>
+                        <th>Acción</th>
+                        <th>Mensaje</th>
+                        <th style="width:110px">IP Origen</th>
+                        <th style="width:60px" class="text-center">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="bi bi-journal-x empty-state-icon"></i>
+                                    <p class="empty-state-title">Sin registros</p>
+                                    <p class="empty-state-sub">No se encontraron entradas con los filtros aplicados.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-nowrap small">@item.Fecha.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                <td>
+                                    @if (item.Nivel == "ERROR")
+                                    {
+                                        <span class="badge-nivel badge-nivel-error">ERROR</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-nivel badge-nivel-info">INFO</span>
+                                    }
+                                </td>
+                                <td class="small">@(item.NombreUsuario ?? "—")</td>
+                                <td class="small">@(item.Controlador ?? "—")</td>
+                                <td class="small">@(item.Accion ?? "—")</td>
+                                <td class="small bitacora-mensaje" title="@item.Mensaje">
+                                    @(item.Mensaje?.Length > 80
+                                        ? item.Mensaje.Substring(0, 80) + "…"
+                                        : item.Mensaje ?? "—")
+                                </td>
+                                <td class="small text-muted">@(item.IpOrigen ?? "—")</td>
+                                <td class="text-center">
+                                    @if (!string.IsNullOrWhiteSpace(item.StackTrace) || !string.IsNullOrWhiteSpace(item.Mensaje))
+                                    {
+                                        <button type="button"
+                                                class="btn btn-action btn-light-secondary btn-detalle-bitacora"
+                                                title="Ver detalle"
+                                                data-fecha="@item.Fecha.ToString("dd/MM/yyyy HH:mm:ss")"
+                                                data-nivel="@item.Nivel"
+                                                data-usuario="@(item.NombreUsuario ?? "—")"
+                                                data-modulo="@(item.Controlador ?? "—")"
+                                                data-accion="@(item.Accion ?? "—")"
+                                                data-ip="@(item.IpOrigen ?? "—")"
+                                                data-mensaje="@item.Mensaje"
+                                                data-stack="@item.StackTrace"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#mcDetalleBitacoraModal">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @* ─── Paginación ─── *@
+        @if (totalPaginas > 1)
+        {
+            <div class="card-footer">
+                <nav aria-label="Paginación de bitácora">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Bitacora", new {
+                                nivel        = ViewBag.FiltroNivel,
+                                controlador  = ViewBag.FiltroControlador,
+                                usuario      = ViewBag.FiltroUsuario,
+                                fechaDesde   = ViewBag.FiltroFechaDesde,
+                                fechaHasta   = ViewBag.FiltroFechaHasta,
+                                page         = paginaActual - 1
+                            })">Anterior</a>
+                        </li>
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "Bitacora", new {
+                                    nivel        = ViewBag.FiltroNivel,
+                                    controlador  = ViewBag.FiltroControlador,
+                                    usuario      = ViewBag.FiltroUsuario,
+                                    fechaDesde   = ViewBag.FiltroFechaDesde,
+                                    fechaHasta   = ViewBag.FiltroFechaHasta,
+                                    page         = i
+                                })">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Bitacora", new {
+                                nivel        = ViewBag.FiltroNivel,
+                                controlador  = ViewBag.FiltroControlador,
+                                usuario      = ViewBag.FiltroUsuario,
+                                fechaDesde   = ViewBag.FiltroFechaDesde,
+                                fechaHasta   = ViewBag.FiltroFechaHasta,
+                                page         = paginaActual + 1
+                            })">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+
+    </div>
+</section>
+
+@* ─── Modal de detalle de registro ─── *@
+<div class="modal fade" id="mcDetalleBitacoraModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content mc-modal">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title">
+                    <i class="bi bi-journal-text me-2 text-primary"></i>Detalle del registro
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body pt-2">
+
+                @* Metadatos del evento *@
+                <div class="bitacora-detalle-meta">
+                    <div class="bitacora-meta-item">
+                        <span class="bitacora-meta-label"><i class="bi bi-calendar3"></i>Fecha</span>
+                        <span id="detalleFecha" class="bitacora-meta-val">—</span>
+                    </div>
+                    <div class="bitacora-meta-item">
+                        <span class="bitacora-meta-label"><i class="bi bi-flag"></i>Nivel</span>
+                        <span id="detalleNivel">—</span>
+                    </div>
+                    <div class="bitacora-meta-item">
+                        <span class="bitacora-meta-label"><i class="bi bi-person"></i>Usuario</span>
+                        <span id="detalleUsuario" class="bitacora-meta-val">—</span>
+                    </div>
+                    <div class="bitacora-meta-item">
+                        <span class="bitacora-meta-label"><i class="bi bi-grid"></i>Módulo</span>
+                        <span id="detalleModulo" class="bitacora-meta-val">—</span>
+                    </div>
+                    <div class="bitacora-meta-item">
+                        <span class="bitacora-meta-label"><i class="bi bi-play"></i>Acción</span>
+                        <span id="detalleAccion" class="bitacora-meta-val">—</span>
+                    </div>
+                    <div class="bitacora-meta-item">
+                        <span class="bitacora-meta-label"><i class="bi bi-hdd-network"></i>IP Origen</span>
+                        <span id="detalleIp" class="bitacora-meta-val">—</span>
+                    </div>
+                </div>
+
+                @* Mensaje *@
+                <div class="bitacora-detalle-seccion">
+                    <p class="bitacora-detalle-seccion-titulo">Mensaje</p>
+                    <p id="detalleMensaje" class="bitacora-detalle-texto">—</p>
+                </div>
+
+                @* Stack Trace (solo si hay) *@
+                <div class="bitacora-detalle-seccion" id="detalleStackWrap">
+                    <p class="bitacora-detalle-seccion-titulo">Stack Trace</p>
+                    <pre id="detalleStack" class="bitacora-stack-trace">—</pre>
+                </div>
+
+            </div>
+
+            <div class="modal-footer border-0 justify-content-end">
+                <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/bitacora.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/bitacora.js")).Ticks"></script>
+}
