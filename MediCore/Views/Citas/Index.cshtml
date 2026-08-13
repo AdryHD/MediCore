@@ -4,6 +4,24 @@
     ViewBag.ActiveMenu = "Citas";
 }
 
+<style>
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+        padding: .25rem .65rem;
+        border-radius: 50rem;
+        font-size: .75rem;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+    .badge-status.pending    { background: #fff7ed; color: #c05621; }
+    .badge-status.done       { background: #ecfdf5; color: #065f46; }
+    .badge-status.canceled   { background: #fff5f5; color: #9b1c1c; }
+    .badge-status.confirmed  { background: #e0f2fe; color: #075985; }
+    .badge-status.programmed { background: #ede9fe; color: #5b21b6; }
+</style>
+
 <div class="page-heading">
     <div>
         <span class="section-eyebrow">GESTIÓN MÉDICA</span>
@@ -129,7 +147,7 @@
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <a href="@Url.Action("Atender", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-success" title="Atender">
-                                                <i class="bi bi-heart-pulse-fill"></i>
+                                                <i class="bi bi-heart-fill"></i>
                                             </a>
                                             <a href="@Url.Action("Cancelar", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-danger btn-confirmar-cancelar" title="Cancelar"
                                                data-cita-id="@item.id_cita">

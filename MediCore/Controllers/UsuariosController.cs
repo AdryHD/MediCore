@@ -25,6 +25,7 @@ namespace MediCore.Controllers
         public ActionResult Index()
         {
             ViewBag.ActiveMenu = "Usuarios";
+            ViewBag.UsuarioActual = Session["Consecutivo"] as int?;
 
             using (var db = new MediCoreEntities())
             {
@@ -48,6 +49,54 @@ namespace MediCore.Controllers
 
                 ViewBag.Roles = roles;
                 return View(usuarios);
+            }
+        }
+
+        // POST: Usuarios/CambiarEstado
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CambiarEstado(int idUsuario)
+        {
+            using (var db = new MediCoreEntities())
+            {
+                var usuario = db.tbUsuario.FirstOrDefault(u => u.Consecutivo == idUsuario);
+
+                if (usuario == null)
+                {
+                    TempData["Error"] = "El usuario indicado no existe.";
+                    return RedirectToAction("Index");
+                }
+
+                int? idActual = Session["Consecutivo"] as int?;
+                if (idActual.HasValue && idActual.Value == idUsuario)
+                {
+                    TempData["Error"] = "No puedes cambiar el estado de tu propia cuenta.";
+                    return RedirectToAction("Index");
+                }
+
+                try
+                {
+                    usuario.Estado = !usuario.Estado;
+                    db.Entry(usuario).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    _utilitarioService.RegistrarEvento(
+                        NombreControlador,
+                        "CambiarEstado",
+                        string.Format("Se {0} al usuario '{1}' (Consecutivo: {2}).",
+                            usuario.Estado ? "activó" : "desactivó", usuario.Nombre, usuario.Consecutivo)
+                    );
+
+                    TempData["Success"] = string.Format("Usuario '{0}' {1} correctamente.",
+                        usuario.Nombre, usuario.Estado ? "activado" : "desactivado");
+                }
+                catch (Exception ex)
+                {
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "CambiarEstado");
+                    TempData["Error"] = "Ocurrió un error al cambiar el estado del usuario.";
+                }
+
+                return RedirectToAction("Index");
             }
         }
 
