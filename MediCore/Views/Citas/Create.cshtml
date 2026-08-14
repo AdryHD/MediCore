@@ -25,6 +25,7 @@
             @using (Html.BeginForm("Create", "Citas", FormMethod.Post))
             {
                     @Html.AntiForgeryToken()
+                    <span id="citas-init-data" data-doctor="" data-hora=""></span>
 
                     @Html.ValidationSummary(true, "", new { @class = "alert alert-light-danger" })
 
@@ -184,14 +185,6 @@
 
 
 @section Scripts{
-
-    <script>
-        var doctorSeleccionado = "";
-        var horaSeleccionada = "";
-    </script>
-
     @Scripts.Render("~/bundles/jqueryval")
-
     <script src="~/Scripts/citas.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/citas.js")).Ticks"></script>
-
 }

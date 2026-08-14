@@ -1,4 +1,4 @@
-﻿@model MediCore.EF.Expedientes
+﻿@model MediCore.Models.ExpedienteDetalleModel
 @{
     ViewBag.Title = "Detalle del Expediente";
     ViewBag.ActiveMenu = "Expedientes";
@@ -11,14 +11,14 @@
             EXPEDIENTE CLÍNICO
         </span>
 
-        <h3>@Model.Pacientes.nombre_completo</h3>
+        <h3>@Model.NombrePaciente</h3>
     </div>
 
     <div>
         <a href="@Url.Action("Index", "Expedientes")" class="btn btn-light-secondary">
             <i class="bi bi-arrow-left me-1"></i>Regresar
         </a>
-        <a href="@Url.Action("Edit", "Expedientes", new { id = Model.id_expediente })" class="btn btn-primary">
+        <a href="@Url.Action("Edit", "Expedientes", new { id = Model.IdExpediente })" class="btn btn-primary">
 
             <i class="bi bi-pencil-square me-1"></i>
             Editar Expediente
@@ -43,55 +43,55 @@
                 <div class="col-md-4 mb-3">
                     <small class="text-muted">Nombre completo</small>
                     <div class="fw-bold">
-                        @Model.Pacientes.nombre_completo
+                        @Model.NombrePaciente
                     </div>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <small class="text-muted">Cédula</small>
                     <div class="fw-bold">
-                        @Model.Pacientes.cedula
+                        @Model.CedulaPaciente
                     </div>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <small class="text-muted">Fecha de nacimiento</small>
                     <div class="fw-bold">
-                        @Model.Pacientes.fecha_nacimiento.ToString("dd/MM/yyyy")
+                        @Model.FechaNacimientoPaciente.ToString("dd/MM/yyyy")
                     </div>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <small class="text-muted">Sexo</small>
                     <div class="fw-bold">
-                        @Model.Pacientes.sexo
+                        @Model.SexoPaciente
                     </div>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <small class="text-muted">Teléfono</small>
                     <div class="fw-bold">
-                        @(string.IsNullOrWhiteSpace(Model.Pacientes.telefono)
+                        @(string.IsNullOrWhiteSpace(Model.TelefonoPaciente)
                             ? "No registrado"
-                            : Model.Pacientes.telefono)
+                            : Model.TelefonoPaciente)
                     </div>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <small class="text-muted">Correo electrónico</small>
                     <div class="fw-bold">
-                        @(string.IsNullOrWhiteSpace(Model.Pacientes.correo)
+                        @(string.IsNullOrWhiteSpace(Model.CorreoPaciente)
                             ? "No registrado"
-                            : Model.Pacientes.correo)
+                            : Model.CorreoPaciente)
                     </div>
                 </div>
 
                 <div class="col-12">
                     <small class="text-muted">Dirección</small>
                     <div class="fw-bold">
-                        @(string.IsNullOrWhiteSpace(Model.Pacientes.direccion)
+                        @(string.IsNullOrWhiteSpace(Model.DireccionPaciente)
                             ? "No registrada"
-                            : Model.Pacientes.direccion)
+                            : Model.DireccionPaciente)
                     </div>
                 </div>
 
@@ -119,9 +119,9 @@
 
                     <div class="mt-1">
 
-                        @if (!string.IsNullOrWhiteSpace(Model.tipo_sangre))
+                        @if (!string.IsNullOrWhiteSpace(Model.TipoSangre))
                         {
-                            <span class="badge-status pending"><i class="bi bi-droplet-fill"></i>@Model.tipo_sangre</span>
+                            <span class="badge-status pending"><i class="bi bi-droplet-fill"></i>@Model.TipoSangre</span>
                         }
                         else
                         {
@@ -142,7 +142,7 @@
                     </small>
 
                     <div class="fw-bold">
-                        @Model.fecha_apertura.ToString("dd/MM/yyyy")
+                        @Model.FechaApertura.ToString("dd/MM/yyyy")
                     </div>
 
                 </div>
@@ -155,7 +155,7 @@
                     </small>
 
                     <div>
-                        <span class="badge-status done"><i class="bi bi-clipboard2-pulse"></i>@Model.HistorialMedico.Count</span>
+                        <span class="badge-status done"><i class="bi bi-clipboard2-pulse"></i>@Model.ConsultasCount</span>
                     </div>
 
                 </div>
@@ -174,9 +174,9 @@
                 </h6>
 
                 <p class="mb-0">
-                    @(string.IsNullOrWhiteSpace(Model.alergias)
+                    @(string.IsNullOrWhiteSpace(Model.Alergias)
                         ? "No se han registrado alergias."
-                        : Model.alergias)
+                        : Model.Alergias)
                 </p>
 
             </div>
@@ -190,9 +190,9 @@
                 </h6>
 
                 <p class="mb-0">
-                    @(string.IsNullOrWhiteSpace(Model.antecedentes)
+                    @(string.IsNullOrWhiteSpace(Model.Antecedentes)
                         ? "No se han registrado antecedentes médicos."
-                        : Model.antecedentes)
+                        : Model.Antecedentes)
                 </p>
 
             </div>
@@ -207,7 +207,7 @@
             <h4><i class="bi bi-clock-history me-2" style="color:#01C0BA;"></i>Historial Médico</h4>
         </div>
         <div class="card-body p-0">
-            @if (Model.HistorialMedico != null && Model.HistorialMedico.Any())
+            @if (Model.Historial != null && Model.Historial.Any())
             {
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
@@ -221,16 +221,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var historial in Model.HistorialMedico.OrderByDescending(h => h.fecha_consulta))
+                            @foreach (var historial in Model.Historial)
                             {
                                 <tr>
-                                    <td>@historial.fecha_consulta.ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td>@historial.Doctores.nombre_completo</td>
-                                    <td>@historial.diagnostico</td>
+                                    <td>@historial.FechaConsulta.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@historial.NombreDoctor</td>
+                                    <td>@historial.Diagnostico</td>
                                     <td>
-                                        @if (historial.proxima_cita.HasValue)
+                                        @if (historial.ProximaCita.HasValue)
                                         {
-                                            @historial.proxima_cita.Value.ToString("dd/MM/yyyy")
+                                            @historial.ProximaCita.Value.ToString("dd/MM/yyyy")
                                         }
                                         else
                                         {
@@ -238,7 +238,7 @@
                                         }
                                     </td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "HistorialMedico", new { id = historial.id_historial })" class="btn btn-action btn-light-secondary" title="Ver consulta">
+                                        <a href="@Url.Action("Details", "HistorialMedico", new { id = historial.IdHistorial })" class="btn btn-action btn-light-secondary" title="Ver consulta">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     </td>

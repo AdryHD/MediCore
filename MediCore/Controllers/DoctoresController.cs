@@ -60,11 +60,21 @@ namespace MediCore.Controllers
                         .OrderBy(d => d.nombre_completo)
                         .Skip((page - 1) * TamanoPagina)
                         .Take(TamanoPagina)
+                        .Select(d => new DoctorListaModel
+                        {
+                            IdDoctor          = d.id_doctor,
+                            NombreCompleto    = d.nombre_completo,
+                            Cedula            = d.cedula,
+                            CodigoColegiado   = d.codigo_colegiado,
+                            NombreEspecialidad = d.Especialidades != null ? d.Especialidades.nombre : "—",
+                            Correo            = d.correo,
+                            Telefono          = d.telefono,
+                            Estado            = d.estado
+                        })
                         .ToList();
 
                     var especialidades = db.Especialidades.OrderBy(e => e.nombre).ToList();
 
-                    ViewBag.NombreEspecialidad = especialidades.ToDictionary(e => e.id_especialidad, e => e.nombre);
                     ViewBag.Especialidades = new SelectList(especialidades, "id_especialidad", "nombre", idEspecialidad);
                     ViewBag.FiltroTexto = q;
                     ViewBag.FiltroEspecialidad = idEspecialidad;
@@ -79,7 +89,7 @@ namespace MediCore.Controllers
                 {
                     _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cargar los doctores.";
-                    return View(new List<Doctores>());
+                    return View(new List<DoctorListaModel>());
                 }
             }
         }

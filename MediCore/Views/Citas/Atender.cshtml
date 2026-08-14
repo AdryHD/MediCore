@@ -223,41 +223,17 @@
                 </div>
 
 
-                <div class="row">
-
-                    <div class="col-md-6 mb-3">
-
-                        @Html.LabelFor(
-                            m => m.ProximaCita,
-                            new { @class = "form-label" })
-
-                        @Html.TextBoxFor(
-                            m => m.ProximaCita,
-                            "{0:yyyy-MM-dd}",
-                            new
-                            {
-                                @class = "form-control",
-                                type = "date"
-                            })
-
-                        <small class="text-muted">
-                            Opcional
-                        </small>
-
-                    </div>
-
-                </div>
-
-
                 <div class="text-end mt-4">
-
+                    @Html.ValidationMessageFor(m => m.AccionFinal, "", new { @class = "text-danger d-block mb-2" })
                     <a href="@Url.Action("Index", "Citas")" class="btn btn-light-secondary">
                         <i class="bi bi-arrow-left me-1"></i>Cancelar
                     </a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-heart-fill me-1"></i>Finalizar Atención
+                    <button type="submit" name="AccionFinal" value="ALTA" class="btn btn-success">
+                        <i class="bi bi-check-circle me-1"></i>Dar de Alta
                     </button>
-
+                    <button type="submit" name="AccionFinal" value="NUEVA_CITA" class="btn btn-primary">
+                        <i class="bi bi-calendar-plus me-1"></i>Solicitar Seguimiento
+                    </button>
                 </div>
             }
 

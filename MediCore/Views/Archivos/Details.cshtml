@@ -1,4 +1,4 @@
-@model MediCore.EF.Archivos
+@model MediCore.Models.ArchivoDetalleModel
 @{
     ViewBag.Title = "Detalle del Archivo";
     ViewBag.ActiveMenu = "Archivos";
@@ -7,13 +7,13 @@
 <div class="page-heading">
     <div>
         <span class="section-eyebrow">ARCHIVOS DIGITALES</span>
-        <h3>@Model.nombre</h3>
+        <h3>@Model.Nombre</h3>
     </div>
     <div>
         <a href="@Url.Action("Index", "Archivos")" class="btn btn-light-secondary">
             <i class="bi bi-arrow-left me-1"></i>Regresar
         </a>
-        <a href="@Url.Action("Edit", "Archivos", new { id = Model.id_archivo })" class="btn btn-primary">
+        <a href="@Url.Action("Edit", "Archivos", new { id = Model.IdArchivo })" class="btn btn-primary">
             <i class="bi bi-pencil-square me-1"></i>Editar
         </a>
     </div>
@@ -32,18 +32,18 @@
 
                 <div class="col-md-4 mb-3">
                     <small class="text-muted d-block">ID del Archivo</small>
-                    <div class="fw-bold">#@Model.id_archivo</div>
+                    <div class="fw-bold">#@Model.IdArchivo</div>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <small class="text-muted d-block">Nombre del Archivo</small>
-                    <div class="fw-bold">@Model.nombre</div>
+                    <div class="fw-bold">@Model.Nombre</div>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <small class="text-muted d-block">Estado</small>
                     <div class="mt-1">
-                        @if (Model.estado == "ACTIVO")
+                        @if (Model.Estado == "ACTIVO")
                         {
                             <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
                         }
@@ -57,19 +57,19 @@
                 <div class="col-md-4 mb-3">
                     <small class="text-muted d-block">Tipo MIME / Formato</small>
                     <div class="fw-bold">
-                        @(string.IsNullOrWhiteSpace(Model.tipo_mime) ? "No especificado" : Model.tipo_mime)
+                        @(string.IsNullOrWhiteSpace(Model.TipoMime) ? "No especificado" : Model.TipoMime)
                     </div>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <small class="text-muted d-block">Tamaño</small>
                     <div class="fw-bold">
-                        @if (Model.tamano_bytes > 0)
+                        @if (Model.TamanioBytes > 0)
                         {
 
-                            @(Model.tamano_bytes >= 1048576
-                                ? string.Format("{0:F2} MB", (double)Model.tamano_bytes / 1048576)
-                                : string.Format("{0:F2} KB", (double)Model.tamano_bytes / 1024))
+                            @(Model.TamanioBytes >= 1048576
+                                ? string.Format("{0:F2} MB", (double)Model.TamanioBytes / 1048576)
+                                : string.Format("{0:F2} KB", (double)Model.TamanioBytes / 1024))
                         }
                         else
                         {
@@ -81,7 +81,7 @@
                 <div class="col-md-4 mb-3">
                     <small class="text-muted d-block">Fecha de Carga</small>
                     <div class="fw-bold">
-                        @Model.fecha_carga.ToString("dd/MM/yyyy HH:mm")
+                        @Model.FechaCarga.ToString("dd/MM/yyyy HH:mm")
                     </div>
                 </div>
 
@@ -100,16 +100,16 @@
                 <div class="col-md-6 mb-3">
                     <small class="text-muted d-block">Expediente Asignado</small>
                     <div class="fw-bold">
-                        @if (Model.Expedientes != null && Model.Expedientes.Pacientes != null)
+                        @if (Model.NombrePaciente != null)
                         {
-                            <a href="@Url.Action("Details", "Archivos", new { id = Model.id_expediente })">
+                            <a href="@Url.Action("Details", "Archivos", new { id = Model.IdExpediente })">
                                 <i class="bi bi-folder2-open me-1"></i>
-                                @Model.Expedientes.Pacientes.nombre_completo (ID Expediente: #@Model.id_expediente)
+                                @Model.NombrePaciente (ID Expediente: #@Model.IdExpediente)
                             </a>
                         }
-                        else if (Model.id_expediente.HasValue)
+                        else if (Model.IdExpediente.HasValue)
                         {
-                            <span>Expediente #@Model.id_expediente</span>
+                            <span>Expediente #@Model.IdExpediente</span>
                         }
                         else
                         {
@@ -121,16 +121,16 @@
                 <div class="col-md-6 mb-3">
                     <small class="text-muted d-block">Subido por (Usuario)</small>
                     <div class="fw-bold">
-                        @if (Model.tbUsuario != null)
+                        @if (Model.NombreUsuario != null)
                         {
                             <span>
                                 <i class="bi bi-person-check me-1"></i>
-                                @Model.tbUsuario.Nombre (ID Usuario: #@Model.id_usuario)
+                                @Model.NombreUsuario (ID Usuario: #@Model.IdUsuario)
                             </span>
                         }
-                        else if (Model.id_usuario.HasValue)
+                        else if (Model.IdUsuario.HasValue)
                         {
-                            <span>Usuario #@Model.id_usuario</span>
+                            <span>Usuario #@Model.IdUsuario</span>
                         }
                         else
                         {
@@ -149,12 +149,12 @@
         </div>
 
         <div class="card-body text-center py-4">
-            @if (Model.contenido != null && Model.contenido.Length > 0)
+            @if (Model.TieneContenido)
             {
                 <i class="bi bi-file-earmark-check text-success fs-1"></i>
                 <p class="mt-2 mb-3">El archivo binario se encuentra almacenado correctamente en el sistema.</p>
 
-                <a href="@Url.Action("Descargar", "Archivos", new { id = Model.id_archivo })" class="btn btn-primary">
+                <a href="@Url.Action("Descargar", "Archivos", new { id = Model.IdArchivo })" class="btn btn-primary">
                     <i class="bi bi-download me-1"></i>
                     Descargar Archivo
                 </a>

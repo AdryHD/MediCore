@@ -123,6 +123,15 @@ namespace MediCore.Controllers
 
                     var resultado = historial
                         .OrderByDescending(h => h.fecha_consulta)
+                        .Select(h => new HistorialListaModel
+                        {
+                            IdHistorial        = h.id_historial,
+                            FechaConsulta      = h.fecha_consulta,
+                            NombrePaciente     = h.Expedientes.Pacientes.nombre_completo,
+                            NombreDoctor       = h.Doctores.nombre_completo,
+                            NombreEspecialidad = h.Doctores.Especialidades.nombre,
+                            Diagnostico        = h.diagnostico
+                        })
                         .ToList();
 
                     _utilitario.RegistrarEvento(
@@ -138,7 +147,7 @@ namespace MediCore.Controllers
             {
                 _utilitario.RegistrarErrorBitacora(ex, ControladorNombre, "Index");
                 TempData["Error"] = "Ocurrió un error al cargar la consulta del historial médico.";
-                return View(new System.Collections.Generic.List<HistorialMedico>());
+                return View(new System.Collections.Generic.List<HistorialListaModel>());
             }
         }
 
@@ -181,7 +190,26 @@ namespace MediCore.Controllers
                         $"Consulta detallada del registro de historial ID: {id}"
                     );
 
-                    return View(historial);
+                    var model = new HistorialDetalleModel
+                    {
+                        IdHistorial        = historial.id_historial,
+                        IdExpediente       = historial.id_expediente,
+                        IdCita             = historial.id_cita,
+                        NombrePaciente     = historial.Expedientes.Pacientes.nombre_completo,
+                        CedulaPaciente     = historial.Expedientes.Pacientes.cedula,
+                        SexoPaciente       = historial.Expedientes.Pacientes.sexo,
+                        FechaConsulta      = historial.fecha_consulta,
+                        NombreDoctor       = historial.Doctores.nombre_completo,
+                        NombreEspecialidad = historial.Doctores.Especialidades.nombre,
+                        Sintomas           = historial.sintomas,
+                        Diagnostico        = historial.diagnostico,
+                        Tratamiento        = historial.tratamiento,
+                        Medicamentos       = historial.medicamentos,
+                        Observaciones      = historial.observaciones,
+                        ProximaCita        = historial.proxima_cita
+                    };
+
+                    return View(model);
                 }
             }
             catch (Exception ex)

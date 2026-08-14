@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MediCore.EF.Pacientes>
+﻿@model IEnumerable<MediCore.Models.PacienteListaModel>
 @{
     ViewBag.Title = "Pacientes";
     ViewBag.ActiveMenu = "Pacientes";
@@ -93,15 +93,15 @@
                             foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.id_paciente</td>
-                                    <td class="fw-semibold">@item.nombre_completo</td>
-                                    <td>@item.cedula</td>
-                                    <td>@item.fecha_nacimiento.ToString("dd/MM/yyyy")</td>
-                                    <td>@item.sexo</td>
-                                    <td>@(string.IsNullOrWhiteSpace(item.telefono) ? "—" : item.telefono)</td>
-                                    <td>@item.correo</td>
+                                    <td>@item.IdPaciente</td>
+                                    <td class="fw-semibold">@item.NombreCompleto</td>
+                                    <td>@item.Cedula</td>
+                                    <td>@item.FechaNacimiento.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.Sexo</td>
+                                    <td>@(string.IsNullOrWhiteSpace(item.Telefono) ? "—" : item.Telefono)</td>
+                                    <td>@item.Correo</td>
                                     <td>
-                                        @if (item.estado == "ACTIVO")
+                                        @if (item.Estado == "ACTIVO")
                                         {
                                             <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
                                         }
@@ -111,17 +111,17 @@
                                         }
                                     </td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "Pacientes", new { id = item.id_paciente })" class="btn btn-action btn-light-secondary" title="Ver detalle">
+                                        <a href="@Url.Action("Details", "Pacientes", new { id = item.IdPaciente })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="@Url.Action("Edit", "Pacientes", new { id = item.id_paciente })" class="btn btn-action btn-light-primary" title="Editar">
+                                        <a href="@Url.Action("Edit", "Pacientes", new { id = item.IdPaciente })" class="btn btn-action btn-light-primary" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        @if (item.estado == "ACTIVO")
+                                        @if (item.Estado == "ACTIVO")
                                         {
                                             if (esAdmin)
                                             {
-                                            <a href="@Url.Action("Delete", "Pacientes", new { id = item.id_paciente })" class="btn btn-action btn-light-danger" title="Desactivar">
+                                            <a href="@Url.Action("Delete", "Pacientes", new { id = item.IdPaciente })" class="btn btn-action btn-light-danger" title="Desactivar">
                                                 <i class="bi bi-toggle-off"></i>
                                             </a>
                                             }
@@ -133,7 +133,7 @@
                                             using (Html.BeginForm("CambiarEstado", "Pacientes", FormMethod.Post, new { style = "display:inline-block;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@item.id_paciente" />
+                                                <input type="hidden" name="id" value="@item.IdPaciente" />
                                                 <input type="hidden" name="nuevoEstado" value="ACTIVO" />
                                                 <button type="submit" class="btn btn-action btn-light-success" title="Activar">
                                                     <i class="bi bi-toggle-on"></i>

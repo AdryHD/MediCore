@@ -28,6 +28,7 @@ namespace MediCore.EF
         public int duracion_min { get; set; }
         public string motivo { get; set; }
         public string estado { get; set; }
+        public string motivo_cancelacion { get; set; }
         public Nullable<int> id_cita_anterior { get; set; }
         public System.DateTime fecha_creacion { get; set; }
     

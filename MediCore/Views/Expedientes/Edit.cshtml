@@ -1,5 +1,5 @@
 
-@model MediCore.EF.Expedientes
+@model MediCore.Models.ExpedienteEditModel
 @{
     ViewBag.Title = "Editar Expediente";
     ViewBag.ActiveMenu = "Expedientes";
@@ -11,7 +11,7 @@
         <h3>Editar Expediente</h3>
     </div>
     <div>
-        <a href="@Url.Action("Details", "Expedientes", new { id = Model.id_expediente })" class="btn btn-light-secondary">
+        <a href="@Url.Action("Details", "Expedientes", new { id = Model.IdExpediente })" class="btn btn-light-secondary">
             <i class="bi bi-arrow-left me-1"></i>Cancelar
         </a>
     </div>
@@ -34,7 +34,7 @@
             {
                 @Html.AntiForgeryToken()
 
-                @Html.HiddenFor(m => m.id_expediente)
+                @Html.HiddenFor(m => m.IdExpediente)
 
                 <div class="row">
 
@@ -46,7 +46,7 @@
 
                         <input type="text"
                                class="form-control"
-                               value="@Model.Pacientes.nombre_completo"
+                               value="@Model.NombrePaciente"
                                readonly />
 
                     </div>
@@ -60,7 +60,7 @@
 
                         <input type="text"
                                class="form-control"
-                               value="@Model.Pacientes.cedula"
+                               value="@Model.CedulaPaciente"
                                readonly />
 
                     </div>
@@ -77,7 +77,7 @@
                         </label>
 
                         @Html.DropDownListFor(
-                            m => m.tipo_sangre,
+                            m => m.TipoSangre,
                             new SelectList(
                                 new[]
                                 {
@@ -90,7 +90,7 @@
                                     "O+",
                                     "O-"
                                 },
-                                Model.tipo_sangre
+                                Model.TipoSangre
                             ),
                             "-- Seleccione --",
                             new { @class = "form-select" }
@@ -107,7 +107,7 @@
 
                         <input type="text"
                                class="form-control"
-                               value="@Model.fecha_apertura.ToString("dd/MM/yyyy")"
+                               value="@Model.FechaApertura.ToString("dd/MM/yyyy")"
                                readonly />
 
                     </div>
@@ -122,7 +122,7 @@
                     </label>
 
                     @Html.TextAreaFor(
-                        m => m.alergias,
+                        m => m.Alergias,
                         new
                         {
                             @class = "form-control",
@@ -141,7 +141,7 @@
                     </label>
 
                     @Html.TextAreaFor(
-                        m => m.antecedentes,
+                        m => m.Antecedentes,
                         new
                         {
                             @class = "form-control",
@@ -155,7 +155,7 @@
 
                 <div class="text-end mt-4">
 
-                    <a href="@Url.Action("Details", "Expedientes", new { id = Model.id_expediente })" class="btn btn-light-secondary">
+                    <a href="@Url.Action("Details", "Expedientes", new { id = Model.IdExpediente })" class="btn btn-light-secondary">
                         <i class="bi bi-arrow-left me-1"></i>Cancelar
                     </a>
 

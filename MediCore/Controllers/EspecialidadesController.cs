@@ -29,6 +29,14 @@ namespace MediCore.Controllers
                 {
                     var especialidades = db.Especialidades
                         .OrderBy(e => e.nombre)
+                        .Select(e => new EspecialidadListaModel
+                        {
+                            IdEspecialidad = e.id_especialidad,
+                            Nombre         = e.nombre,
+                            Descripcion    = e.descripcion,
+                            Estado         = e.estado,
+                            FechaCreacion  = e.fecha_creacion
+                        })
                         .ToList();
 
                     return View(especialidades);
@@ -37,7 +45,7 @@ namespace MediCore.Controllers
                 {
                     _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cargar las especialidades.";
-                    return View(new List<Especialidades>());
+                    return View(new List<EspecialidadListaModel>());
                 }
             }
         }

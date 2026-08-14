@@ -1,7 +1,9 @@
-﻿@model IEnumerable<MediCore.EF.HistorialMedico>
+﻿@model IEnumerable<MediCore.Models.HistorialListaModel>
 @{
     ViewBag.Title = "Historial Médico";
     ViewBag.ActiveMenu = "HistorialMedico";
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 0;
 }
 
 <div class="page-heading">
@@ -82,13 +84,13 @@
                             foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.fecha_consulta.ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td class="fw-semibold">@item.Expedientes.Pacientes.nombre_completo</td>
-                                    <td>@item.Doctores.nombre_completo</td>
-                                    <td>@item.Doctores.Especialidades.nombre</td>
-                                    <td>@item.diagnostico</td>
+                                    <td>@item.FechaConsulta.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="fw-semibold">@item.NombrePaciente</td>
+                                    <td>@item.NombreDoctor</td>
+                                    <td>@item.NombreEspecialidad</td>
+                                    <td>@item.Diagnostico</td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "HistorialMedico", new { id = item.id_historial })" class="btn btn-action btn-light-secondary" title="Ver consulta">
+                                        <a href="@Url.Action("Details", "HistorialMedico", new { id = item.IdHistorial })" class="btn btn-action btn-light-secondary" title="Ver consulta">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     </td>
@@ -113,5 +115,26 @@
                 </table>
             </div>
         </div>
+        @if (totalPaginas > 1)
+        {
+            <div class="card-footer">
+                <nav aria-label="Paginación de historial médico">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "HistorialMedico", new { idPaciente = ViewBag.FiltroPaciente, idDoctor = ViewBag.FiltroDoctor, idEspecialidad = ViewBag.FiltroEspecialidad, fechaDesde = ViewBag.FechaDesde, fechaHasta = ViewBag.FechaHasta, page = paginaActual - 1 })">Anterior</a>
+                        </li>
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "HistorialMedico", new { idPaciente = ViewBag.FiltroPaciente, idDoctor = ViewBag.FiltroDoctor, idEspecialidad = ViewBag.FiltroEspecialidad, fechaDesde = ViewBag.FechaDesde, fechaHasta = ViewBag.FechaHasta, page = i })">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "HistorialMedico", new { idPaciente = ViewBag.FiltroPaciente, idDoctor = ViewBag.FiltroDoctor, idEspecialidad = ViewBag.FiltroEspecialidad, fechaDesde = ViewBag.FechaDesde, fechaHasta = ViewBag.FechaHasta, page = paginaActual + 1 })">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
     </div>
 </section>

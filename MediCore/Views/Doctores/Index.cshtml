@@ -1,9 +1,8 @@
-﻿@model IEnumerable<MediCore.EF.Doctores>
+﻿@model IEnumerable<MediCore.Models.DoctorListaModel>
 @{
     ViewBag.Title = "Doctores";
     ViewBag.ActiveMenu = "Doctores";
 
-    var nombreEspecialidad = ViewBag.NombreEspecialidad as System.Collections.Generic.Dictionary<int, string>;
     int paginaActual = ViewBag.PaginaActual ?? 1;
     int totalPaginas = ViewBag.TotalPaginas ?? 0;
     bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
@@ -80,7 +79,10 @@
                             <th>Correo</th>
                             <th>Teléfono</th>
                             <th>Estado</th>
+                            @if (esAdmin)
+                            {
                             <th class="text-end">Acciones</th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -89,15 +91,15 @@
                             foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.id_doctor</td>
-                                    <td class="fw-semibold">@item.nombre_completo</td>
-                                    <td>@item.cedula</td>
-                                    <td>@item.codigo_colegiado</td>
-                                    <td>@(nombreEspecialidad != null && nombreEspecialidad.ContainsKey(item.id_especialidad) ? nombreEspecialidad[item.id_especialidad] : "—")</td>
-                                    <td>@item.correo</td>
-                                    <td>@(string.IsNullOrWhiteSpace(item.telefono) ? "—" : item.telefono)</td>
+                                    <td>@item.IdDoctor</td>
+                                    <td class="fw-semibold">@item.NombreCompleto</td>
+                                    <td>@item.Cedula</td>
+                                    <td>@item.CodigoColegiado</td>
+                                    <td>@item.NombreEspecialidad</td>
+                                    <td>@item.Correo</td>
+                                    <td>@(string.IsNullOrWhiteSpace(item.Telefono) ? "—" : item.Telefono)</td>
                                     <td>
-                                        @if (item.estado == "ACTIVO")
+                                        @if (item.Estado == "ACTIVO")
                                         {
                                             <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
                                         }
@@ -106,21 +108,21 @@
                                             <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Inactivo</span>
                                         }
                                     </td>
+                                    @if (esAdmin)
+                                    {
                                     <td class="text-end">
-                                        @if (esAdmin)
-                                        {
-                                        <a href="@Url.Action("Edit", "Doctores", new { id = item.id_doctor })" class="btn btn-action btn-light-primary" title="Editar">
+                                        <a href="@Url.Action("Edit", "Doctores", new { id = item.IdDoctor })" class="btn btn-action btn-light-primary" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        if (item.estado == "ACTIVO")
+                                        if (item.Estado == "ACTIVO")
                                         {
-                                            using (Html.BeginForm("CambiarEstado", "Doctores", FormMethod.Post, new { id = "form-estado-" + item.id_doctor, style = "display:inline-block;" }))
+                                            using (Html.BeginForm("CambiarEstado", "Doctores", FormMethod.Post, new { id = "form-estado-" + item.IdDoctor, style = "display:inline-block;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@item.id_doctor" />
+                                                <input type="hidden" name="id" value="@item.IdDoctor" />
                                                 <input type="hidden" name="nuevoEstado" value="INACTIVO" />
                                                 <button type="button" class="btn btn-action btn-light-danger btn-confirmar-estado" title="Desactivar"
-                                                        data-form-id="form-estado-@item.id_doctor" data-nombre="@item.nombre_completo">
+                                                        data-form-id="form-estado-@item.IdDoctor" data-nombre="@item.NombreCompleto">
                                                     <i class="bi bi-toggle-off"></i>
                                                 </button>
                                             }
@@ -130,22 +132,22 @@
                                             using (Html.BeginForm("CambiarEstado", "Doctores", FormMethod.Post, new { style = "display:inline-block;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@item.id_doctor" />
+                                                <input type="hidden" name="id" value="@item.IdDoctor" />
                                                 <input type="hidden" name="nuevoEstado" value="ACTIVO" />
                                                 <button type="submit" class="btn btn-action btn-light-success" title="Activar">
                                                     <i class="bi bi-toggle-on"></i>
                                                 </button>
                                             }
                                         }
-                                        }
                                     </td>
+                                    }
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="9" class="empty-state-cell">
+                                <td colspan="@(esAdmin ? 9 : 8)" class="empty-state-cell">
                                     <div class="empty-state">
                                         <div class="empty-state-icon-wrap">
                                             <i class="bi bi-person-badge"></i>

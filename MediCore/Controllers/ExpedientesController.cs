@@ -67,6 +67,16 @@ namespace MediCore.Controllers
 
                     var resultado = expedientes
                         .OrderBy(e => e.Pacientes.nombre_completo)
+                        .ToList()
+                        .Select(e => new ExpedienteListaModel
+                        {
+                            IdExpediente   = e.id_expediente,
+                            NombrePaciente = e.Pacientes.nombre_completo,
+                            CedulaPaciente = e.Pacientes.cedula,
+                            TipoSangre     = e.tipo_sangre,
+                            FechaApertura  = e.fecha_apertura,
+                            ConsultasCount = e.HistorialMedico.Count
+                        })
                         .ToList();
 
                     _utilitario.RegistrarEvento(
@@ -82,7 +92,7 @@ namespace MediCore.Controllers
             {
                 _utilitario.RegistrarErrorBitacora(ex, ControladorNombre, "Index");
                 TempData["Error"] = "Ocurrió un error al cargar la lista de expedientes.";
-                return View(new System.Collections.Generic.List<Expedientes>());
+                return View(new System.Collections.Generic.List<ExpedienteListaModel>());
             }
         }
 
@@ -123,7 +133,34 @@ namespace MediCore.Controllers
                         $"Consulta detallada del expediente ID: {id}"
                     );
 
-                    return View(expediente);
+                    var model = new ExpedienteDetalleModel
+                    {
+                        IdExpediente           = expediente.id_expediente,
+                        NombrePaciente         = expediente.Pacientes.nombre_completo,
+                        CedulaPaciente         = expediente.Pacientes.cedula,
+                        FechaNacimientoPaciente = expediente.Pacientes.fecha_nacimiento,
+                        SexoPaciente           = expediente.Pacientes.sexo,
+                        TelefonoPaciente       = expediente.Pacientes.telefono,
+                        CorreoPaciente         = expediente.Pacientes.correo,
+                        DireccionPaciente      = expediente.Pacientes.direccion,
+                        TipoSangre             = expediente.tipo_sangre,
+                        FechaApertura          = expediente.fecha_apertura,
+                        Alergias               = expediente.alergias,
+                        Antecedentes           = expediente.antecedentes,
+                        ConsultasCount         = expediente.HistorialMedico.Count,
+                        Historial              = expediente.HistorialMedico
+                            .OrderByDescending(h => h.fecha_consulta)
+                            .Select(h => new HistorialResumenModel
+                            {
+                                IdHistorial   = h.id_historial,
+                                FechaConsulta = h.fecha_consulta,
+                                NombreDoctor  = h.Doctores.nombre_completo,
+                                Diagnostico   = h.diagnostico,
+                                ProximaCita   = h.proxima_cita
+                            }).ToList()
+                    };
+
+                    return View(model);
                 }
             }
             catch (Exception ex)
@@ -159,7 +196,18 @@ namespace MediCore.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    return View(expediente);
+                    var model = new ExpedienteEditModel
+                    {
+                        IdExpediente   = expediente.id_expediente,
+                        NombrePaciente = expediente.Pacientes.nombre_completo,
+                        CedulaPaciente = expediente.Pacientes.cedula,
+                        FechaApertura  = expediente.fecha_apertura,
+                        TipoSangre     = expediente.tipo_sangre,
+                        Alergias       = expediente.alergias,
+                        Antecedentes   = expediente.antecedentes
+                    };
+
+                    return View(model);
                 }
             }
             catch (Exception ex)
@@ -172,7 +220,7 @@ namespace MediCore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Expedientes model)
+        public ActionResult Edit(ExpedienteEditModel model)
         {
             ViewBag.ActiveMenu = ControladorNombre;
 
@@ -181,7 +229,7 @@ namespace MediCore.Controllers
                 using (var db = new MediCoreEntities())
                 {
                     var expediente = db.Expedientes
-                        .FirstOrDefault(e => e.id_expediente == model.id_expediente);
+                        .FirstOrDefault(e => e.id_expediente == model.IdExpediente);
 
                     if (expediente == null)
                     {
@@ -189,16 +237,16 @@ namespace MediCore.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    expediente.tipo_sangre = model.tipo_sangre;
-                    expediente.alergias = model.alergias;
-                    expediente.antecedentes = model.antecedentes;
+                    expediente.tipo_sangre = model.TipoSangre;
+                    expediente.alergias    = model.Alergias;
+                    expediente.antecedentes = model.Antecedentes;
 
                     db.SaveChanges();
 
                     _utilitario.RegistrarEvento(
                         ControladorNombre,
                         "Edit [POST]",
-                        $"Se actualizó correctamente el expediente ID: {model.id_expediente}"
+                        $"Se actualizó correctamente el expediente ID: {model.IdExpediente}"
                     );
 
                     TempData["Success"] = "El expediente fue actualizado correctamente.";

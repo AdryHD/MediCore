@@ -93,6 +93,15 @@ namespace MediCore.Controllers
                 return View(
                     citas
                         .OrderByDescending(c => c.fecha_cita)
+                        .Select(c => new CitaListaModel
+                        {
+                            IdCita         = c.id_cita,
+                            NombrePaciente = c.Pacientes.nombre_completo,
+                            NombreDoctor   = c.Doctores.nombre_completo,
+                            FechaCita      = c.fecha_cita,
+                            DuracionMin    = c.duracion_min,
+                            Estado         = c.estado
+                        })
                         .ToList());
             }
         }
@@ -191,8 +200,21 @@ namespace MediCore.Controllers
 
                     _utilitarioService.RegistrarEvento(NombreControlador, "Details", $"Consulta de la cita #{id}.");
 
+                    var model = new CitaDetalleModel
+                    {
+                        IdCita            = cita.id_cita,
+                        NombrePaciente    = cita.Pacientes.nombre_completo,
+                        NombreDoctor      = cita.Doctores.nombre_completo,
+                        NombreEspecialidad = cita.Doctores.Especialidades.nombre,
+                        FechaCita         = cita.fecha_cita,
+                        DuracionMin       = cita.duracion_min,
+                        Motivo            = cita.motivo,
+                        MotivoCancelacion = cita.motivo_cancelacion,
+                        Estado            = cita.estado,
+                        FechaCreacion     = cita.fecha_creacion
+                    };
 
-                    return View(cita);
+                    return View(model);
                 }
                 catch (Exception ex)
                 {
@@ -701,6 +723,12 @@ namespace MediCore.Controllers
                 return View(model);
             }
 
+            if (model.AccionFinal != "ALTA" && model.AccionFinal != "NUEVA_CITA")
+            {
+                ModelState.AddModelError("AccionFinal", "Debe seleccionar Dar de Alta o Solicitar seguimiento.");
+                return View(model);
+            }
+
             using (var db = new MediCoreEntities())
             {
                 using (var transaction = db.Database.BeginTransaction())
@@ -720,98 +748,77 @@ namespace MediCore.Controllers
 
                         if (cita.estado != "PENDIENTE")
                         {
-                            TempData["Error"] =
-                                "La cita ya fue atendida o cancelada.";
-
+                            TempData["Error"] = "La cita ya fue atendida o cancelada.";
                             return RedirectToAction("Index");
                         }
 
                         var expediente = db.Expedientes
-                            .FirstOrDefault(e =>
-                                e.id_paciente == cita.id_paciente);
+                            .FirstOrDefault(e => e.id_paciente == cita.id_paciente);
 
                         if (expediente == null)
                         {
-                            TempData["Error"] =
-                                "El paciente no tiene un expediente clínico.";
-
+                            TempData["Error"] = "El paciente no tiene un expediente clínico.";
                             return RedirectToAction("Index");
                         }
 
-                        // evita registrar dos historiales para la misma cita
-                        bool historialExistente = db.HistorialMedico
-                            .Any(h => h.id_cita == cita.id_cita);
-
+                        bool historialExistente = db.HistorialMedico.Any(h => h.id_cita == cita.id_cita);
                         if (historialExistente)
                         {
-                            TempData["Error"] =
-                                "Esta cita ya tiene un registro en el historial médico.";
-
+                            TempData["Error"] = "Esta cita ya tiene un registro en el historial médico.";
                             return RedirectToAction("Index");
                         }
 
                         var historial = new HistorialMedico
                         {
                             id_expediente = expediente.id_expediente,
-                            id_cita = cita.id_cita,
-                            id_doctor = cita.id_doctor,
-
+                            id_cita       = cita.id_cita,
+                            id_doctor     = cita.id_doctor,
                             fecha_consulta = DateTime.Now,
-
-                            sintomas = string.IsNullOrWhiteSpace(model.Sintomas)
-                                ? null
-                                : model.Sintomas.Trim(),
-
-                            diagnostico = model.Diagnostico.Trim(),
-
-                            tratamiento = string.IsNullOrWhiteSpace(model.Tratamiento)
-                                ? null
-                                : model.Tratamiento.Trim(),
-
-                            observaciones = string.IsNullOrWhiteSpace(model.Observaciones)
-                                ? null
-                                : model.Observaciones.Trim(),
-
-                            medicamentos = string.IsNullOrWhiteSpace(model.Medicamentos)
-                                ? null
-                                : model.Medicamentos.Trim(),
-
-                            proxima_cita = model.ProximaCita
+                            sintomas      = string.IsNullOrWhiteSpace(model.Sintomas) ? null : model.Sintomas.Trim(),
+                            diagnostico   = model.Diagnostico.Trim(),
+                            tratamiento   = string.IsNullOrWhiteSpace(model.Tratamiento) ? null : model.Tratamiento.Trim(),
+                            observaciones = string.IsNullOrWhiteSpace(model.Observaciones) ? null : model.Observaciones.Trim(),
+                            medicamentos  = string.IsNullOrWhiteSpace(model.Medicamentos) ? null : model.Medicamentos.Trim(),
                         };
 
                         db.HistorialMedico.Add(historial);
-
-                        // la cita es atendida hasta que el registro clínico se completa.
                         cita.estado = "ATENDIDA";
 
-                        db.SaveChanges();
+                        // Si el doctor solicita seguimiento, crear cita pendiente de programación
+                        if (model.AccionFinal == "NUEVA_CITA")
+                        {
+                            var citaSeguimiento = new Citas
+                            {
+                                id_paciente     = cita.id_paciente,
+                                id_doctor       = cita.id_doctor,
+                                fecha_cita      = DateTime.Now.AddDays(7), // fecha provisional; el recepcionista la asigna
+                                duracion_min    = cita.duracion_min,
+                                motivo          = "Seguimiento: " + model.Diagnostico.Trim(),
+                                estado          = "SOLICITUD",
+                                id_cita_anterior = cita.id_cita,
+                                fecha_creacion  = DateTime.Now
+                            };
+                            db.Citas.Add(citaSeguimiento);
+                        }
 
+                        db.SaveChanges();
                         transaction.Commit();
 
-                        _utilitarioService.RegistrarEvento(NombreControlador, "Edit GET", $"Edición de la cita #{model.IdCita}.");
+                        _utilitarioService.RegistrarEvento(NombreControlador, "Atender POST",
+                            string.Format("Cita #{0} atendida. Acción: {1}.", model.IdCita, model.AccionFinal));
 
-                        TempData["Success"] =
-                            "La atención médica fue registrada correctamente.";
+                        TempData["Success"] = model.AccionFinal == "ALTA"
+                            ? "Paciente dado de alta correctamente."
+                            : "Atención registrada. Se generó una solicitud de seguimiento para el recepcionista.";
 
-                        return RedirectToAction(
-                            "Details",
-                            "Expedientes",
-                            new { id = expediente.id_expediente }
-                        );
+                        return RedirectToAction("Details", "Expedientes", new { id = expediente.id_expediente });
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-
                         _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "Atender POST");
+                        ModelState.AddModelError("", "Ocurrió un error al registrar la atención médica.");
 
-                        ModelState.AddModelError(
-                            "",
-                            "Ocurrió un error al registrar la atención médica."
-                        );
-
-                        // Recuperamos estos datos porque no debemos confiar
-                        // en los valores enviados desde el navegador.
                         var cita = db.Citas
                             .Include(c => c.Pacientes)
                             .Include(c => c.Doctores)
@@ -819,17 +826,10 @@ namespace MediCore.Controllers
 
                         if (cita != null)
                         {
-                            model.NombrePaciente =
-                                cita.Pacientes.nombre_completo;
-
-                            model.NombreDoctor =
-                                cita.Doctores.nombre_completo;
-
-                            model.FechaCita =
-                                cita.fecha_cita;
-
-                            model.Motivo =
-                                cita.motivo;
+                            model.NombrePaciente = cita.Pacientes.nombre_completo;
+                            model.NombreDoctor   = cita.Doctores.nombre_completo;
+                            model.FechaCita      = cita.fecha_cita;
+                            model.Motivo         = cita.motivo;
                         }
 
                         return View(model);
@@ -838,8 +838,126 @@ namespace MediCore.Controllers
             }
         }
 
+        // GET: Citas/ProgramarSeguimiento/5 — solo recepcionista o admin
         [HttpGet]
-        public async Task<ActionResult> Cancelar(int id)
+        public ActionResult ProgramarSeguimiento(int id)
+        {
+            ViewBag.ActiveMenu = "Citas";
+
+            using (var db = new MediCoreEntities())
+            {
+                try
+                {
+                    var cita = db.Citas
+                        .Include(c => c.Pacientes)
+                        .Include(c => c.Doctores)
+                        .FirstOrDefault(c => c.id_cita == id);
+
+                    if (cita == null || cita.estado != "SOLICITUD")
+                    {
+                        TempData["Error"] = "La cita de seguimiento no existe o ya fue programada.";
+                        return RedirectToAction("Index");
+                    }
+
+                    // Obtener diagnóstico de la cita anterior para mostrar contexto
+                    string diagnosticoAnterior = null;
+                    if (cita.id_cita_anterior.HasValue)
+                    {
+                        var historial = db.HistorialMedico
+                            .FirstOrDefault(h => h.id_cita == cita.id_cita_anterior.Value);
+                        diagnosticoAnterior = historial?.diagnostico;
+                    }
+
+                    var model = new ProgramarSeguimientoModel
+                    {
+                        IdCita            = cita.id_cita,
+                        IdCitaAnterior    = cita.id_cita_anterior ?? 0,
+                        IdPaciente        = cita.id_paciente,
+                        IdDoctor          = cita.id_doctor,
+                        NombrePaciente    = cita.Pacientes.nombre_completo,
+                        NombreDoctor      = cita.Doctores.nombre_completo,
+                        DiagnosticoAnterior = diagnosticoAnterior,
+                        FechaCitaAnterior = cita.fecha_cita,
+                        Motivo            = cita.motivo
+                    };
+
+                    return View(model);
+                }
+                catch (Exception ex)
+                {
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "ProgramarSeguimiento GET");
+                    TempData["Error"] = "Ocurrió un error al cargar la programación del seguimiento.";
+                    return RedirectToAction("Index");
+                }
+            }
+        }
+
+        // POST: Citas/ProgramarSeguimiento
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ProgramarSeguimiento(ProgramarSeguimientoModel model)
+        {
+            ViewBag.ActiveMenu = "Citas";
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            using (var db = new MediCoreEntities())
+            {
+                try
+                {
+                    var cita = db.Citas
+                        .Include(c => c.Pacientes)
+                        .Include(c => c.Doctores)
+                        .Include(c => c.Doctores.Especialidades)
+                        .FirstOrDefault(c => c.id_cita == model.IdCita);
+
+                    if (cita == null || cita.estado != "SOLICITUD")
+                    {
+                        TempData["Error"] = "La cita de seguimiento no existe o ya fue programada.";
+                        return RedirectToAction("Index");
+                    }
+
+                    DateTime fechaHora = model.FechaCita.Value.Date.Add(model.HoraCita.Value);
+
+                    cita.fecha_cita = fechaHora;
+                    cita.estado     = "PROGRAMADA";
+                    cita.motivo     = string.IsNullOrWhiteSpace(model.Motivo) ? cita.motivo : model.Motivo.Trim();
+
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    _utilitarioService.RegistrarEvento(NombreControlador, "ProgramarSeguimiento POST",
+                        string.Format("Cita de seguimiento #{0} programada para {1}.", model.IdCita, fechaHora.ToString("dd/MM/yyyy HH:mm")));
+
+                    bool correoEnviado = await _emailService.EnviarConfirmacionCita(
+                        cita.Pacientes.correo,
+                        cita.Pacientes.nombre_completo,
+                        cita.Doctores.nombre_completo,
+                        cita.Doctores.Especialidades.nombre,
+                        cita.id_cita,
+                        cita.fecha_cita.Date,
+                        cita.fecha_cita.TimeOfDay,
+                        cita.estado);
+
+                    TempData["Success"] = correoEnviado
+                        ? string.Format("Cita de seguimiento programada para el {0} a las {1}. Se envió un correo de confirmación al paciente.", fechaHora.ToString("dd/MM/yyyy"), fechaHora.ToString("HH:mm"))
+                        : string.Format("Cita de seguimiento programada para el {0} a las {1}, aunque no fue posible enviar el correo de confirmación.", fechaHora.ToString("dd/MM/yyyy"), fechaHora.ToString("HH:mm"));
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "ProgramarSeguimiento POST");
+                    ModelState.AddModelError("", "Ocurrió un error al programar el seguimiento.");
+                    return View(model);
+                }
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Cancelar(int id, string motivoCancelacion)
         {
             ViewBag.ActiveMenu = "Citas";
 
@@ -862,6 +980,7 @@ namespace MediCore.Controllers
                     }
 
                     cita.estado = "CANCELADA";
+                    cita.motivo_cancelacion = string.IsNullOrWhiteSpace(motivoCancelacion) ? null : motivoCancelacion.Trim();
 
                     db.SaveChanges();
 

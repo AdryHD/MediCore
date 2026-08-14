@@ -1,0 +1,114 @@
+@model MediCore.Models.ProgramarSeguimientoModel
+@{
+    ViewBag.Title = "Programar Seguimiento";
+    ViewBag.ActiveMenu = "Citas";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="section-eyebrow">GESTIÓN MÉDICA</span>
+        <h3>Programar Cita de Seguimiento</h3>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "Citas")" class="btn btn-light">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <!-- Contexto de la cita anterior -->
+        <div class="col-12 col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h4><i class="bi bi-journal-medical me-2" style="color:#01C0BA;"></i>Consulta anterior</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Paciente</small>
+                        <span class="fw-semibold">@Model.NombrePaciente</span>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Doctor</small>
+                        <span class="fw-semibold">@Model.NombreDoctor</span>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Fecha consulta anterior</small>
+                        <span>@Model.FechaCitaAnterior.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model.DiagnosticoAnterior))
+                    {
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Diagnóstico</small>
+                        <p class="mb-0" style="font-size:14px;">@Model.DiagnosticoAnterior</p>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de programación -->
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-calendar-plus me-2" style="color:#01C0BA;"></i>Asignar fecha y hora</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("ProgramarSeguimiento", "Citas", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.IdCita)
+                        @Html.HiddenFor(m => m.IdCitaAnterior)
+                        @Html.HiddenFor(m => m.IdPaciente)
+                        @Html.HiddenFor(m => m.IdDoctor)
+                        @Html.HiddenFor(m => m.NombrePaciente)
+                        @Html.HiddenFor(m => m.NombreDoctor)
+                        @Html.HiddenFor(m => m.DiagnosticoAnterior)
+                        @Html.HiddenFor(m => m.FechaCitaAnterior)
+
+                        if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-light-danger mb-3">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                @Html.ValidationSummary(true)
+                            </div>
+                        }
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Fecha <span class="text-danger">*</span></label>
+                                <select id="selectFecha" name="FechaCita" class="form-select" data-doctor-id="@Model.IdDoctor">
+                                    <option value="">-- Cargando fechas... --</option>
+                                </select>
+                                @Html.ValidationMessageFor(m => m.FechaCita, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Horario <span class="text-danger">*</span></label>
+                                <select id="selectHora" name="HoraCita" class="form-select" disabled>
+                                    <option value="">-- Seleccione fecha primero --</option>
+                                </select>
+                                @Html.ValidationMessageFor(m => m.HoraCita, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Notas de seguimiento</label>
+                                @Html.TextAreaFor(m => m.Motivo, new { @class = "form-control", rows = "3", placeholder = "Observaciones para esta cita de seguimiento..." })
+                            </div>
+                        </div>
+
+                        <div class="mt-4 d-flex gap-2 justify-content-end">
+                            <a href="@Url.Action("Index", "Citas")" class="btn btn-light">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-calendar-check me-1"></i>Programar Cita
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="@Url.Content("~/Scripts/programarSeguimiento.js")?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/programarSeguimiento.js")).Ticks"></script>
+}

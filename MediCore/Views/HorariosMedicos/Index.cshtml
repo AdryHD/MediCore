@@ -1,10 +1,8 @@
-﻿@model IEnumerable<MediCore.EF.HorariosMedicos>
+﻿@model IEnumerable<MediCore.Models.HorarioListaModel>
 @{
     ViewBag.Title = "Horarios Médicos";
     ViewBag.ActiveMenu = "Horarios";
 
-    var nombreDoctor = ViewBag.NombreDoctor as System.Collections.Generic.Dictionary<int, string>;
-    var diasSemana = ViewBag.DiasSemana as System.Collections.Generic.Dictionary<byte, string>;
     int paginaActual = ViewBag.PaginaActual ?? 1;
     int totalPaginas = ViewBag.TotalPaginas ?? 0;
     bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
@@ -101,7 +99,10 @@
                             <th>Hora fin</th>
                             <th>Duración (min)</th>
                             <th>Estado</th>
+                            @if (esAdmin)
+                            {
                             <th class="text-end">Acciones</th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -110,14 +111,14 @@
                             foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.id_horario</td>
-                                    <td class="fw-semibold">@(nombreDoctor != null && nombreDoctor.ContainsKey(item.id_doctor) ? nombreDoctor[item.id_doctor] : "—")</td>
-                                    <td>@(diasSemana != null && diasSemana.ContainsKey(item.dia_semana) ? diasSemana[item.dia_semana] : "—")</td>
-                                    <td>@item.hora_inicio.ToString(@"hh\:mm")</td>
-                                    <td>@item.hora_fin.ToString(@"hh\:mm")</td>
-                                    <td>@item.duracion_cita_min</td>
+                                    <td>@item.IdHorario</td>
+                                    <td class="fw-semibold">@item.NombreDoctor</td>
+                                    <td>@item.NombreDia</td>
+                                    <td>@item.HoraInicio.ToString(@"hh\:mm")</td>
+                                    <td>@item.HoraFin.ToString(@"hh\:mm")</td>
+                                    <td>@item.DuracionCitaMin</td>
                                     <td>
-                                        @if (item.estado == "ACTIVO")
+                                        @if (item.Estado == "ACTIVO")
                                         {
                                             <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
                                         }
@@ -126,9 +127,9 @@
                                             <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Inactivo</span>
                                         }
                                     </td>
+                                    @if (esAdmin)
+                                    {
                                     <td class="text-end">
-                                        @if (esAdmin)
-                                        {
                                         <a href="@Url.Action("Details", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                             <i class="bi bi-eye"></i>
                                         </a>
@@ -153,15 +154,15 @@
                                                 </button>
                                             }
                                         }
-                                        }
                                     </td>
+                                    }
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="8" class="empty-state-cell">
+                                <td colspan="@(esAdmin ? 8 : 7)" class="empty-state-cell">
                                     <div class="empty-state">
                                         <div class="empty-state-icon-wrap">
                                             <i class="bi bi-clock"></i>

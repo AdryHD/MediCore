@@ -1,4 +1,4 @@
-@model MediCore.EF.Citas
+@model MediCore.Models.CitaDetalleModel
 @{
     ViewBag.Title = "Detalle de la Cita";
     ViewBag.ActiveMenu = "Citas";
@@ -25,40 +25,40 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <small class="text-muted">Paciente</small>
-                    <div class="fw-semibold">@Model.Pacientes.nombre_completo</div>
+                    <div class="fw-semibold">@Model.NombrePaciente</div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <small class="text-muted">Doctor</small>
-                    <div class="fw-semibold">@Model.Doctores.nombre_completo</div>
+                    <div class="fw-semibold">@Model.NombreDoctor</div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <small class="text-muted">Especialidad</small>
-                    <div class="fw-semibold">@Model.Doctores.Especialidades.nombre</div>
+                    <div class="fw-semibold">@Model.NombreEspecialidad</div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <small class="text-muted">Fecha</small>
-                    <div class="fw-semibold">@Model.fecha_cita.ToString("dd/MM/yyyy")</div>
+                    <div class="fw-semibold">@Model.FechaCita.ToString("dd/MM/yyyy")</div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <small class="text-muted">Hora</small>
-                    <div class="fw-semibold">@Model.fecha_cita.ToString("HH:mm")</div>
+                    <div class="fw-semibold">@Model.FechaCita.ToString("HH:mm")</div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <small class="text-muted">Duración</small>
-                    <div class="fw-semibold">@Model.duracion_min minutos</div>
+                    <div class="fw-semibold">@Model.DuracionMin minutos</div>
                 </div>
                 <div class="col-md-12 mb-3">
                     <small class="text-muted">Motivo</small>
-                    <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.motivo) ? "No registrado" : Model.motivo)</div>
+                    <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.Motivo) ? "No registrado" : Model.Motivo)</div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <small class="text-muted">Estado</small>
                     <div class="mt-1">
-                        @if (Model.estado == "PENDIENTE")
+                        @if (Model.Estado == "PENDIENTE")
                         {
                             <span class="badge-status pending"><i class="bi bi-hourglass-split"></i>Pendiente</span>
                         }
-                        else if (Model.estado == "ATENDIDA")
+                        else if (Model.Estado == "ATENDIDA")
                         {
                             <span class="badge-status done"><i class="bi bi-check-circle"></i>Atendida</span>
                         }
@@ -68,9 +68,16 @@
                         }
                     </div>
                 </div>
+                @if (Model.Estado == "CANCELADA" && !string.IsNullOrWhiteSpace(Model.MotivoCancelacion))
+                {
+                <div class="col-md-6 mb-3">
+                    <small class="text-muted">Motivo de cancelación</small>
+                    <div class="fw-semibold">@Model.MotivoCancelacion</div>
+                </div>
+                }
                 <div class="col-md-6 mb-3">
                     <small class="text-muted">Fecha de registro</small>
-                    <div class="fw-semibold">@Model.fecha_creacion.ToString("dd/MM/yyyy HH:mm")</div>
+                    <div class="fw-semibold">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</div>
                 </div>
             </div>
         </div>

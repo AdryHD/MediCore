@@ -1,8 +1,7 @@
-@model MediCore.EF.Pacientes
+@model MediCore.Models.PacienteDetalleModel
 @{
     ViewBag.Title = "Detalle de Paciente";
     ViewBag.ActiveMenu = "Pacientes";
-    var expediente = ViewBag.Expediente as MediCore.EF.Expedientes;
 }
 
 <div class="page-heading">
@@ -28,40 +27,40 @@
                     <div class="row">
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Nombre completo</label>
-                            <p class="fw-semibold mb-0">@Model.nombre_completo</p>
+                            <p class="fw-semibold mb-0">@Model.NombreCompleto</p>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Cédula</label>
-                            <p class="fw-semibold mb-0">@Model.cedula</p>
+                            <p class="fw-semibold mb-0">@Model.Cedula</p>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Fecha de nacimiento</label>
-                            <p class="fw-semibold mb-0">@Model.fecha_nacimiento.ToString("dd/MM/yyyy")</p>
+                            <p class="fw-semibold mb-0">@Model.FechaNacimiento.ToString("dd/MM/yyyy")</p>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Sexo</label>
-                            <p class="fw-semibold mb-0">@Model.sexo</p>
+                            <p class="fw-semibold mb-0">@Model.Sexo</p>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Teléfono</label>
-                            <p class="fw-semibold mb-0">@(string.IsNullOrWhiteSpace(Model.telefono) ? "—" : Model.telefono)</p>
+                            <p class="fw-semibold mb-0">@(string.IsNullOrWhiteSpace(Model.Telefono) ? "—" : Model.Telefono)</p>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Correo electrónico</label>
-                            <p class="fw-semibold mb-0">@Model.correo</p>
+                            <p class="fw-semibold mb-0">@Model.Correo</p>
                         </div>
                         <div class="col-12 mb-3">
                             <label class="form-label">Dirección</label>
-                            <p class="fw-semibold mb-0">@(string.IsNullOrWhiteSpace(Model.direccion) ? "—" : Model.direccion)</p>
+                            <p class="fw-semibold mb-0">@(string.IsNullOrWhiteSpace(Model.Direccion) ? "—" : Model.Direccion)</p>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Tipo de sangre</label>
-                            <p class="fw-semibold mb-0">@(expediente != null && !string.IsNullOrWhiteSpace(expediente.tipo_sangre) ? expediente.tipo_sangre : "—")</p>
+                            <p class="fw-semibold mb-0">@(!string.IsNullOrWhiteSpace(Model.TipoSangre) ? Model.TipoSangre : "—")</p>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Estado</label>
                             <p class="mb-0">
-                                @if (Model.estado == "ACTIVO")
+                                @if (Model.Estado == "ACTIVO")
                                 {
                                     <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
                                 }
@@ -73,15 +72,15 @@
                         </div>
                         <div class="col-12 mb-3">
                             <label class="form-label">Alergias</label>
-                            <p class="fw-semibold mb-0">@(expediente != null && !string.IsNullOrWhiteSpace(expediente.alergias) ? expediente.alergias : "—")</p>
+                            <p class="fw-semibold mb-0">@(!string.IsNullOrWhiteSpace(Model.Alergias) ? Model.Alergias : "—")</p>
                         </div>
                         <div class="col-12 mb-3">
                             <label class="form-label">Antecedentes médicos</label>
-                            <p class="fw-semibold mb-0">@(expediente != null && !string.IsNullOrWhiteSpace(expediente.antecedentes) ? expediente.antecedentes : "—")</p>
+                            <p class="fw-semibold mb-0">@(!string.IsNullOrWhiteSpace(Model.Antecedentes) ? Model.Antecedentes : "—")</p>
                         </div>
                     </div>
 
-                    <a href="@Url.Action("Edit", "Pacientes", new { id = Model.id_paciente })" class="btn btn-primary">
+                    <a href="@Url.Action("Edit", "Pacientes", new { id = Model.IdPaciente })" class="btn btn-primary">
                         <i class="bi bi-pencil-square me-1"></i>Editar
                     </a>
                 </div>

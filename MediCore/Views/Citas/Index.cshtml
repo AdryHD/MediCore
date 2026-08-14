@@ -1,9 +1,11 @@
-@model IEnumerable<MediCore.EF.Citas>
+@model IEnumerable<MediCore.Models.CitaListaModel>
 @{
     ViewBag.Title = "Gestión de Citas";
     ViewBag.ActiveMenu = "Citas";
     bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
     bool esDoctor = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 0;
 }
 
 <style>
@@ -22,6 +24,7 @@
     .badge-status.canceled   { background: #fff5f5; color: #9b1c1c; }
     .badge-status.confirmed  { background: #e0f2fe; color: #075985; }
     .badge-status.programmed { background: #ede9fe; color: #5b21b6; }
+    .badge-status.solicitud  { background: #fef3c7; color: #92400e; }
 </style>
 
 <div class="page-heading">
@@ -70,6 +73,7 @@
                         <select name="estado" class="form-select">
                             <option value="">Todos</option>
                             <option value="PENDIENTE">Pendiente</option>
+                            <option value="SOLICITUD">Seguimiento pendiente</option>
                             <option value="ATENDIDA">Atendida</option>
                             <option value="CANCELADA">Cancelada</option>
                         </select>
@@ -113,15 +117,15 @@
                             foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.id_cita</td>
-                                    <td class="fw-semibold">@item.Pacientes.nombre_completo</td>
-                                    <td>@item.Doctores.nombre_completo</td>
-                                    <td>@item.fecha_cita.ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td>@item.duracion_min min</td>
+                                    <td>@item.IdCita</td>
+                                    <td class="fw-semibold">@item.NombrePaciente</td>
+                                    <td>@item.NombreDoctor</td>
+                                    <td>@item.FechaCita.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@item.DuracionMin min</td>
                                     <td>
                                         @{
                                             string badgeClass, badgeIcon, badgeText;
-                                            switch (item.estado?.ToUpper())
+                                            switch (item.Estado?.ToUpper())
                                             {
                                                 case "PENDIENTE":
                                                     badgeClass = "pending"; badgeIcon = "bi-hourglass-split"; badgeText = "Pendiente"; break;
@@ -133,47 +137,61 @@
                                                     badgeClass = "confirmed"; badgeIcon = "bi-check2-circle"; badgeText = "Confirmada"; break;
                                                 case "PROGRAMADA":
                                                     badgeClass = "programmed"; badgeIcon = "bi-calendar-check"; badgeText = "Programada"; break;
+                                                case "SOLICITUD":
+                                                    badgeClass = "solicitud"; badgeIcon = "bi-calendar-plus"; badgeText = "Seguimiento pendiente"; break;
                                                 default:
-                                                    badgeClass = "pending"; badgeIcon = "bi-circle"; badgeText = item.estado?.ToLower() ?? "—"; break;
+                                                    badgeClass = "pending"; badgeIcon = "bi-circle"; badgeText = item.Estado?.ToLower() ?? "—"; break;
                                             }
                                         }
                                         <span class="badge-status @badgeClass"><i class="bi @badgeIcon"></i>@badgeText</span>
                                     </td>
                                     <td class="text-end">
-                                        @if (item.estado == "PENDIENTE")
+                                        @if (item.Estado == "PENDIENTE")
                                         {
-                                            <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-secondary" title="Ver detalle">
+                                            <a href="@Url.Action("Details", "Citas", new { id = item.IdCita })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="@Url.Action("Edit", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-primary" title="Editar">
+                                            <a href="@Url.Action("Edit", "Citas", new { id = item.IdCita })" class="btn btn-action btn-light-primary" title="Editar">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             if (esAdmin || esDoctor)
                                             {
-                                            <a href="@Url.Action("Atender", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-success" title="Atender">
+                                            <a href="@Url.Action("Atender", "Citas", new { id = item.IdCita })" class="btn btn-action btn-light-success" title="Atender">
                                                 <i class="bi bi-heart-fill"></i>
                                             </a>
                                             }
-                                            <a href="@Url.Action("Cancelar", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-danger btn-confirmar-cancelar" title="Cancelar"
-                                               data-cita-id="@item.id_cita">
+                                            <a href="@Url.Action("Cancelar", "Citas", new { id = item.IdCita })" class="btn btn-action btn-light-danger btn-confirmar-cancelar" title="Cancelar"
+                                               data-cita-id="@item.IdCita">
                                                 <i class="bi bi-x-circle"></i>
                                             </a>
                                         }
-                                        else if (item.estado == "ATENDIDA")
+                                        else if (item.Estado == "SOLICITUD")
                                         {
-                                            <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-secondary" title="Ver">
+                                            <a href="@Url.Action("Details", "Citas", new { id = item.IdCita })" class="btn btn-action btn-light-secondary" title="Ver">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            if (!esDoctor)
+                                            {
+                                            <a href="@Url.Action("ProgramarSeguimiento", "Citas", new { id = item.IdCita })" class="btn btn-action btn-light-success" title="Programar seguimiento">
+                                                <i class="bi bi-calendar-plus"></i>
+                                            </a>
+                                            }
+                                        }
+                                        else if (item.Estado == "ATENDIDA")
+                                        {
+                                            <a href="@Url.Action("Details", "Citas", new { id = item.IdCita })" class="btn btn-action btn-light-secondary" title="Ver">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                             if (esAdmin || esDoctor)
                                             {
-                                            <a href="@Url.Action("Index", "Expedientes", new { idCita = item.id_cita })" class="btn btn-action btn-light-primary" title="Ver expediente">
+                                            <a href="@Url.Action("Index", "Expedientes", new { idCita = item.IdCita })" class="btn btn-action btn-light-primary" title="Ver expediente">
                                                 <i class="bi bi-folder2-open"></i>
                                             </a>
                                             }
                                         }
                                         else
                                         {
-                                            <a href="@Url.Action("Details", "Citas", new { id = item.id_cita })" class="btn btn-action btn-light-secondary" title="Ver">
+                                            <a href="@Url.Action("Details", "Citas", new { id = item.IdCita })" class="btn btn-action btn-light-secondary" title="Ver">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                         }
@@ -199,6 +217,27 @@
                 </table>
             </div>
         </div>
+        @if (totalPaginas > 1)
+        {
+            <div class="card-footer">
+                <nav aria-label="Paginación de citas">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Citas", new { idPaciente = ViewBag.FiltroPaciente, idDoctor = ViewBag.FiltroDoctor, estado = ViewBag.FiltroEstado, fecha = ViewBag.FiltroFecha, page = paginaActual - 1 })">Anterior</a>
+                        </li>
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "Citas", new { idPaciente = ViewBag.FiltroPaciente, idDoctor = ViewBag.FiltroDoctor, estado = ViewBag.FiltroEstado, fecha = ViewBag.FiltroFecha, page = i })">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Citas", new { idPaciente = ViewBag.FiltroPaciente, idDoctor = ViewBag.FiltroDoctor, estado = ViewBag.FiltroEstado, fecha = ViewBag.FiltroFecha, page = paginaActual + 1 })">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
     </div>
 </section>
 
@@ -211,24 +250,24 @@
                 </div>
                 <h5 class="mc-modal-title">¿Cancelar cita?</h5>
                 <p class="mc-modal-text">Esta acción cancelará la cita seleccionada. No podrá deshacerse.</p>
+                <div class="text-start mt-3">
+                    <label for="motivoCancelacionInput" class="form-label fw-semibold" style="font-size:.875rem;">Motivo de cancelación <span class="text-muted fw-normal">(opcional)</span></label>
+                    <textarea id="motivoCancelacionInput" name="motivoCancelacion" class="form-control" rows="3" maxlength="500" placeholder="Ej. Paciente solicitó reprogramación..."></textarea>
+                </div>
             </div>
             <div class="modal-footer border-0 justify-content-center">
                 <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">Volver</button>
-                <a href="#" id="mcCancelarBtn" class="btn btn-light-danger">Sí, cancelar</a>
+                <form id="mcCancelarForm" method="post" style="display:inline;" data-cancelar-url="@Url.Action("Cancelar", "Citas")">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="mcCancelarId" />
+                    <input type="hidden" name="motivoCancelacion" id="mcCancelarMotivo" />
+                    <button type="submit" class="btn btn-light-danger">Sí, cancelar</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        document.querySelectorAll('.btn-confirmar-cancelar').forEach(function (btn) {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                var url = btn.getAttribute('href');
-                document.getElementById('mcCancelarBtn').setAttribute('href', url);
-                new bootstrap.Modal(document.getElementById('mcCancelarModal')).show();
-            });
-        });
-    </script>
+    <script src="~/Scripts/citasIndex.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/citasIndex.js")).Ticks"></script>
 }

@@ -1,4 +1,4 @@
-@model MediCore.EF.HistorialMedico
+@model MediCore.Models.HistorialDetalleModel
 @{
     ViewBag.Title = "Detalle de Consulta";
     ViewBag.ActiveMenu = "HistorialMedico";
@@ -35,7 +35,7 @@
                     </small>
 
                     <div class="fw-bold">
-                        @Model.Expedientes.Pacientes.nombre_completo
+                        @Model.NombrePaciente
                     </div>
 
                 </div>
@@ -48,7 +48,7 @@
                     </small>
 
                     <div class="fw-bold">
-                        @Model.Expedientes.Pacientes.cedula
+                        @Model.CedulaPaciente
                     </div>
 
                 </div>
@@ -61,7 +61,7 @@
                     </small>
 
                     <div class="fw-bold">
-                        @Model.Expedientes.Pacientes.sexo
+                        @Model.SexoPaciente
                     </div>
 
                 </div>
@@ -89,7 +89,7 @@
                     </small>
 
                     <div class="fw-bold">
-                        @Model.fecha_consulta.ToString("dd/MM/yyyy HH:mm")
+                        @Model.FechaConsulta.ToString("dd/MM/yyyy HH:mm")
                     </div>
 
                 </div>
@@ -102,7 +102,7 @@
                     </small>
 
                     <div class="fw-bold">
-                        @Model.Doctores.nombre_completo
+                        @Model.NombreDoctor
                     </div>
 
                 </div>
@@ -115,7 +115,7 @@
                     </small>
 
                     <div class="fw-bold">
-                        @Model.Doctores.Especialidades.nombre
+                        @Model.NombreEspecialidad
                     </div>
 
                 </div>
@@ -132,7 +132,7 @@
                     </small>
 
                     <div class="fw-bold">
-                        #@Model.id_expediente
+                        #@Model.IdExpediente
                     </div>
 
                 </div>
@@ -146,9 +146,9 @@
 
                     <div class="fw-bold">
 
-                        @if (Model.id_cita.HasValue)
+                        @if (Model.IdCita.HasValue)
                         {
-                            <span>#@Model.id_cita.Value</span>
+                            <span>#@Model.IdCita.Value</span>
                         }
                         else
                         {
@@ -187,9 +187,9 @@
 
                 <div class="border rounded p-3">
 
-                    @if (!string.IsNullOrWhiteSpace(Model.sintomas))
+                    @if (!string.IsNullOrWhiteSpace(Model.Sintomas))
                     {
-                        @Model.sintomas
+                        @Model.Sintomas
                     }
                     else
                     {
@@ -215,7 +215,7 @@
                 <div class="border rounded p-3">
 
                     <strong>
-                        @Model.diagnostico
+                        @Model.Diagnostico
                     </strong>
 
                 </div>
@@ -234,9 +234,9 @@
 
                 <div class="border rounded p-3">
 
-                    @if (!string.IsNullOrWhiteSpace(Model.tratamiento))
+                    @if (!string.IsNullOrWhiteSpace(Model.Tratamiento))
                     {
-                        @Model.tratamiento
+                        @Model.Tratamiento
                     }
                     else
                     {
@@ -263,9 +263,9 @@
 
                     <div class="border rounded p-3 h-100">
 
-                        @if (!string.IsNullOrWhiteSpace(Model.medicamentos))
+                        @if (!string.IsNullOrWhiteSpace(Model.Medicamentos))
                         {
-                            @Model.medicamentos
+                            @Model.Medicamentos
                         }
                         else
                         {
@@ -290,9 +290,9 @@
 
                     <div class="border rounded p-3 h-100">
 
-                        @if (!string.IsNullOrWhiteSpace(Model.observaciones))
+                        @if (!string.IsNullOrWhiteSpace(Model.Observaciones))
                         {
-                            @Model.observaciones
+                            @Model.Observaciones
                         }
                         else
                         {
@@ -319,10 +319,10 @@
 
                 <div class="border rounded p-3">
 
-                    @if (Model.proxima_cita.HasValue)
+                    @if (Model.ProximaCita.HasValue)
                     {
                         <span class="fw-bold">
-                            @Model.proxima_cita.Value.ToString("dd/MM/yyyy")
+                            @Model.ProximaCita.Value.ToString("dd/MM/yyyy")
                         </span>
                     }
                     else
@@ -342,7 +342,7 @@
 
 
     <div class="d-flex gap-2 justify-content-end">
-        <a href="@Url.Action("Details", "Expedientes", new { id = Model.id_expediente })" class="btn btn-light-secondary">
+        <a href="@Url.Action("Details", "Expedientes", new { id = Model.IdExpediente })" class="btn btn-light-secondary">
             <i class="bi bi-folder2-open me-1"></i>Ver Expediente
         </a>
         <a href="@Url.Action("Index", "HistorialMedico")" class="btn btn-light-secondary">

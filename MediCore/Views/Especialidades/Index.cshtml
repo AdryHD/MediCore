@@ -1,8 +1,10 @@
-﻿@model IEnumerable<MediCore.EF.Especialidades>
+﻿@model IEnumerable<MediCore.Models.EspecialidadListaModel>
 @{
     ViewBag.Title = "Especialidades";
     ViewBag.ActiveMenu = "Especialidades";
     bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 0;
 }
 
 <div class="page-heading">
@@ -50,7 +52,10 @@
                             <th>Descripción</th>
                             <th>Estado</th>
                             <th>Fecha Creación</th>
+                            @if (esAdmin)
+                            {
                             <th class="text-end">Acciones</th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -59,11 +64,11 @@
                             foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.id_especialidad</td>
-                                    <td class="fw-semibold">@item.nombre</td>
-                                    <td>@(string.IsNullOrWhiteSpace(item.descripcion) ? "—" : item.descripcion)</td>
+                                    <td>@item.IdEspecialidad</td>
+                                    <td class="fw-semibold">@item.Nombre</td>
+                                    <td>@(string.IsNullOrWhiteSpace(item.Descripcion) ? "—" : item.Descripcion)</td>
                                     <td>
-                                        @if (item.estado == "ACTIVO")
+                                        @if (item.Estado == "ACTIVO")
                                         {
                                             <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
                                         }
@@ -72,22 +77,22 @@
                                             <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Inactivo</span>
                                         }
                                     </td>
-                                    <td>@item.fecha_creacion.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                                    @if (esAdmin)
+                                    {
                                     <td class="text-end">
-                                        @if (esAdmin)
-                                        {
-                                        <a href="@Url.Action("Edit", "Especialidades", new { id = item.id_especialidad })" class="btn btn-action btn-light-primary" title="Editar">
+                                    <a href="@Url.Action("Edit", "Especialidades", new { id = item.IdEspecialidad })" class="btn btn-action btn-light-primary" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        if (item.estado == "ACTIVO")
+                                        if (item.Estado == "ACTIVO")
                                         {
-                                            using (Html.BeginForm("CambiarEstado", "Especialidades", FormMethod.Post, new { id = "form-estado-" + item.id_especialidad, style = "display:inline-block;" }))
+                                            using (Html.BeginForm("CambiarEstado", "Especialidades", FormMethod.Post, new { id = "form-estado-" + item.IdEspecialidad, style = "display:inline-block;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@item.id_especialidad" />
+                                                <input type="hidden" name="id" value="@item.IdEspecialidad" />
                                                 <input type="hidden" name="nuevoEstado" value="INACTIVO" />
                                                 <button type="button" class="btn btn-action btn-light-danger btn-confirmar-estado" title="Desactivar"
-                                                        data-form-id="form-estado-@item.id_especialidad" data-nombre="@item.nombre">
+                                                        data-form-id="form-estado-@item.IdEspecialidad" data-nombre="@item.Nombre">
                                                     <i class="bi bi-toggle-off"></i>
                                                 </button>
                                             }
@@ -97,22 +102,22 @@
                                             using (Html.BeginForm("CambiarEstado", "Especialidades", FormMethod.Post, new { style = "display:inline-block;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@item.id_especialidad" />
+                                                <input type="hidden" name="id" value="@item.IdEspecialidad" />
                                                 <input type="hidden" name="nuevoEstado" value="ACTIVO" />
                                                 <button type="submit" class="btn btn-action btn-light-success" title="Activar">
                                                     <i class="bi bi-toggle-on"></i>
                                                 </button>
                                             }
                                         }
-                                        }
                                     </td>
+                                    }
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="6" class="empty-state-cell">
+                                <td colspan="@(esAdmin ? 6 : 5)" class="empty-state-cell">
                                     <div class="empty-state">
                                         <div class="empty-state-icon-wrap">
                                             <i class="bi bi-award"></i>
@@ -127,10 +132,29 @@
                 </table>
             </div>
         </div>
+        @if (totalPaginas > 1)
+        {
+            <div class="card-footer">
+                <nav aria-label="Paginación de especialidades">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Especialidades", new { page = paginaActual - 1 })">Anterior</a>
+                        </li>
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "Especialidades", new { page = i })">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Especialidades", new { page = paginaActual + 1 })">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
     </div>
 </section>
-
-@* Modal de confirmación para desactivar una especialidad *@
 <div class="modal fade" id="mcConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content mc-modal">

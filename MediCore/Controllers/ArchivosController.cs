@@ -30,7 +30,7 @@ namespace MediCore.Controllers
                     var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
                     var idDoctorSesion = Session["IdDoctor"] as int?;
 
-                    List<Archivos> archivos;
+                    List<ArchivoListaModel> archivos;
                     if (esDoctorRol && idDoctorSesion.HasValue)
                     {
                         var idsPacientes = db.Citas
@@ -41,11 +41,31 @@ namespace MediCore.Controllers
                             .Where(a => a.id_expediente != null &&
                                         idsPacientes.Contains(a.Expedientes.id_paciente))
                             .OrderBy(a => a.nombre)
+                            .Select(a => new ArchivoListaModel
+                            {
+                                IdArchivo    = a.id_archivo,
+                                Nombre       = a.nombre,
+                                TipoMime     = a.tipo_mime,
+                                TamanioBytes = a.tamano_bytes,
+                                FechaCarga   = a.fecha_carga,
+                                Estado       = a.estado
+                            })
                             .ToList();
                     }
                     else
                     {
-                        archivos = db.Archivos.OrderBy(a => a.nombre).ToList();
+                        archivos = db.Archivos
+                            .OrderBy(a => a.nombre)
+                            .Select(a => new ArchivoListaModel
+                            {
+                                IdArchivo    = a.id_archivo,
+                                Nombre       = a.nombre,
+                                TipoMime     = a.tipo_mime,
+                                TamanioBytes = a.tamano_bytes,
+                                FechaCarga   = a.fecha_carga,
+                                Estado       = a.estado
+                            })
+                            .ToList();
                     }
                     ViewBag.EsDoctor = esDoctorRol;
 
@@ -61,7 +81,7 @@ namespace MediCore.Controllers
                 {
                     _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cargar los archivos.";
-                    return View(new List<Archivos>());
+                    return View(new List<ArchivoListaModel>());
                 }
             }
         }
@@ -329,7 +349,23 @@ namespace MediCore.Controllers
                 }
 
                 ViewBag.ActiveMenu = NombreControlador;
-                return View(archivo);
+
+                var model = new ArchivoDetalleModel
+                {
+                    IdArchivo      = archivo.id_archivo,
+                    Nombre         = archivo.nombre,
+                    Estado         = archivo.estado,
+                    TipoMime       = archivo.tipo_mime,
+                    TamanioBytes   = archivo.tamano_bytes,
+                    FechaCarga     = archivo.fecha_carga,
+                    IdExpediente   = archivo.id_expediente,
+                    NombrePaciente = archivo.Expedientes?.Pacientes?.nombre_completo,
+                    IdUsuario      = archivo.id_usuario,
+                    NombreUsuario  = archivo.tbUsuario?.Nombre,
+                    TieneContenido = archivo.contenido != null && archivo.contenido.Length > 0
+                };
+
+                return View(model);
             }
         }
     }

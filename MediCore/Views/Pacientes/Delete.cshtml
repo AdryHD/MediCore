@@ -1,4 +1,4 @@
-@model MediCore.EF.Pacientes
+@model MediCore.Models.PacienteDetalleModel
 @{
     ViewBag.Title = "Desactivar Paciente";
     ViewBag.ActiveMenu = "Pacientes";
@@ -34,18 +34,18 @@
                     <div class="row">
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Nombre completo</label>
-                            <p class="fw-semibold mb-0">@Model.nombre_completo</p>
+                            <p class="fw-semibold mb-0">@Model.NombreCompleto</p>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label class="form-label">Cédula</label>
-                            <p class="fw-semibold mb-0">@Model.cedula</p>
+                            <p class="fw-semibold mb-0">@Model.Cedula</p>
                         </div>
                     </div>
 
                     @using (Html.BeginForm("Delete", "Pacientes", FormMethod.Post))
                     {
                         @Html.AntiForgeryToken()
-                        @Html.Hidden("id", Model.id_paciente)
+                        @Html.Hidden("id", Model.IdPaciente)
                         <button type="submit" class="btn btn-light-danger">
                             <i class="bi bi-toggle-off me-1"></i>Sí, desactivar
                         </button>

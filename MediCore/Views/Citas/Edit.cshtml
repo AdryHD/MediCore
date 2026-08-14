@@ -26,6 +26,7 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.IdCita)
+                <span id="citas-init-data" data-doctor="@Model.IdDoctor" data-hora="@Model.Hora.ToString(@"hh\:mm")"></span>
                 @Html.ValidationSummary(true, "", new { @class = "alert alert-light-danger" })
 
                 <div class="row">
@@ -83,9 +84,5 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script>
-        var doctorSeleccionado = '@Model.IdDoctor';
-        var horaSeleccionada = '@Model.Hora.ToString(@"hh\:mm")';
-    </script>
     <script src="~/Scripts/citas.js?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Scripts/citas.js")).Ticks"></script>
 }

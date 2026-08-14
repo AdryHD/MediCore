@@ -1,9 +1,11 @@
-﻿@model IEnumerable<MediCore.EF.Archivos>
+﻿@model IEnumerable<MediCore.Models.ArchivoListaModel>
 @{
     ViewBag.Title = "Archivos";
     ViewBag.ActiveMenu = "Archivos";
     bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
     bool esDoctor = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 0;
 }
 
 <div class="page-heading">
@@ -86,26 +88,26 @@
                             foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.id_archivo</td>
+                                    <td>@item.IdArchivo</td>
                                     <td class="fw-semibold">
-                                        <i class="bi bi-file-earmark-pdf text-danger me-1"></i>@item.nombre
+                                        <i class="bi bi-file-earmark-pdf text-danger me-1"></i>@item.Nombre
                                     </td>
-                                    <td>@(string.IsNullOrWhiteSpace(item.tipo_mime) ? "N/A" : item.tipo_mime)</td>
+                                    <td>@(string.IsNullOrWhiteSpace(item.TipoMime) ? "N/A" : item.TipoMime)</td>
                                     <td>
-                                        @if (item.tamano_bytes > 0)
+                                        @if (item.TamanioBytes > 0)
                                         {
-                                            @(item.tamano_bytes >= 1048576
-                                                ? string.Format("{0:F2} MB", (double)item.tamano_bytes / 1048576)
-                                                : string.Format("{0:F2} KB", (double)item.tamano_bytes / 1024))
+                                            @(item.TamanioBytes >= 1048576
+                                                ? string.Format("{0:F2} MB", (double)item.TamanioBytes / 1048576)
+                                                : string.Format("{0:F2} KB", (double)item.TamanioBytes / 1024))
                                         }
                                         else
                                         {
                                             <span>0 Bytes</span>
                                         }
                                     </td>
-                                    <td>@item.fecha_carga.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@item.FechaCarga.ToString("dd/MM/yyyy HH:mm")</td>
                                     <td>
-                                        @if (item.estado == "ACTIVO")
+                                        @if (item.Estado == "ACTIVO")
                                         {
                                             <span class="badge-status done"><i class="bi bi-check-circle"></i>Activo</span>
                                         }
@@ -115,23 +117,23 @@
                                         }
                                     </td>
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "Archivos", new { id = item.id_archivo })" class="btn btn-action btn-light-secondary" title="Ver detalle">
+                                        <a href="@Url.Action("Details", "Archivos", new { id = item.IdArchivo })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         @if (esAdmin)
                                         {
-                                        <a href="@Url.Action("Edit", "Archivos", new { id = item.id_archivo })" class="btn btn-action btn-light-primary" title="Editar archivo">
+                                        <a href="@Url.Action("Edit", "Archivos", new { id = item.IdArchivo })" class="btn btn-action btn-light-primary" title="Editar archivo">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         using (Html.BeginForm("CambiarEstado", "Archivos", FormMethod.Post, new { @class = "d-inline" }))
                                         {
                                             @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@item.id_archivo" />
-                                            <input type="hidden" name="nuevoEstado" value="@(item.estado == "ACTIVO" ? "INACTIVO" : "ACTIVO")" />
+                                            <input type="hidden" name="id" value="@item.IdArchivo" />
+                                            <input type="hidden" name="nuevoEstado" value="@(item.Estado == "ACTIVO" ? "INACTIVO" : "ACTIVO")" />
                                             <button type="submit"
-                                                    class="btn btn-action @(item.estado == "ACTIVO" ? "btn-light-danger" : "btn-light-success")"
-                                                    title="@(item.estado == "ACTIVO" ? "Desactivar" : "Activar")">
-                                                <i class="bi @(item.estado == "ACTIVO" ? "bi-toggle-off" : "bi-toggle-on")"></i>
+                                                    class="btn btn-action @(item.Estado == "ACTIVO" ? "btn-light-danger" : "btn-light-success")"
+                                                    title="@(item.Estado == "ACTIVO" ? "Desactivar" : "Activar")">
+                                                <i class="bi @(item.Estado == "ACTIVO" ? "bi-toggle-off" : "bi-toggle-on")"></i>
                                             </button>
                                         }
                                         }
@@ -157,5 +159,26 @@
                 </table>
             </div>
         </div>
+        @if (totalPaginas > 1)
+        {
+            <div class="card-footer">
+                <nav aria-label="Paginación de archivos">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Archivos", new { page = paginaActual - 1 })">Anterior</a>
+                        </li>
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "Archivos", new { page = i })">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Archivos", new { page = paginaActual + 1 })">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
     </div>
 </section>

@@ -198,6 +198,7 @@
     <Compile Include="Models\ArchivosFormModel.cs" />
     <Compile Include="Models\CitaFormModel.cs" />
     <Compile Include="Models\AtencionCitaModel.cs" />
+    <Compile Include="Models\ProgramarSeguimientoModel.cs" />
     <Compile Include="Models\DoctorFormModel.cs" />
     <Compile Include="Models\ExpedienteFormModel.cs" />
     <Compile Include="Models\EspecialidadFormModel.cs" />
@@ -213,6 +214,20 @@
     <Compile Include="Models\BitacoraListaModel.cs" />
     <Compile Include="Models\GestionUsuarioModel.cs" />
     <Compile Include="Models\RolItem.cs" />
+    <Compile Include="Models\CitaDetalleModel.cs" />
+    <Compile Include="Models\CitaListaModel.cs" />
+    <Compile Include="Models\PacienteDetalleModel.cs" />
+    <Compile Include="Models\PacienteListaModel.cs" />
+    <Compile Include="Models\ExpedienteDetalleModel.cs" />
+    <Compile Include="Models\ExpedienteEditModel.cs" />
+    <Compile Include="Models\ExpedienteListaModel.cs" />
+    <Compile Include="Models\HistorialDetalleModel.cs" />
+    <Compile Include="Models\HistorialListaModel.cs" />
+    <Compile Include="Models\ArchivoDetalleModel.cs" />
+    <Compile Include="Models\ArchivoListaModel.cs" />
+    <Compile Include="Models\EspecialidadListaModel.cs" />
+    <Compile Include="Models\DoctorListaModel.cs" />
+    <Compile Include="Models\HorarioListaModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="EF\Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -267,6 +282,8 @@
     <Content Include="EmailTemplates\CitaReprogramacion.txt" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\citas.js" />
+    <Content Include="Scripts\citasIndex.js" />
+    <Content Include="Scripts\programarSeguimiento.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
     <Content Include="Scripts\jquery-3.7.0.slim.js" />

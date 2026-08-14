@@ -1,4 +1,11 @@
-﻿$(document).ready(function () {
+﻿var doctorSeleccionado = '';
+var horaSeleccionada = '';
+
+$(document).ready(function () {
+
+    var initData = $('#citas-init-data');
+    doctorSeleccionado = initData.data('doctor') || '';
+    horaSeleccionada   = initData.data('hora')   || '';
 
     $("#IdEspecialidad").change(cargarDoctores);
 

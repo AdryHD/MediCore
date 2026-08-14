@@ -64,18 +64,30 @@ namespace MediCore.Controllers
                     if (page < 1) page = 1;
                     int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)TamanoPagina);
 
+                    var doctores = db.Doctores.OrderBy(d => d.nombre_completo).ToList();
+                    var dictDoctores = doctores.ToDictionary(d => d.id_doctor, d => d.nombre_completo);
+
                     var horarios = query
                         .OrderBy(h => h.id_doctor)
                         .ThenBy(h => h.dia_semana)
                         .ThenBy(h => h.hora_inicio)
                         .Skip((page - 1) * TamanoPagina)
                         .Take(TamanoPagina)
+                        .ToList()
+                        .Select(h => new HorarioListaModel
+                        {
+                            IdHorario      = h.id_horario,
+                            IdDoctor       = h.id_doctor,
+                            NombreDoctor   = dictDoctores.ContainsKey(h.id_doctor) ? dictDoctores[h.id_doctor] : "—",
+                            DiaSemana      = h.dia_semana,
+                            NombreDia      = DiasSemana.ContainsKey(h.dia_semana) ? DiasSemana[h.dia_semana] : "—",
+                            HoraInicio     = h.hora_inicio,
+                            HoraFin        = h.hora_fin,
+                            DuracionCitaMin = h.duracion_cita_min,
+                            Estado         = h.estado
+                        })
                         .ToList();
 
-                    var doctores = db.Doctores.OrderBy(d => d.nombre_completo).ToList();
-
-                    ViewBag.NombreDoctor = doctores.ToDictionary(d => d.id_doctor, d => d.nombre_completo);
-                    ViewBag.DiasSemana = DiasSemana;
                     ViewBag.Doctores = new SelectList(doctores, "id_doctor", "nombre_completo", idDoctor);
                     ViewBag.FiltroDoctor = idDoctor;
                     ViewBag.FiltroDiaSemana = diaSemana;
@@ -90,7 +102,7 @@ namespace MediCore.Controllers
                 {
                     _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cargar los horarios médicos.";
-                    return View(new List<HorariosMedicos>());
+                    return View(new List<HorarioListaModel>());
                 }
             }
         }

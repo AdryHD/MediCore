@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace MediCore.Controllers
@@ -15,6 +16,7 @@ namespace MediCore.Controllers
         private const string NombreControlador = "Pacientes";
         private const int TamanoPagina = 10;
         private readonly UtilitarioService _utilitario = new UtilitarioService();
+        private readonly EmailService _emailService = new EmailService();
 
         // GET: Pacientes
         public ActionResult Index(string q, string estado, int page = 1)
@@ -61,6 +63,17 @@ namespace MediCore.Controllers
                         .OrderBy(p => p.nombre_completo)
                         .Skip((page - 1) * TamanoPagina)
                         .Take(TamanoPagina)
+                        .Select(p => new PacienteListaModel
+                        {
+                            IdPaciente     = p.id_paciente,
+                            NombreCompleto = p.nombre_completo,
+                            Cedula         = p.cedula,
+                            FechaNacimiento = p.fecha_nacimiento,
+                            Sexo           = p.sexo,
+                            Telefono       = p.telefono,
+                            Correo         = p.correo,
+                            Estado         = p.estado
+                        })
                         .ToList();
 
                     ViewBag.FiltroTexto = q;
@@ -75,7 +88,7 @@ namespace MediCore.Controllers
                 {
                     _utilitario.RegistrarErrorBitacora(ex, NombreControlador, MethodBase.GetCurrentMethod().Name);
                     TempData["Error"] = "Ocurrió un error al cargar los pacientes.";
-                    return View(new List<Pacientes>());
+                    return View(new List<PacienteListaModel>());
                 }
             }
         }
@@ -96,7 +109,7 @@ namespace MediCore.Controllers
         // POST: Pacientes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PacienteFormModel model)
+        public async Task<ActionResult> Create(PacienteFormModel model)
         {
             ViewBag.ActiveMenu = "Pacientes";
 
@@ -142,6 +155,8 @@ namespace MediCore.Controllers
                         db.SaveChanges();
 
                         transaction.Commit();
+
+                        await _emailService.EnviarBienvenida(paciente.correo, paciente.nombre_completo);
 
                         _utilitario.RegistrarEvento(
                         NombreControlador,
@@ -267,6 +282,7 @@ namespace MediCore.Controllers
         }
 
         // GET: Pacientes/Details/5
+        [HttpGet]
         public ActionResult Details(int id)
         {
             ViewBag.ActiveMenu = "Pacientes";
@@ -281,9 +297,25 @@ namespace MediCore.Controllers
                     return RedirectToAction("Index");
                 }
 
-                ViewBag.Expediente = db.Expedientes.FirstOrDefault(e => e.id_paciente == id);
+                var exp = db.Expedientes.FirstOrDefault(e => e.id_paciente == id);
 
-                return View(paciente);
+                var model = new PacienteDetalleModel
+                {
+                    IdPaciente      = paciente.id_paciente,
+                    NombreCompleto  = paciente.nombre_completo,
+                    Cedula          = paciente.cedula,
+                    FechaNacimiento = paciente.fecha_nacimiento,
+                    Sexo            = paciente.sexo,
+                    Telefono        = paciente.telefono,
+                    Correo          = paciente.correo,
+                    Direccion       = paciente.direccion,
+                    Estado          = paciente.estado,
+                    TipoSangre      = exp?.tipo_sangre,
+                    Alergias        = exp?.alergias,
+                    Antecedentes    = exp?.antecedentes
+                };
+
+                return View(model);
             }
         }
 
@@ -303,7 +335,14 @@ namespace MediCore.Controllers
                     return RedirectToAction("Index");
                 }
 
-                return View(paciente);
+                var model = new PacienteDetalleModel
+                {
+                    IdPaciente     = paciente.id_paciente,
+                    NombreCompleto = paciente.nombre_completo,
+                    Cedula         = paciente.cedula
+                };
+
+                return View(model);
             }
         }
 
