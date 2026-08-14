@@ -5,6 +5,7 @@
 
     int paginaActual = ViewBag.PaginaActual ?? 1;
     int totalPaginas = ViewBag.TotalPaginas ?? 0;
+    var diasSemana = ViewBag.DiasSemana as Dictionary<byte, string>;
     bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
     bool esDoctor = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
 }
@@ -130,15 +131,15 @@
                                     @if (esAdmin)
                                     {
                                     <td class="text-end">
-                                        <a href="@Url.Action("Details", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-secondary" title="Ver detalle">
+                                        <a href="@Url.Action("Details", "HorariosMedicos", new { id = item.IdHorario })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="@Url.Action("Edit", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-primary" title="Editar">
+                                        <a href="@Url.Action("Edit", "HorariosMedicos", new { id = item.IdHorario })" class="btn btn-action btn-light-primary" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        if (item.estado == "ACTIVO")
+                                        @if (item.Estado == "ACTIVO")
                                         {
-                                            <a href="@Url.Action("Delete", "HorariosMedicos", new { id = item.id_horario })" class="btn btn-action btn-light-danger" title="Desactivar">
+                                            <a href="@Url.Action("Delete", "HorariosMedicos", new { id = item.IdHorario })" class="btn btn-action btn-light-danger" title="Desactivar">
                                                 <i class="bi bi-toggle-off"></i>
                                             </a>
                                         }
@@ -147,7 +148,7 @@
                                             using (Html.BeginForm("CambiarEstado", "HorariosMedicos", FormMethod.Post, new { style = "display:inline-block;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@item.id_horario" />
+                                                <input type="hidden" name="id" value="@item.IdHorario" />
                                                 <input type="hidden" name="nuevoEstado" value="ACTIVO" />
                                                 <button type="submit" class="btn btn-action btn-light-success" title="Activar">
                                                     <i class="bi bi-toggle-on"></i>

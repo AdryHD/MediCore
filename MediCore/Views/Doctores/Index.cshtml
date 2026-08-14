@@ -114,7 +114,7 @@
                                         <a href="@Url.Action("Edit", "Doctores", new { id = item.IdDoctor })" class="btn btn-action btn-light-primary" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        if (item.Estado == "ACTIVO")
+                                        @if (item.Estado == "ACTIVO")
                                         {
                                             using (Html.BeginForm("CambiarEstado", "Doctores", FormMethod.Post, new { id = "form-estado-" + item.IdDoctor, style = "display:inline-block;" }))
                                             {

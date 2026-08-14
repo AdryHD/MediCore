@@ -88,6 +88,7 @@ namespace MediCore.Controllers
                         })
                         .ToList();
 
+                    ViewBag.DiasSemana = DiasSemana;
                     ViewBag.Doctores = new SelectList(doctores, "id_doctor", "nombre_completo", idDoctor);
                     ViewBag.FiltroDoctor = idDoctor;
                     ViewBag.FiltroDiaSemana = diaSemana;
