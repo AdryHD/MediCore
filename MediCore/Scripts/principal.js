@@ -39,10 +39,13 @@
         $.getJSON('/Home/GetIndicadores', function (data) {
             if (data.error) return;
 
-            $('#stat-pacientes').text(data.totalPacientes);
-            $('#stat-doctores').text(data.totalDoctores);
             $('#stat-citas-hoy').text(data.citasHoy);
             $('#stat-citas-pendientes').text(data.citasPendientes);
+
+            if (!data.esDoctor) {
+                $('#stat-pacientes').text(data.totalPacientes);
+                $('#stat-doctores').text(data.totalDoctores);
+            }
 
             var tbody = $('#tabla-proximas-citas');
             tbody.empty();

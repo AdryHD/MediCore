@@ -83,7 +83,7 @@ namespace MediCore.Controllers
                             NombreDia      = DiasSemana.ContainsKey(h.dia_semana) ? DiasSemana[h.dia_semana] : "—",
                             HoraInicio     = h.hora_inicio,
                             HoraFin        = h.hora_fin,
-                            DuracionCitaMin = h.duracion_cita_min,
+                            DuracionCitaMin = h.duracion_cita_min > 0 ? h.duracion_cita_min : 30,
                             Estado         = h.estado
                         })
                         .ToList();

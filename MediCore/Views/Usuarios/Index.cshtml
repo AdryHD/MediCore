@@ -5,6 +5,7 @@
 
     var roles = ViewBag.Roles as System.Collections.Generic.List<MediCore.Models.RolItem>;
     int? usuarioActual = ViewBag.UsuarioActual as int?;
+    bool esAdmin = (Session["NombreRol"] as string ?? "").ToUpper() == "ADMINISTRADOR";
 }
 
 <style>
@@ -96,8 +97,10 @@
                             <th>Correo</th>
                             <th>Cédula</th>
                             <th>Estado</th>
+                            @if (!esAdmin) {
                             <th>Rol actual</th>
                             <th class="text-end">Asignar rol</th>
+                            }
                             <th class="text-center">Activar / Desactivar</th>
                         </tr>
                     </thead>
@@ -121,6 +124,7 @@
                                             <span class="badge-status canceled"><i class="bi bi-slash-circle"></i>Inactivo</span>
                                         }
                                     </td>
+                                    @if (!esAdmin) {
                                     <td>
                                         @{
                                             string rolKey = (item.NombreRol ?? "").ToUpper();
@@ -150,6 +154,7 @@
                                             </button>
                                         }
                                     </td>
+                                    }
                                     <td class="text-center">
                                         @if (usuarioActual.HasValue && usuarioActual.Value == item.Consecutivo)
                                         {

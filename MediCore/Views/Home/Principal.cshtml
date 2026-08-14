@@ -1,6 +1,7 @@
 @{
     ViewBag.Title = "Inicio";
     ViewBag.ActiveMenu = "Dashboard";
+    bool esDoctor = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
 }
 
 <style>
@@ -43,6 +44,8 @@
 <section class="section">
     <div class="row g-3 mb-4">
 
+        @if (!esDoctor)
+        {
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="stats-card stats-card--blue">
                 <div class="stats-icon blue">
@@ -66,6 +69,7 @@
                 </div>
             </div>
         </div>
+        }
 
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="stats-card stats-card--green">
@@ -73,7 +77,7 @@
                     <i class="bi bi-calendar2-check-fill"></i>
                 </div>
                 <div class="stats-info">
-                    <h6 class="label">Citas Hoy</h6>
+                    <h6 class="label">@(esDoctor ? "Mis citas hoy" : "Citas Hoy")</h6>
                     <h4 class="value" id="stat-citas-hoy">—</h4>
                 </div>
             </div>
@@ -85,7 +89,7 @@
                     <i class="bi bi-clock-history"></i>
                 </div>
                 <div class="stats-info">
-                    <h6 class="label">Citas Pendientes</h6>
+                    <h6 class="label">@(esDoctor ? "Mis citas pendientes" : "Citas Pendientes")</h6>
                     <h4 class="value" id="stat-citas-pendientes">—</h4>
                 </div>
             </div>
@@ -101,7 +105,7 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4><i class="bi bi-calendar2-week me-2" style="color:#01C0BA;"></i>Próximas Citas</h4>
+                    <h4><i class="bi bi-calendar2-week me-2" style="color:#01C0BA;"></i>@(esDoctor ? "Mis Próximas Citas" : "Próximas Citas")</h4>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

@@ -209,10 +209,72 @@ namespace MediCore.Controllers
                     var hoy = DateTime.Today;
                     var manana = hoy.AddDays(1);
 
+                    var rol = (Session["NombreRol"] as string ?? "").ToUpper();
+                    bool esDoctor = rol == "DOCTOR";
+                    int? idDoctor = Session["IdDoctor"] as int?;
+
+                    if (esDoctor)
+                    {
+                        // Si es doctor pero no tiene id_doctor en sesión, intentar recuperarlo
+                        if (!idDoctor.HasValue)
+                        {
+                            int? idUsuario = Session["Consecutivo"] as int?;
+                            if (idUsuario.HasValue)
+                            {
+                                var doc = db.Doctores.FirstOrDefault(d => d.id_usuario == idUsuario.Value && d.estado == "ACTIVO");
+                                if (doc != null)
+                                {
+                                    Session["IdDoctor"] = doc.id_doctor;
+                                    idDoctor = doc.id_doctor;
+                                }
+                            }
+                        }
+
+                        if (!idDoctor.HasValue)
+                            return Json(new { esDoctor = true, citasHoy = 0, citasPendientes = 0, proximasCitas = new List<object>() }, JsonRequestBehavior.AllowGet);
+
+                        var citasHoyDoc = db.Citas.Count(c =>
+                            c.id_doctor == idDoctor.Value &&
+                            c.fecha_cita >= hoy && c.fecha_cita < manana);
+
+                        var citasPendientesDoc = db.Citas.Count(c =>
+                            c.id_doctor == idDoctor.Value &&
+                            c.estado == "PENDIENTE");
+
+                        var proximasCitasDoc = db.Citas
+                            .Where(c => c.id_doctor == idDoctor.Value && c.fecha_cita >= hoy)
+                            .OrderBy(c => c.fecha_cita)
+                            .Take(10)
+                            .Select(c => new
+                            {
+                                id_cita    = c.id_cita,
+                                paciente   = c.Pacientes.nombre_completo,
+                                doctor     = c.Doctores.nombre_completo,
+                                especialidad = c.Doctores.Especialidades.nombre,
+                                fecha_cita = c.fecha_cita,
+                                estado     = c.estado
+                            })
+                            .ToList()
+                            .Select(c => new
+                            {
+                                c.id_cita, c.paciente, c.doctor, c.especialidad,
+                                fecha_cita = c.fecha_cita.ToString("dd/MM/yyyy HH:mm"),
+                                c.estado
+                            });
+
+                        return Json(new
+                        {
+                            esDoctor          = true,
+                            citasHoy          = citasHoyDoc,
+                            citasPendientes   = citasPendientesDoc,
+                            proximasCitas     = proximasCitasDoc
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+
                     var totalPacientes = db.Pacientes.Count();
                     var totalDoctores = db.Doctores.Count();
                     var citasHoy = db.Citas.Count(c => c.fecha_cita >= hoy && c.fecha_cita < manana);
-                    var citasPendientes = db.Citas.Count(c => c.estado == "Pendiente");
+                    var citasPendientes = db.Citas.Count(c => c.estado == "PENDIENTE");
 
                     var proximasCitas = db.Citas
                         .Where(c => c.fecha_cita >= hoy)
@@ -240,6 +302,7 @@ namespace MediCore.Controllers
 
                     return Json(new
                     {
+                        esDoctor        = false,
                         totalPacientes,
                         totalDoctores,
                         citasHoy,

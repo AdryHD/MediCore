@@ -33,9 +33,12 @@
         <h3>Citas</h3>
     </div>
     <div>
+        @if (!esDoctor)
+        {
         <a href="@Url.Action("Create", "Citas")" class="btn btn-primary">
             <i class="bi bi-plus-lg me-1"></i>Nueva Cita
         </a>
+        }
     </div>
 </div>
 

@@ -22,7 +22,7 @@ function cargarFechasSeguimiento() {
             return;
         }
         $.each(data, function (i, item) {
-            $selectFecha.append($('<option>', { value: item.value, text: item.text }));
+            $selectFecha.append($('<option>', { value: item.valor, text: item.texto }));
         });
     }).fail(function () {
         $selectFecha.empty().append($('<option>', { value: "", text: "Error al cargar fechas" }));
@@ -47,7 +47,7 @@ function cargarHorariosSeguimiento() {
             return;
         }
         $.each(data, function (i, item) {
-            $selectHora.append($('<option>', { value: item.value, text: item.text }));
+            $selectHora.append($('<option>', { value: item.valor, text: item.texto }));
         });
         $selectHora.prop("disabled", false);
     }).fail(function () {

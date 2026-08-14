@@ -965,7 +965,10 @@ namespace MediCore.Controllers
             {
                 try
                 {
-                    var cita = db.Citas.FirstOrDefault(c => c.id_cita == id);
+                    var cita = db.Citas
+                        .Include(c => c.Pacientes)
+                        .Include(c => c.Doctores.Especialidades)
+                        .FirstOrDefault(c => c.id_cita == id);
 
                     if (cita == null)
                     {
