@@ -352,6 +352,7 @@ BEGIN
 		[duracion_min] [int] NOT NULL,
 		[motivo] [nvarchar](255) NULL,
 		[estado] [varchar](20) NOT NULL,
+		[motivo_cancelacion] [nvarchar](500) NULL,
 		[id_cita_anterior] [int] NULL,
 		[fecha_creacion] [datetime2](7) NOT NULL,
 	 CONSTRAINT [PK_Citas] PRIMARY KEY CLUSTERED
@@ -375,6 +376,12 @@ GO
 IF OBJECT_ID(N'dbo.CK_Citas_Estado', N'C') IS NULL
 BEGIN
 	ALTER TABLE [dbo].[Citas] ADD CONSTRAINT [CK_Citas_Estado] CHECK ([estado] IN ('PENDIENTE','PROGRAMADA','CONFIRMADA','REPROGRAMADA','CANCELADA','ATENDIDA','SOLICITUD'))
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.Citas') AND name = 'motivo_cancelacion')
+BEGIN
+	ALTER TABLE [dbo].[Citas] ADD [motivo_cancelacion] [nvarchar](500) NULL
 END
 GO
 
@@ -418,11 +425,25 @@ BEGIN
 		[diagnostico] [nvarchar](max) NOT NULL,
 		[tratamiento] [nvarchar](max) NULL,
 		[observaciones] [nvarchar](max) NULL,
+		[medicamentos] [nvarchar](max) NULL,
+		[proxima_cita] [datetime] NULL,
 	 CONSTRAINT [PK_HistorialMedico] PRIMARY KEY CLUSTERED
 	(
 		[id_historial] ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 	) ON [PRIMARY]
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.HistorialMedico') AND name = 'medicamentos')
+BEGIN
+	ALTER TABLE [dbo].[HistorialMedico] ADD [medicamentos] [nvarchar](max) NULL
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.HistorialMedico') AND name = 'proxima_cita')
+BEGIN
+	ALTER TABLE [dbo].[HistorialMedico] ADD [proxima_cita] [datetime] NULL
 END
 GO
 
