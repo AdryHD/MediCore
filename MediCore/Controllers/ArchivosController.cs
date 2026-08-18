@@ -49,9 +49,11 @@ namespace MediCore.Controllers
         }
 
         // GET: Archivos
-        public ActionResult Index()
+        public ActionResult Index(string buscar = "", string estado = "")
         {
             ViewBag.ActiveMenu = NombreControlador;
+            ViewBag.Buscar = buscar;
+            ViewBag.Estado = estado;
 
             using (var db = new MediCoreEntities())
             {
@@ -60,43 +62,35 @@ namespace MediCore.Controllers
                     var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
                     var idDoctorSesion = Session["IdDoctor"] as int?;
 
-                    List<ArchivoListaModel> archivos;
+                    IQueryable<Archivos> query = db.Archivos.Include("Expedientes");
+
                     if (esDoctorRol && idDoctorSesion.HasValue)
                     {
                         var idsPacientes = db.Citas
                             .Where(c => c.id_doctor == idDoctorSesion.Value)
-                            .Select(c => c.id_paciente).Distinct().ToList();
-                        archivos = db.Archivos
-                            .Include("Expedientes")
-                            .Where(a => a.id_expediente != null &&
-                                        idsPacientes.Contains(a.Expedientes.id_paciente))
-                            .OrderBy(a => a.nombre)
-                            .Select(a => new ArchivoListaModel
-                            {
-                                IdArchivo    = a.id_archivo,
-                                Nombre       = a.nombre,
-                                TipoMime     = a.tipo_mime,
-                                TamanioBytes = a.tamano_bytes,
-                                FechaCarga   = a.fecha_carga,
-                                Estado       = a.estado
-                            })
-                            .ToList();
+                            .Select(c => c.id_paciente).Distinct();
+                        query = query.Where(a => a.id_expediente != null &&
+                                                 idsPacientes.Contains(a.Expedientes.id_paciente));
                     }
-                    else
-                    {
-                        archivos = db.Archivos
-                            .OrderBy(a => a.nombre)
-                            .Select(a => new ArchivoListaModel
-                            {
-                                IdArchivo    = a.id_archivo,
-                                Nombre       = a.nombre,
-                                TipoMime     = a.tipo_mime,
-                                TamanioBytes = a.tamano_bytes,
-                                FechaCarga   = a.fecha_carga,
-                                Estado       = a.estado
-                            })
-                            .ToList();
-                    }
+
+                    if (!string.IsNullOrWhiteSpace(buscar))
+                        query = query.Where(a => a.nombre.Contains(buscar));
+
+                    if (!string.IsNullOrWhiteSpace(estado))
+                        query = query.Where(a => a.estado == estado);
+
+                    var archivos = query.OrderBy(a => a.nombre)
+                        .Select(a => new ArchivoListaModel
+                        {
+                            IdArchivo    = a.id_archivo,
+                            Nombre       = a.nombre,
+                            TipoMime     = a.tipo_mime,
+                            TamanioBytes = a.tamano_bytes,
+                            FechaCarga   = a.fecha_carga,
+                            Estado       = a.estado
+                        })
+                        .ToList();
+
                     ViewBag.EsDoctor = esDoctorRol;
 
                     _utilitario.RegistrarEvento(
