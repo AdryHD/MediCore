@@ -242,7 +242,7 @@ namespace MediCore.Controllers
                             c.estado == "PENDIENTE");
 
                         var proximasCitasDoc = db.Citas
-                            .Where(c => c.id_doctor == idDoctor.Value && c.fecha_cita >= hoy)
+                            .Where(c => c.id_doctor == idDoctor.Value && c.estado == "PENDIENTE" && c.fecha_cita >= hoy)
                             .OrderBy(c => c.fecha_cita)
                             .Take(10)
                             .Select(c => new
@@ -277,7 +277,7 @@ namespace MediCore.Controllers
                     var citasPendientes = db.Citas.Count(c => c.estado == "PENDIENTE");
 
                     var proximasCitas = db.Citas
-                        .Where(c => c.fecha_cita >= hoy)
+                        .Where(c => c.estado == "PENDIENTE" && c.fecha_cita >= hoy)
                         .OrderBy(c => c.fecha_cita)
                         .Take(10)
                         .Select(c => new

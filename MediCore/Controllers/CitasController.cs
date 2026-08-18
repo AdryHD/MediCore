@@ -921,7 +921,7 @@ namespace MediCore.Controllers
                     DateTime fechaHora = model.FechaCita.Value.Date.Add(model.HoraCita.Value);
 
                     cita.fecha_cita = fechaHora;
-                    cita.estado     = "PROGRAMADA";
+                    cita.estado     = "PENDIENTE";
                     cita.motivo     = string.IsNullOrWhiteSpace(model.Motivo) ? cita.motivo : model.Motivo.Trim();
 
                     db.Entry(cita).State = EntityState.Modified;

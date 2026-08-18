@@ -55,8 +55,8 @@
                     '<tr><td colspan="6" class="empty-state-cell">' +
                     '<div class="empty-state">' +
                     '<div class="empty-state-icon-wrap"><i class="bi bi-calendar3"></i></div>' +
-                    '<p class="empty-state-title">Sin citas registradas</p>' +
-                    '<p class="empty-state-sub">Aún no hay citas programadas en el sistema.</p>' +
+                    '<p class="empty-state-title">Sin citas pendientes</p>' +
+                    '<p class="empty-state-sub">No hay citas pendientes en el sistema.</p>' +
                     '</div></td></tr>'
                 );
                 return;

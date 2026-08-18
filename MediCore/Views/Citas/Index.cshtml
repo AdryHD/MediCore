@@ -149,7 +149,7 @@
                                         <span class="badge-status @badgeClass"><i class="bi @badgeIcon"></i>@badgeText</span>
                                     </td>
                                     <td class="text-end">
-                                        @if (item.Estado == "PENDIENTE")
+                                        @if (item.Estado == "PENDIENTE" || item.Estado == "PROGRAMADA")
                                         {
                                             <a href="@Url.Action("Details", "Citas", new { id = item.IdCita })" class="btn btn-action btn-light-secondary" title="Ver detalle">
                                                 <i class="bi bi-eye"></i>
