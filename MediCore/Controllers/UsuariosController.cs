@@ -246,7 +246,7 @@ namespace MediCore.Controllers
                     }
                     else
                     {
-                        db.sp_RegistrarUsuario(model.Nombre.Trim(), cedula, null,
+                        db.sp_RegistrarUsuario(model.Nombre.Trim(), cedula, model.FechaNacimiento,
                             string.IsNullOrWhiteSpace(model.Telefono) ? "" : model.Telefono.Trim(),
                             correo, contrasenna, model.IdRol);
                     }
@@ -256,6 +256,8 @@ namespace MediCore.Controllers
                     if (nuevoUsuario != null)
                     {
                         nuevoUsuario.FechaExpiracionTemp = expiracion;
+                        if (model.FechaNacimiento.HasValue)
+                            nuevoUsuario.FechaNacimiento = model.FechaNacimiento;
                         db.Entry(nuevoUsuario).State = EntityState.Modified;
                         db.SaveChanges();
 

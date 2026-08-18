@@ -12,6 +12,9 @@ namespace MediCore.Models
         [Required(ErrorMessage = "El nombre completo es obligatorio.")]
         public string Nombre { get; set; }
 
+        [Required(ErrorMessage = "La fecha de nacimiento es obligatoria.")]
+        public System.DateTime? FechaNacimiento { get; set; }
+
         [Required(ErrorMessage = "La cédula es obligatoria.")]
         public string Cedula { get; set; }
 

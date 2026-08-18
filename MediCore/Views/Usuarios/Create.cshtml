@@ -65,6 +65,11 @@
                                 @Html.ValidationMessageFor(m => m.Cedula, "", new { @class = "text-danger small" })
                             </div>
                             <div class="col-12 col-md-6">
+                                <label class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(m => m.FechaNacimiento, new { @class = "form-control", type = "date" })
+                                @Html.ValidationMessageFor(m => m.FechaNacimiento, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <label class="form-label">Teléfono</label>
                                 @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", placeholder = "Teléfono" })
                             </div>
