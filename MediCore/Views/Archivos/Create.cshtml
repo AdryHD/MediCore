@@ -44,27 +44,28 @@
                         @Html.ValidationMessageFor(m => m.Id_Expediente, "", new { @class = "text-danger small" })
                     </div>
 
-
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Nombre del Archivo</label>
                         @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Ej: Resultado_Laboratorio.pdf" })
                         @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger small" })
                     </div>
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Tipo MIME / Formato</label>
-                        @Html.TextBoxFor(m => m.Tipo_mime, new { @class = "form-control", placeholder = "Ej: application/pdf" })
-                        @Html.ValidationMessageFor(m => m.Tipo_mime, "", new { @class = "text-danger small" })
-                    </div>
-
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Seleccionar Archivo</label>
-                        <input type="file" name="archivoSubido" class="form-control" />
+                        <div class="input-group">
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('archivoInput').click()">
+                                <i class="bi bi-folder2-open me-1"></i>Elegir archivo
+                            </button>
+                            <span class="form-control text-muted" id="archivoNombre" style="cursor:pointer;" onclick="document.getElementById('archivoInput').click()">
+                                Imágenes (JPG, PNG), PDF, Word, Excel...
+                            </span>
+                        </div>
+                        <input type="file" id="archivoInput" name="archivoSubido"
+                               accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+                               style="display:none;"
+                               onchange="document.getElementById('archivoNombre').textContent = this.files.length > 0 ? this.files[0].name : 'Imágenes (JPG, PNG), PDF, Word, Excel...'; document.getElementById('archivoNombre').classList.toggle('text-muted', this.files.length === 0); document.getElementById('archivoNombre').classList.toggle('text-dark', this.files.length > 0);" />
                     </div>
+
                 </div>
 
                 <div class="text-end mt-4">

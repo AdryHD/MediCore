@@ -4,8 +4,10 @@ using MediCore.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -17,6 +19,34 @@ namespace MediCore.Controllers
     {
         private const string NombreControlador = "Archivos";
         private readonly UtilitarioService _utilitario = new UtilitarioService();
+
+        private string CarpetaUploads
+        {
+            get
+            {
+                var ruta = Path.GetFullPath(
+                    Path.Combine(Server.MapPath("~/"), "..", "Uploads", "Archivos"));
+                if (!Directory.Exists(ruta))
+                    Directory.CreateDirectory(ruta);
+                return ruta;
+            }
+        }
+
+        private void EliminarArchivoDeDisco(byte[] contenido)
+        {
+            if (contenido == null || contenido.Length == 0) return;
+            try
+            {
+                var nombreArchivo = Encoding.UTF8.GetString(contenido);
+                if (!string.IsNullOrWhiteSpace(nombreArchivo))
+                {
+                    var rutaFisica = Path.Combine(CarpetaUploads, nombreArchivo);
+                    if (System.IO.File.Exists(rutaFisica))
+                        System.IO.File.Delete(rutaFisica);
+                }
+            }
+            catch { }
+        }
 
         // GET: Archivos
         public ActionResult Index()
@@ -89,7 +119,22 @@ namespace MediCore.Controllers
         {
             using (var db = new MediCoreEntities())
             {
-                ViewBag.ExpedientesList = db.Expedientes
+                var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
+                var idDoctorSesion = Session["IdDoctor"] as int?;
+
+                IQueryable<EF.Expedientes> query = db.Expedientes;
+
+                if (esDoctorRol && idDoctorSesion.HasValue)
+                {
+                    var idsPacientes = db.Citas
+                        .Where(c => c.id_doctor == idDoctorSesion.Value)
+                        .Select(c => c.id_paciente)
+                        .Distinct();
+
+                    query = query.Where(e => idsPacientes.Contains(e.id_paciente));
+                }
+
+                ViewBag.ExpedientesList = query
                     .Select(e => new SelectListItem
                     {
                         Value = e.id_expediente.ToString(),
@@ -124,25 +169,24 @@ namespace MediCore.Controllers
             {
                 try
                 {
-                    bool existeNombre = db.Archivos
-                        .Any(a => a.nombre.Trim().ToUpper() == model.Nombre.Trim().ToUpper());
-
-                    if (existeNombre)
-                    {
-                        ModelState.AddModelError("Nombre", "Ya existe un archivo registrado con ese nombre.");
-                        CargarExpedientesViewBag(); 
-                        return View(model);
-                    }
-
                     int? idUsuarioSesion = Session["Consecutivo"] as int?;
 
-                    byte[] contenidoBytes = null;
+                    byte[] contenidoFinal = Encoding.UTF8.GetBytes(string.Empty);
+                    string tipoMime = model.Tipo_mime;
+                    long tamano = model.Tamano_bytes;
+                    string rutaTemporal = null;
+
                     if (archivoSubido != null && archivoSubido.ContentLength > 0)
                     {
-                        contenidoBytes = new byte[archivoSubido.ContentLength];
-                        archivoSubido.InputStream.Read(contenidoBytes, 0, archivoSubido.ContentLength);
-                        model.Tipo_mime = archivoSubido.ContentType;
-                        model.Tamano_bytes = archivoSubido.ContentLength;
+                        // Guardar con nombre temporal (GUID) para obtener path antes del INSERT
+                        var ext = Path.GetExtension(archivoSubido.FileName);
+                        var nombreTemp = Guid.NewGuid().ToString("N") + ext;
+                        rutaTemporal = Path.Combine(CarpetaUploads, nombreTemp);
+                        archivoSubido.SaveAs(rutaTemporal);
+
+                        tipoMime = archivoSubido.ContentType;
+                        tamano = archivoSubido.ContentLength;
+                        contenidoFinal = Encoding.UTF8.GetBytes(nombreTemp);
                     }
 
                     var archivo = new Archivos
@@ -150,15 +194,29 @@ namespace MediCore.Controllers
                         id_expediente = model.Id_Expediente,
                         id_usuario = idUsuarioSesion ?? model.Id_Usuario,
                         nombre = model.Nombre.Trim(),
-                        tipo_mime = model.Tipo_mime,
-                        tamano_bytes = model.Tamano_bytes,
-                        contenido = contenidoBytes ?? model.Contenido,
+                        tipo_mime = tipoMime,
+                        tamano_bytes = tamano,
+                        contenido = contenidoFinal,
                         estado = "ACTIVO",
                         fecha_carga = DateTime.Now
                     };
 
                     db.Archivos.Add(archivo);
                     db.SaveChanges();
+
+                    // Renombrar archivo en disco con el id real
+                    if (rutaTemporal != null && archivoSubido != null)
+                    {
+                        var ext = Path.GetExtension(archivoSubido.FileName);
+                        var nombreFinal = string.Format("{0}_{1}{2}",
+                            archivo.id_archivo,
+                            Path.GetFileNameWithoutExtension(archivoSubido.FileName).Replace(" ", "_"),
+                            ext);
+                        var rutaFinal = Path.Combine(CarpetaUploads, nombreFinal);
+                        System.IO.File.Move(rutaTemporal, rutaFinal);
+                        archivo.contenido = Encoding.UTF8.GetBytes(nombreFinal);
+                        db.SaveChanges();
+                    }
 
                     _utilitario.RegistrarEvento(
                         NombreControlador,
@@ -230,17 +288,6 @@ namespace MediCore.Controllers
             {
                 try
                 {
-
-                    bool existeNombre = db.Archivos
-                        .Any(a => a.nombre.Trim().ToUpper() == model.Nombre.Trim().ToUpper() && a.id_archivo != model.Id_Archivo);
-
-                    if (existeNombre)
-                    {
-                        ModelState.AddModelError("Nombre", "Ya existe otro archivo registrado con ese nombre.");
-                        CargarExpedientesViewBag(); 
-                        return View(model);
-                    }
-
                     var archivoBD = db.Archivos.Find(model.Id_Archivo);
                     if (archivoBD != null)
                     {
@@ -251,10 +298,15 @@ namespace MediCore.Controllers
 
                         if (archivoSubido != null && archivoSubido.ContentLength > 0)
                         {
-                            byte[] contenidoBytes = new byte[archivoSubido.ContentLength];
-                            archivoSubido.InputStream.Read(contenidoBytes, 0, archivoSubido.ContentLength);
+                            EliminarArchivoDeDisco(archivoBD.contenido);
 
-                            archivoBD.contenido = contenidoBytes;
+                            var ext = Path.GetExtension(archivoSubido.FileName);
+                            var nombreFinal = string.Format("{0}_{1}{2}",
+                                archivoBD.id_archivo,
+                                Path.GetFileNameWithoutExtension(archivoSubido.FileName).Replace(" ", "_"),
+                                ext);
+                            archivoSubido.SaveAs(Path.Combine(CarpetaUploads, nombreFinal));
+                            archivoBD.contenido = Encoding.UTF8.GetBytes(nombreFinal);
                             archivoBD.tipo_mime = archivoSubido.ContentType;
                             archivoBD.tamano_bytes = archivoSubido.ContentLength;
                         }
@@ -281,6 +333,39 @@ namespace MediCore.Controllers
                     CargarExpedientesViewBag(); 
                     return View(model);
                 }
+            }
+        }
+
+        // GET: Archivos/Descargar/5
+        [HttpGet]
+        public ActionResult Descargar(int? id)
+        {
+            if (!id.HasValue) return HttpNotFound();
+
+            using (var db = new MediCoreEntities())
+            {
+                var archivo = db.Archivos.Find(id.Value);
+                if (archivo == null || archivo.contenido == null || archivo.contenido.Length == 0)
+                    return HttpNotFound();
+
+                var nombreArchivo = Encoding.UTF8.GetString(archivo.contenido);
+                if (string.IsNullOrWhiteSpace(nombreArchivo)
+                    || nombreArchivo.IndexOfAny(Path.GetInvalidFileNameChars()) != -1
+                    || nombreArchivo.Contains("/") || nombreArchivo.Contains("\\"))
+                    return HttpNotFound();
+
+                var rutaFisica = Path.GetFullPath(
+                    Path.Combine(Server.MapPath("~/"), "..", "Uploads", "Archivos", nombreArchivo));
+                if (!System.IO.File.Exists(rutaFisica))
+                    return HttpNotFound();
+
+                var bytes = System.IO.File.ReadAllBytes(rutaFisica);
+                var mimeType = string.IsNullOrWhiteSpace(archivo.tipo_mime)
+                    ? "application/octet-stream"
+                    : archivo.tipo_mime;
+                var nombreDescarga = archivo.nombre + Path.GetExtension(rutaFisica);
+
+                return File(bytes, mimeType, nombreDescarga);
             }
         }
 
@@ -350,6 +435,25 @@ namespace MediCore.Controllers
 
                 ViewBag.ActiveMenu = NombreControlador;
 
+                bool tieneArchivo = false;
+                if (archivo.contenido != null && archivo.contenido.Length > 0)
+                {
+                    try
+                    {
+                        var nombreArchivo = Encoding.UTF8.GetString(archivo.contenido);
+                        // Solo es un nombre de archivo válido si no contiene caracteres de ruta ni caracteres de control
+                        if (!string.IsNullOrWhiteSpace(nombreArchivo)
+                            && nombreArchivo.IndexOfAny(Path.GetInvalidFileNameChars()) == -1
+                            && !nombreArchivo.Contains("/") && !nombreArchivo.Contains("\\"))
+                        {
+                            var rutaFisica = Path.GetFullPath(
+                                Path.Combine(Server.MapPath("~/"), "..", "Uploads", "Archivos", nombreArchivo));
+                            tieneArchivo = System.IO.File.Exists(rutaFisica);
+                        }
+                    }
+                    catch { tieneArchivo = false; }
+                }
+
                 var model = new ArchivoDetalleModel
                 {
                     IdArchivo      = archivo.id_archivo,
@@ -362,7 +466,7 @@ namespace MediCore.Controllers
                     NombrePaciente = archivo.Expedientes?.Pacientes?.nombre_completo,
                     IdUsuario      = archivo.id_usuario,
                     NombreUsuario  = archivo.tbUsuario?.Nombre,
-                    TieneContenido = archivo.contenido != null && archivo.contenido.Length > 0
+                    TieneContenido = tieneArchivo
                 };
 
                 return View(model);
