@@ -758,16 +758,20 @@ namespace MediCore.Controllers
 
                         if (model.AccionFinal == "NUEVA_CITA")
                         {
+                            var motivoSeguimiento = "Seguimiento: " + model.Diagnostico.Trim();
+                            if (motivoSeguimiento.Length > 255)
+                                motivoSeguimiento = motivoSeguimiento.Substring(0, 255);
+
                             var citaSeguimiento = new Citas
                             {
-                                id_paciente     = cita.id_paciente,
-                                id_doctor       = cita.id_doctor,
-                                fecha_cita      = DateTime.Now.AddDays(7), 
-                                duracion_min    = cita.duracion_min,
-                                motivo          = "Seguimiento: " + model.Diagnostico.Trim(),
-                                estado          = "SOLICITUD",
+                                id_paciente      = cita.id_paciente,
+                                id_doctor        = cita.id_doctor,
+                                fecha_cita       = DateTime.Now.AddDays(7),
+                                duracion_min     = cita.duracion_min > 0 ? cita.duracion_min : 30,
+                                motivo           = motivoSeguimiento,
+                                estado           = "SOLICITUD",
                                 id_cita_anterior = cita.id_cita,
-                                fecha_creacion  = DateTime.Now
+                                fecha_creacion   = DateTime.Now
                             };
                             db.Citas.Add(citaSeguimiento);
                         }
