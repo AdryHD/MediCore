@@ -451,8 +451,9 @@ namespace MediCore.Controllers
                         {
                             horasDisponibles.Add(new
                             {
-                                valor = hora.ToString(@"hh\:mm"),
-                                texto = hora.ToString(@"hh\:mm")
+                                valor    = hora.ToString(@"hh\:mm"),
+                                texto    = hora.ToString(@"hh\:mm"),
+                                duracion = horario.duracion_cita_min
                             });
                         }
 

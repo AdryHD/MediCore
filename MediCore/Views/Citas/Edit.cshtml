@@ -26,7 +26,7 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.IdCita)
-                <span id="citas-init-data" data-doctor="@Model.IdDoctor" data-hora="@Model.Hora.ToString(@"hh\:mm")"></span>
+                <span id="citas-init-data" data-doctor="@Model.IdDoctor" data-fecha="@Model.Fecha.ToString("yyyy-MM-dd")" data-hora="@Model.Hora.ToString(@"hh\:mm")"></span>
                 @Html.ValidationSummary(true, "", new { @class = "alert alert-light-danger" })
 
                 <div class="row">
@@ -50,7 +50,9 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         @Html.LabelFor(m => m.Fecha)
-                        @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", id = "Fecha" })
+                        <select name="Fecha" id="Fecha" class="form-select">
+                            <option value="">-- Seleccione un doctor primero --</option>
+                        </select>
                         @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger small" })
                     </div>
                 </div>
@@ -58,7 +60,9 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label>Hora Disponible</label>
-                        @Html.DropDownListFor(m => m.Hora, Model.HorariosDisponibles, "-- Seleccione una hora --", new { @class = "form-select", id = "Hora" })
+                        <select name="Hora" id="Hora" class="form-select">
+                            <option value="">-- Seleccione una hora --</option>
+                        </select>
                         @Html.ValidationMessageFor(m => m.Hora, "", new { @class = "text-danger small" })
                     </div>
                     <div class="col-md-6 mb-3">

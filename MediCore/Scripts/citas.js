@@ -1,10 +1,12 @@
 ﻿var doctorSeleccionado = '';
-var horaSeleccionada = '';
+var fechaSeleccionada  = '';
+var horaSeleccionada   = '';
 
 $(document).ready(function () {
 
     var initData = $('#citas-init-data');
     doctorSeleccionado = initData.data('doctor') || '';
+    fechaSeleccionada  = initData.data('fecha')  || '';
     horaSeleccionada   = initData.data('hora')   || '';
 
     $("#IdEspecialidad").change(cargarDoctores);
@@ -13,7 +15,12 @@ $(document).ready(function () {
 
     $("#Fecha").change(cargarHorarios);
 
-});
+    // En modo edición, arrancar la cadena automáticamente
+    if (doctorSeleccionado !== '') {
+        cargarDoctores();
+    }
+
+});;
 
 function cargarDoctores() {
 
@@ -107,8 +114,16 @@ function cargarFechas() {
                     value: fecha.valor,
                     text: fecha.texto
                 });
+                if (fechaSeleccionada !== '' && fecha.valor === fechaSeleccionada) {
+                    option.prop('selected', true);
+                }
                 $("#Fecha").append(option);
             });
+
+            // Si había fecha pre-seleccionada, cargar horarios automáticamente
+            if (fechaSeleccionada !== '') {
+                cargarHorarios();
+            }
 
         });
 
@@ -145,10 +160,13 @@ function cargarHorarios() {
                     text: hora.texto
                 });
 
-                if (horaSeleccionada != "" &&
-                    hora.valor == horaSeleccionada) {
+                option.attr('data-duracion', hora.duracion);
+
+                if (horaSeleccionada.trim() != "" &&
+                    hora.valor.trim() == horaSeleccionada.trim()) {
 
                     option.prop("selected", true);
+                    $("#Duracion").val(hora.duracion);
 
                 }
 
@@ -159,3 +177,10 @@ function cargarHorarios() {
         });
 
 }
+
+$(document).on('change', '#Hora', function () {
+    var dur = $(this).find('option:selected').attr('data-duracion');
+    if (dur !== undefined && dur !== '') {
+        $('#Duracion').val(dur);
+    }
+});
