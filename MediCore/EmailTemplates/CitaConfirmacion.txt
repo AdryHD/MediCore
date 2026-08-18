@@ -1,6 +1,6 @@
 Hola {{NombrePaciente}},
 
-Tu cita médica fue registrada correctamente con los siguientes datos:
+{{DescripCita}}
 
 Número de cita: #{{NumeroCita}}
 Doctor: {{NombreDoctor}}

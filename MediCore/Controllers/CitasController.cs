@@ -938,7 +938,8 @@ namespace MediCore.Controllers
                         cita.id_cita,
                         cita.fecha_cita.Date,
                         cita.fecha_cita.TimeOfDay,
-                        cita.estado);
+                        cita.estado,
+                        esSeguimiento: true);
 
                     TempData["Success"] = correoEnviado
                         ? string.Format("Cita de seguimiento programada para el {0} a las {1}. Se envió un correo de confirmación al paciente.", fechaHora.ToString("dd/MM/yyyy"), fechaHora.ToString("HH:mm"))

@@ -137,12 +137,28 @@ namespace MediCore.Servicios
             return EnviarCorreoAsync(correoDestino, "Recuperación de acceso - MediCore", cuerpoHtml, cuerpoTexto, "RECUPERACION", idUsuarioDestino);
         }
 
-        public Task<bool> EnviarConfirmacionCita(string correoDestino, string nombrePaciente, string nombreDoctor, string especialidad, int numeroCita, DateTime fecha, TimeSpan hora, string estado)
+        public Task<bool> EnviarConfirmacionCita(string correoDestino, string nombrePaciente, string nombreDoctor, string especialidad, int numeroCita, DateTime fecha, TimeSpan hora, string estado, bool esSeguimiento = false)
         {
-            var cuerpoHtml = CargarPlantillaCorreo("CitaConfirmacion.html", ArmarValoresCita(nombrePaciente, nombreDoctor, especialidad, numeroCita, fecha, hora, estado));
-            var cuerpoTexto = CargarPlantillaCorreo("CitaConfirmacion.txt", ArmarValoresCita(nombrePaciente, nombreDoctor, especialidad, numeroCita, fecha, hora, estado));
+            var valores = ArmarValoresCita(nombrePaciente, nombreDoctor, especialidad, numeroCita, fecha, hora, estado);
+            if (esSeguimiento)
+            {
+                valores["TituloCita"]   = "Cita de seguimiento programada";
+                valores["DescripCita"] = "Tu cita de seguimiento médico fue programada correctamente con los siguientes datos:";
+            }
+            else
+            {
+                valores["TituloCita"]   = "Cita confirmada";
+                valores["DescripCita"] = "Tu cita médica fue registrada correctamente con los siguientes datos:";
+            }
 
-            return EnviarCorreoAsync(correoDestino, string.Format("Cita #{0} confirmada - MediCore", numeroCita), cuerpoHtml, cuerpoTexto, "CITA_PROGRAMADA");
+            var cuerpoHtml = CargarPlantillaCorreo("CitaConfirmacion.html", valores);
+            var cuerpoTexto = CargarPlantillaCorreo("CitaConfirmacion.txt", valores);
+
+            string asunto = esSeguimiento
+                ? string.Format("Cita de seguimiento #{0} programada - MediCore", numeroCita)
+                : string.Format("Cita #{0} confirmada - MediCore", numeroCita);
+
+            return EnviarCorreoAsync(correoDestino, asunto, cuerpoHtml, cuerpoTexto, "CITA_PROGRAMADA");
         }
 
         public Task<bool> EnviarCancelacion(string correoDestino, string nombrePaciente, string nombreDoctor, string especialidad, int numeroCita, DateTime fecha, TimeSpan hora, string estado)
@@ -171,7 +187,9 @@ namespace MediCore.Servicios
                 { "NumeroCita", numeroCita.ToString() },
                 { "Fecha", fecha.ToString("dd/MM/yyyy") },
                 { "Hora", hora.ToString(@"hh\:mm") },
-                { "Estado", estado }
+                { "Estado", estado },
+                { "TituloCita", "Cita confirmada" },
+                { "DescripCita", "Tu cita m\u00e9dica fue registrada correctamente con los siguientes datos:" }
             };
         }
 
