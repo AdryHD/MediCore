@@ -10,7 +10,6 @@ namespace MediCore.Models
         public int IdPaciente { get; set; }
         public int IdDoctor { get; set; }
 
-        // Solo para mostrar
         public string NombrePaciente { get; set; }
         public string NombreDoctor { get; set; }
         public string DiagnosticoAnterior { get; set; }

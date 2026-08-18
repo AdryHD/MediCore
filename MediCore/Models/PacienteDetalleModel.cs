@@ -13,7 +13,7 @@ namespace MediCore.Models
         public string Correo { get; set; }
         public string Direccion { get; set; }
         public string Estado { get; set; }
-        // Campos del expediente (pueden ser null si no existe)
+
         public string TipoSangre { get; set; }
         public string Alergias { get; set; }
         public string Antecedentes { get; set; }

@@ -3,11 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MediCore.Models
 {
-    /// <summary>
-    /// ViewModel utilizado para los formularios de creación y edición de
-    /// doctores (RF-02). Se mantiene separado de la entidad EF para poder
-    /// aplicar validaciones de UI sin afectar el modelo de datos.
-    /// </summary>
+
     public class DoctorFormModel
     {
         public int IdDoctor { get; set; }

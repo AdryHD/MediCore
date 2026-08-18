@@ -4,10 +4,7 @@ using System.Web.Routing;
 
 namespace MediCore.Models
 {
-    /// <summary>
-    /// Permite el acceso únicamente a usuarios con rol ADMINISTRADOR o DOCTOR.
-    /// Debe combinarse con [AuthActionFilter].
-    /// </summary>
+
     public class DoctorOAdminActionFilter : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)

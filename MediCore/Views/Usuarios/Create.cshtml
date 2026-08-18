@@ -87,7 +87,13 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Código colegiado <span class="text-danger">*</span></label>
-                                @Html.TextBoxFor(m => m.CodigoColegiado, new { @class = "form-control", placeholder = "Código colegiado" })
+                                <div class="input-group">
+                                    <span class="input-group-text fw-bold" style="background:#e9ecef;color:#166534;">MED-</span>
+                                    <input type="text" id="codigoNumero" class="form-control" placeholder="Ej: 12345"
+                                           inputmode="numeric" pattern="[0-9]*"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,''); document.getElementById('CodigoColegiado').value='MED-'+this.value;" />
+                                </div>
+                                @Html.HiddenFor(m => m.CodigoColegiado)
                                 @Html.ValidationMessageFor(m => m.CodigoColegiado, "", new { @class = "text-danger small" })
                             </div>
                             <div class="col-12 col-md-6">

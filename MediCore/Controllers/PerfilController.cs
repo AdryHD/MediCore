@@ -19,7 +19,7 @@ namespace MediCore.Controllers
         {
             return Session["Consecutivo"] as int?;
         }
-        // GET: Perfil
+
         public ActionResult Index()
         {
             using (var db = new MediCoreEntities())
@@ -48,7 +48,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Perfil/CambiarPerfil
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CambiarPerfil(PerfilModel model)
@@ -108,7 +107,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Perfil/CambiarContrasenna
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CambiarContrasenna(CambiarContrasennaModel model)

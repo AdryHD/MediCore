@@ -1,4 +1,4 @@
-﻿using MediCore.EF;
+using MediCore.EF;
 using MediCore.Models;
 using MediCore.Servicios;
 using System;
@@ -48,7 +48,6 @@ namespace MediCore.Controllers
             catch { }
         }
 
-        // GET: Archivos
         public ActionResult Index(string buscar = "", string estado = "")
         {
             ViewBag.ActiveMenu = NombreControlador;
@@ -137,7 +136,7 @@ namespace MediCore.Controllers
                     .ToList();
             }
         }
-        // GET: Archivos/Create
+
         [HttpGet]
         public ActionResult Create()
         {
@@ -146,7 +145,6 @@ namespace MediCore.Controllers
             return View(new ArchivosFormModel());
         }
 
-        // POST: Archivos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ArchivosFormModel model, HttpPostedFileBase archivoSubido)
@@ -172,7 +170,7 @@ namespace MediCore.Controllers
 
                     if (archivoSubido != null && archivoSubido.ContentLength > 0)
                     {
-                        // Guardar con nombre temporal (GUID) para obtener path antes del INSERT
+
                         var ext = Path.GetExtension(archivoSubido.FileName);
                         var nombreTemp = Guid.NewGuid().ToString("N") + ext;
                         rutaTemporal = Path.Combine(CarpetaUploads, nombreTemp);
@@ -198,7 +196,6 @@ namespace MediCore.Controllers
                     db.Archivos.Add(archivo);
                     db.SaveChanges();
 
-                    // Renombrar archivo en disco con el id real
                     if (rutaTemporal != null && archivoSubido != null)
                     {
                         var ext = Path.GetExtension(archivoSubido.FileName);
@@ -232,7 +229,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Archivos/Edit
         [AdminActionFilter]
         [HttpGet]
         public ActionResult Edit(int id)
@@ -264,7 +260,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Archivos/Edit
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -330,7 +325,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Archivos/Descargar/5
         [HttpGet]
         public ActionResult Descargar(int? id)
         {
@@ -363,7 +357,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Archivos/CambiarEstado
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -404,7 +397,6 @@ namespace MediCore.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Archivos/Details/5
         [HttpGet]
         public ActionResult Details(int? id)
         {
@@ -435,7 +427,7 @@ namespace MediCore.Controllers
                     try
                     {
                         var nombreArchivo = Encoding.UTF8.GetString(archivo.contenido);
-                        // Solo es un nombre de archivo válido si no contiene caracteres de ruta ni caracteres de control
+
                         if (!string.IsNullOrWhiteSpace(nombreArchivo)
                             && nombreArchivo.IndexOfAny(Path.GetInvalidFileNameChars()) == -1
                             && !nombreArchivo.Contains("/") && !nombreArchivo.Contains("\\"))

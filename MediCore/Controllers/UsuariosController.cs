@@ -10,19 +10,15 @@ using System.Web.Mvc;
 
 namespace MediCore.Controllers
 {
-    // Pantalla de administración: permite a un ADMINISTRADOR ver a todos los
-    // usuarios internos registrados y cambiarles el rol correspondiente
-    // (ADMINISTRADOR, DOCTOR o RECEPCIONISTA).
+
     [AuthActionFilter]
     [AdminActionFilter]
     public class UsuariosController : Controller
     {
         private const string NombreControlador = "Usuarios";
 
-        // Instancia del servicio de bitácora y utilitarios
         private readonly UtilitarioService _utilitarioService = new UtilitarioService();
 
-        // GET: Usuarios
         public ActionResult Index()
         {
             ViewBag.ActiveMenu = "Usuarios";
@@ -53,7 +49,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Usuarios/CambiarEstado
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CambiarEstado(int idUsuario)
@@ -101,7 +96,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Usuarios/AsignarRol
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AsignarRol(int idUsuario, int idRol)
@@ -127,7 +121,6 @@ namespace MediCore.Controllers
                     var rolAsignado = roles.FirstOrDefault(r => r.IdRol == idRol);
                     var nombreRolAsignado = rolAsignado != null ? rolAsignado.NombreRol : "DESCONOCIDO";
 
-                    // Registro de bitácora usando UtilitarioService
                     _utilitarioService.RegistrarEvento(
                         NombreControlador,
                         "AsignarRol",
@@ -139,7 +132,7 @@ namespace MediCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Registro de excepción usando UtilitarioService
+
                     _utilitarioService.RegistrarErrorBitacora(ex, NombreControlador, "AsignarRol");
 
                     TempData["Error"] = "Ocurrió un error al actualizar el rol. Intente nuevamente.";
@@ -149,7 +142,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Usuarios/Create?rol=DOCTOR|ADMINISTRADOR|RECEPCIONISTA
         public ActionResult Create(string rol)
         {
             if (string.IsNullOrWhiteSpace(rol))
@@ -182,7 +174,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Usuarios/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CrearUsuarioModel model)
@@ -251,7 +242,6 @@ namespace MediCore.Controllers
                             correo, contrasenna, model.IdRol);
                     }
 
-                    // Establecer FechaExpiracionTemp (24h)
                     var nuevoUsuario = db.tbUsuario.FirstOrDefault(u => u.Correo == correo);
                     if (nuevoUsuario != null)
                     {
@@ -308,4 +298,3 @@ namespace MediCore.Controllers
         }
     }
 }
-

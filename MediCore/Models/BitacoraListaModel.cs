@@ -2,10 +2,7 @@ using System;
 
 namespace MediCore.Models
 {
-    /// <summary>
-    /// DTO para mostrar registros de la bitácora en la vista.
-    /// Evita exponer la entidad EF directamente.
-    /// </summary>
+
     public class BitacoraListaModel
     {
         public long IdBitacora { get; set; }

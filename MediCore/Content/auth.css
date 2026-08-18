@@ -1,5 +1,4 @@
-﻿/* MediCore — Auth Page */
-*, *::before, *::after { box-sizing: border-box; }
+﻿*, *::before, *::after { box-sizing: border-box; }
 
 body {
     background-color: #f0f4ff;
@@ -163,4 +162,3 @@ body {
 @media (max-width: 480px) {
     #auth-card { padding: 2rem 1.5rem; }
 }
-

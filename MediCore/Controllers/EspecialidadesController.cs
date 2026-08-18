@@ -15,7 +15,6 @@ namespace MediCore.Controllers
         private const string NombreControlador = "Especialidades";
         private readonly UtilitarioService _utilitario = new UtilitarioService();
 
-        // GET: Especialidades
         public ActionResult Index()
         {
             if ((Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR")
@@ -50,7 +49,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Especialidades/Create
         [AdminActionFilter]
         [HttpGet]
         public ActionResult Create()
@@ -59,7 +57,6 @@ namespace MediCore.Controllers
             return View(new EspecialidadFormModel());
         }
 
-        // POST: Especialidades/Create
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -96,7 +93,6 @@ namespace MediCore.Controllers
                     db.Especialidades.Add(especialidad);
                     db.SaveChanges();
 
-                    // Registro de bitácora mediante servicio
                     _utilitario.RegistrarEvento(
                         NombreControlador,
                         MethodBase.GetCurrentMethod().Name,
@@ -115,7 +111,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Especialidades/Edit/5
         [AdminActionFilter]
         [HttpGet]
         public ActionResult Edit(int id)
@@ -143,7 +138,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Especialidades/Edit
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -183,7 +177,6 @@ namespace MediCore.Controllers
 
                     db.SaveChanges();
 
-                    // Registro de bitácora mediante servicio
                     _utilitario.RegistrarEvento(
                         NombreControlador,
                         MethodBase.GetCurrentMethod().Name,
@@ -202,7 +195,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Especialidades/CambiarEstado
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -212,14 +204,14 @@ namespace MediCore.Controllers
             {
                 try
                 {
-                    // Obtenemos el usuario directamente de Session para pasarle al SP
+
                     int? idUsuario = Session["Consecutivo"] as int?;
                     int resultado = db.spCambiarEstadoEspecialidad(id, nuevoEstado, idUsuario).FirstOrDefault() ?? -1;
 
                     switch (resultado)
                     {
                         case 0:
-                            // Registro de bitácora mediante servicio
+
                             _utilitario.RegistrarEvento(
                                 NombreControlador,
                                 MethodBase.GetCurrentMethod().Name,

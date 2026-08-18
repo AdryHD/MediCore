@@ -6,7 +6,7 @@ namespace MediCore.Models
     public class ExpedienteDetalleModel
     {
         public int IdExpediente { get; set; }
-        // Datos del paciente
+
         public string NombrePaciente { get; set; }
         public string CedulaPaciente { get; set; }
         public DateTime FechaNacimientoPaciente { get; set; }
@@ -14,7 +14,7 @@ namespace MediCore.Models
         public string TelefonoPaciente { get; set; }
         public string CorreoPaciente { get; set; }
         public string DireccionPaciente { get; set; }
-        // Datos clínicos
+
         public string TipoSangre { get; set; }
         public DateTime FechaApertura { get; set; }
         public string Alergias { get; set; }

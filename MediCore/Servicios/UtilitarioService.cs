@@ -1,4 +1,4 @@
-﻿using MediCore.EF;
+using MediCore.EF;
 using MediCore.Models;
 using System;
 using System.Collections.Generic;
@@ -34,7 +34,6 @@ namespace MediCore.Servicios
             return HttpContext.Current?.Request?.UserHostAddress;
         }
 
-        // Método principal de 3 parámetros que están llamando Citas, Pacientes, Doctores, etc.
         public void RegistrarEvento(string controlador, string accion, string mensaje)
         {
             try

@@ -1,9 +1,4 @@
-﻿/* =============================================
-   MediCore — Panel / Dashboard Styles
-   Palette: #00366B | #0069B7 | #01C0BA
-   ============================================= */
-
-:root {
+﻿:root {
     --mc-dark:      #00366B;
     --mc-blue:      #0069B7;
     --mc-teal:      #01C0BA;
@@ -32,9 +27,6 @@ body {
     font-size: 0.92rem;
 }
 
-/* =============================================
-   TOPBAR
-   ============================================= */
 #topbar {
     width: 100%;
     height: var(--mc-topbar-h);
@@ -109,22 +101,16 @@ body {
     vertical-align: middle;
 }
 
-/* =============================================
-   APP WRAPPER
-   ============================================= */
 #app {
     display: flex;
     min-height: 100vh;
     margin-top: var(--mc-topbar-h);
 }
 
-/* =============================================
-   SIDEBAR
-   ============================================= */
 #sidebar {
     width: var(--mc-sidebar-w);
     height: calc(100vh - var(--mc-topbar-h));
-    background: linear-gradient(180deg, #00274e 0%, #00366B 60%, #004a8c 100%);
+    background: #ffffff;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
@@ -134,7 +120,8 @@ body {
     z-index: 200;
     transition: transform 0.25s ease;
     overflow: visible;
-    box-shadow: 3px 0 20px rgba(0,54,107,0.15);
+    box-shadow: 2px 0 12px rgba(0,54,107,0.08);
+    border-right: 1px solid #e3eaf5;
 }
 
 #sidebar.hide {
@@ -149,17 +136,16 @@ body {
     overflow-x: hidden;
     width: var(--mc-sidebar-w);
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.12) transparent;
+    scrollbar-color: #c8d8ee transparent;
 }
 
-/* Logo */
 .sidebar-header {
     padding: 1rem 1.25rem;
     height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid #e3eaf5;
     flex-shrink: 0;
     background: #ffffff;
     overflow: hidden;
@@ -188,9 +174,8 @@ body {
     display: none;
 }
 
-/* Menu */
 .sidebar-menu {
-    padding: 0.75rem 0 1.5rem;
+    padding: 0.5rem 0 1.5rem;
     flex: 1;
 }
 
@@ -201,27 +186,38 @@ body {
 }
 
 .sidebar-title {
-    font-size: 0.63rem;
-    font-weight: 700;
+    font-size: 0.75rem !important;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1.3px;
-    color: rgba(255,255,255,0.3);
-    padding: 1.1rem 1.4rem 0.35rem;
+    letter-spacing: 1.6px;
+    color: #00366B;
+    padding: 1.2rem 1.25rem 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, #c8d8ee 0%, transparent 100%);
+    margin-left: 0.3rem;
 }
 
 .sidebar-item {
-    margin: 1px 0.75rem;
+    margin: 1px 0.6rem;
     position: relative;
 }
 
 .sidebar-item .sidebar-link {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.56rem 0.85rem;
-    border-radius: 9px;
+    gap: 0.7rem;
+    padding: 0.52rem 0.85rem;
+    border-radius: 8px;
     text-decoration: none;
-    color: rgba(255,255,255,0.62);
+    color: #3a5580;
     font-size: 0.875rem;
     font-weight: 600;
     transition: background 0.15s, color 0.15s;
@@ -232,45 +228,34 @@ body {
     width: 18px;
     text-align: center;
     flex-shrink: 0;
-    color: rgba(255,255,255,0.4);
+    color: #7faad4;
     transition: color 0.15s;
 }
 
 .sidebar-item .sidebar-link:hover {
-    background: rgba(0, 105, 183, 0.1);
-    color: var(--mc-blue);
+    background: #eef4fb;
+    color: #003d82;
 }
 
 .sidebar-item .sidebar-link:hover i {
-    color: var(--mc-teal);
+    color: #01C0BA;
 }
 
-/* Active item */
 .sidebar-item.active .sidebar-link {
-    background: rgba(1,192,186,0.18);
-    color: var(--mc-white);
+    background: linear-gradient(90deg, #e8f4ff 0%, #f0fbfa 100%);
+    color: #003d82;
     font-weight: 700;
+    border-left: 3px solid #01C0BA;
 }
 
 .sidebar-item.active .sidebar-link i {
-    color: var(--mc-teal);
+    color: #01C0BA;
 }
 
 .sidebar-item.active .sidebar-link::before {
-    content: '';
-    position: absolute;
-    left: -0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 26px;
-    background: var(--mc-teal);
-    border-radius: 0 3px 3px 0;
+    display: none;
 }
 
-/* =============================================
-   MAIN CONTENT AREA
-   ============================================= */
 #main {
     margin-left: var(--mc-sidebar-w);
     flex: 1;
@@ -285,9 +270,6 @@ body {
     margin-left: 0;
 }
 
-/* =============================================
-   NAVBAR SUPERIOR
-   ============================================= */
 header.mb-3 { margin-bottom: 0 !important; }
 
 header .navbar {
@@ -365,17 +347,11 @@ header .navbar {
 .navbar .dropdown-item.text-danger { color: #dc3545 !important; }
 .navbar .dropdown-item.text-danger:hover { background: #fff5f5; color: #c82333 !important; }
 
-/* =============================================
-   PAGE CONTENT
-   ============================================= */
 .main-content {
     flex: 1;
     padding: 1.5rem 1.5rem 1.5rem 1.25rem;
 }
 
-/* =============================================
-   WELCOME BANNER
-   ============================================= */
 .welcome-banner {
     background: linear-gradient(120deg, var(--mc-dark) 0%, #005096 55%, #0078c8 100%);
     border-radius: 16px;
@@ -428,9 +404,6 @@ header .navbar {
     flex-shrink: 0;
 }
 
-/* =============================================
-   SECTION EYEBROW LABELS
-   ============================================= */
 .section-eyebrow {
     display: block;
     font-size: 0.68rem;
@@ -452,7 +425,6 @@ header .navbar {
     margin: 0;
 }
 
-/* Page heading */
 .page-heading {
     margin-bottom: 0.5rem;
     display: flex;
@@ -476,9 +448,6 @@ header .navbar {
     margin: 0;
 }
 
-/* =============================================
-   STATS CARDS
-   ============================================= */
 .stats-card {
     background: var(--mc-white);
     border-radius: 14px;
@@ -545,9 +514,6 @@ header .navbar {
     line-height: 1;
 }
 
-/* =============================================
-   CARDS GENÉRICAS
-   ============================================= */
 .card {
     border: 1px solid var(--mc-border);
     border-radius: 14px;
@@ -577,9 +543,6 @@ header .navbar {
 
 .card-body { padding: 1.25rem 1.4rem; }
 
-/* =============================================
-   TABLA
-   ============================================= */
 .table {
     margin: 0;
     font-size: 0.875rem;
@@ -615,7 +578,6 @@ header .navbar {
     background: #f4f8ff;
 }
 
-/* Badges de estado */
 .badge-status {
     display: inline-flex;
     align-items: center;
@@ -633,13 +595,12 @@ header .navbar {
 .badge-status.confirmed  { background: #e0f2fe; color: #075985; }
 .badge-status.programmed { background: #ede9fe; color: #5b21b6; }
 .badge-status.info       { background: #f0fdf4; color: #14532d; }
-/* Role badges */
+
 .badge-status.role-admin  { background: #ede9fe; color: #5b21b6; }
 .badge-status.role-doctor { background: #dcfce7; color: #166534; }
 .badge-status.role-recep  { background: #fef3c7; color: #92400e; }
 .badge-status.role-other  { background: #f1f5f9; color: #334155; }
 
-/* Guardar rol — pill button matching badge style */
 .btn-role {
     display: inline-flex;
     align-items: center;
@@ -661,7 +622,6 @@ header .navbar {
     box-shadow: 0 0 0 3px rgba(59,130,246,.15);
 }
 
-/* ─── Bitácora: badges de nivel ─── */
 .badge-nivel {
     display: inline-flex;
     align-items: center;
@@ -676,7 +636,6 @@ header .navbar {
 .badge-nivel-info  { background: #e0f2fe; color: #075985; }
 .badge-nivel-error { background: #fff5f5; color: #9b1c1c; }
 
-/* ─── Bitácora: stack trace ─── */
 .bitacora-stack-trace {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -696,7 +655,6 @@ header .navbar {
     white-space: nowrap;
 }
 
-/* ─── Bitácora: modal de detalle ─── */
 .bitacora-detalle-meta {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -745,7 +703,6 @@ header .navbar {
     margin: 0;
 }
 
-/* Action buttons — tamaño uniforme */
 .btn-action {
     display: inline-flex;
     align-items: center;
@@ -764,9 +721,6 @@ header .navbar {
 .btn-action.btn-light-primary { color: #2563eb; }
 .btn-action.btn-light-warning { color: #d97706; }
 
-/* =============================================
-   MODAL DE CONFIRMACIÓN
-   ============================================= */
 .mc-modal {
     border: none;
     border-radius: 16px;
@@ -828,12 +782,6 @@ header .navbar {
     opacity: 0.55;
 }
 
-/* =============================================
-   FOOTER
-   ============================================= */
-/* =============================================
-   EMPTY STATE
-   ============================================= */
 .empty-state-cell {
     padding: 0 !important;
     vertical-align: top !important;
@@ -883,9 +831,6 @@ header .navbar {
     margin: 0;
 }
 
-/* =============================================
-   FOOTER
-   ============================================= */
 .main-footer {
     background: linear-gradient(135deg, #00274e 0%, #00366b 60%, #004a8c 100%) !important;
     border-top: 3px solid var(--mc-teal);
@@ -905,7 +850,6 @@ header .navbar {
     pointer-events: none;
 }
 
-/* Sección superior con columnas */
 .footer-top {
     display: flex;
     align-items: flex-start;
@@ -981,7 +925,6 @@ header .navbar {
     flex-shrink: 0;
 }
 
-/* Barra inferior con copyright */
 .footer-bottom {
     display: flex;
     align-items: center;
@@ -1003,20 +946,13 @@ header .navbar {
     letter-spacing: 0.5px;
 }
 
-/* clases legacy eliminadas — mantenidas vacías por compatibilidad */
 .footer-inner, .footer-left, .footer-brand,
 .footer-sep, .footer-desc, .footer-right {}
 
-/* =============================================
-   UTILITY
-   ============================================= */
 .text-teal  { color: var(--mc-teal) !important; }
 .text-blue  { color: var(--mc-blue) !important; }
 .text-dark-mc { color: var(--mc-dark) !important; }
 
-/* =============================================
-   RESPONSIVE
-   ============================================= */
 @media (max-width: 991px) {
     .topbar-right { display: none; }
 
@@ -1048,4 +984,3 @@ header .navbar {
     .stats-icon i { font-size: 1.3rem; }
     .stats-info h4.value { font-size: 1.35rem; }
 }
-

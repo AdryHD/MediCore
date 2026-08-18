@@ -3,19 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MediCore.Models
 {
-    /// <summary>
-    /// Modelo para la vista de edición de expediente clínico.
-    /// </summary>
+
     public class ExpedienteEditModel
     {
         public int IdExpediente { get; set; }
 
-        // Campos de solo lectura (visualización, no se persisten desde aquí)
         public string NombrePaciente { get; set; }
         public string CedulaPaciente { get; set; }
         public DateTime FechaApertura { get; set; }
 
-        // Campos editables
         [Display(Name = "Tipo de sangre")]
         public string TipoSangre { get; set; }
 

@@ -18,7 +18,6 @@ namespace MediCore.Controllers
         private readonly UtilitarioService _utilitario = new UtilitarioService();
         private readonly EmailService _emailService = new EmailService();
 
-        // GET: Pacientes
         public ActionResult Index(string q, string estado, int page = 1)
         {
             ViewBag.ActiveMenu = "Pacientes";
@@ -41,7 +40,6 @@ namespace MediCore.Controllers
                         query = query.Where(p => p.estado == estado);
                     }
 
-                    // Si el usuario es doctor, ver solo los pacientes con citas asignadas
                     var idDoctorSesion = Session["IdDoctor"] as int?;
                     var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
                     if (esDoctorRol && idDoctorSesion.HasValue)
@@ -93,7 +91,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Pacientes/Create
         [HttpGet]
         public ActionResult Create()
         {
@@ -106,7 +103,6 @@ namespace MediCore.Controllers
             return View(new PacienteFormModel());
         }
 
-        // POST: Pacientes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(PacienteFormModel model)
@@ -176,7 +172,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Pacientes/Edit/5
         [HttpGet]
         public ActionResult Edit(int id)
         {
@@ -213,7 +208,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Pacientes/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(PacienteFormModel model)
@@ -281,7 +275,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Pacientes/Details/5
         [HttpGet]
         public ActionResult Details(int id)
         {
@@ -319,7 +312,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Pacientes/Delete/5
         [HttpGet]
         public ActionResult Delete(int id)
         {
@@ -346,7 +338,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Pacientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -382,7 +373,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Pacientes/CambiarEstado
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -454,7 +444,3 @@ namespace MediCore.Controllers
      }
 
     }
-
-       
-
-        

@@ -8,10 +8,7 @@ using System.Web.Mvc;
 
 namespace MediCore.Controllers
 {
-    /// <summary>
-    /// Módulo de auditoría: permite a los administradores consultar el historial
-    /// de eventos y errores registrados en el sistema.
-    /// </summary>
+
     [AuthActionFilter]
     [AdminActionFilter]
     public class BitacoraController : Controller
@@ -21,7 +18,6 @@ namespace MediCore.Controllers
 
         private readonly UtilitarioService _utilitario = new UtilitarioService();
 
-        // GET: Bitacora
         public ActionResult Index(
             string nivel,
             string controlador,
@@ -40,26 +36,22 @@ namespace MediCore.Controllers
                         .Include(b => b.tbUsuario)
                         .AsQueryable();
 
-                    // Filtro por nivel (INFO / ERROR)
                     if (!string.IsNullOrWhiteSpace(nivel))
                     {
                         consulta = consulta.Where(b => b.nivel == nivel);
                     }
 
-                    // Filtro por controlador
                     if (!string.IsNullOrWhiteSpace(controlador))
                     {
                         consulta = consulta.Where(b => b.controlador.Contains(controlador));
                     }
 
-                    // Filtro por nombre de usuario
                     if (!string.IsNullOrWhiteSpace(usuario))
                     {
                         consulta = consulta.Where(b =>
                             b.tbUsuario != null && b.tbUsuario.Nombre.Contains(usuario));
                     }
 
-                    // Filtro por fecha desde
                     if (fechaDesde.HasValue)
                     {
                         consulta = consulta.Where(b =>
@@ -67,7 +59,6 @@ namespace MediCore.Controllers
                             DbFunctions.TruncateTime(fechaDesde.Value));
                     }
 
-                    // Filtro por fecha hasta
                     if (fechaHasta.HasValue)
                     {
                         consulta = consulta.Where(b =>
@@ -75,14 +66,11 @@ namespace MediCore.Controllers
                             DbFunctions.TruncateTime(fechaHasta.Value));
                     }
 
-                    // Total de registros para la paginación
                     int totalRegistros = consulta.Count();
                     int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)TamanoPagina);
 
-                    // Garantizar que la página esté dentro del rango válido
                     page = Math.Max(1, Math.Min(page, Math.Max(1, totalPaginas)));
 
-                    // Proyección al DTO
                     var registros = consulta
                         .OrderByDescending(b => b.fecha)
                         .Skip((page - 1) * TamanoPagina)
@@ -101,7 +89,6 @@ namespace MediCore.Controllers
                         })
                         .ToList();
 
-                    // Pasar filtros activos a la vista para repoblar el formulario
                     ViewBag.FiltroNivel        = nivel;
                     ViewBag.FiltroControlador  = controlador;
                     ViewBag.FiltroUsuario      = usuario;

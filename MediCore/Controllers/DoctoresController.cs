@@ -94,7 +94,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Doctores/Create
         [AdminActionFilter]
         [HttpGet]
         public ActionResult Create()
@@ -109,7 +108,6 @@ namespace MediCore.Controllers
             return View(new DoctorFormModel());
         }
 
-        // POST: Doctores/Create
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -183,7 +181,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Doctores/Edit/5
         [AdminActionFilter]
         [HttpGet]
         public ActionResult Edit(int id)
@@ -217,7 +214,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Doctores/Edit
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -315,7 +311,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Doctores/CambiarEstado
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]

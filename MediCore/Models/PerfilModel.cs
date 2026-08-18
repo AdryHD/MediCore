@@ -3,11 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MediCore.Models
 {
-    /// <summary>
-    /// ViewModel utilizado para la pantalla de "Mi Perfil": edición de datos
-    /// personales del usuario autenticado. Se mantiene separado de la entidad
-    /// EF para poder aplicar validaciones de UI sin afectar el modelo de datos.
-    /// </summary>
+
     public class PerfilModel
     {
         public int Consecutivo { get; set; }
@@ -28,17 +24,11 @@ namespace MediCore.Models
         [Display(Name = "Teléfono")]
         public string Telefono { get; set; }
 
-        // Solo lectura en la vista, informativos.
         public string Cedula { get; set; }
         public DateTime? FechaNacimiento { get; set; }
         public string NombreRol { get; set; }
     }
 
-    /// <summary>
-    /// ViewModel utilizado para el formulario de cambio de contraseña dentro
-    /// de "Mi Perfil". Se mantiene separado de <see cref="PerfilModel"/> para
-    /// que las validaciones de cada formulario no interfieran entre sí.
-    /// </summary>
     public class CambiarContrasennaModel
     {
         [Required(ErrorMessage = "Debe ingresar la contraseña nueva.")]

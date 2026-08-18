@@ -7,11 +7,11 @@ namespace MediCore.Models
         public int IdHistorial { get; set; }
         public int IdExpediente { get; set; }
         public int? IdCita { get; set; }
-        // Datos del paciente
+
         public string NombrePaciente { get; set; }
         public string CedulaPaciente { get; set; }
         public string SexoPaciente { get; set; }
-        // Datos de la consulta
+
         public DateTime FechaConsulta { get; set; }
         public string NombreDoctor { get; set; }
         public string NombreEspecialidad { get; set; }

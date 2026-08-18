@@ -1,4 +1,4 @@
-﻿using MediCore.EF;
+using MediCore.EF;
 using MediCore.Models;
 using MediCore.Servicios;
 using System;
@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
-
-
 
 namespace MediCore.Controllers
 {
@@ -43,35 +41,30 @@ namespace MediCore.Controllers
                         .Include(h => h.Citas)
                         .AsQueryable();
 
-                    // Si el usuario es doctor, ver solo el historial de sus pacientes
                     var idDoctorSesion = Session["IdDoctor"] as int?;
                     var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
                     if (esDoctorRol && idDoctorSesion.HasValue)
                         historial = historial.Where(h => h.id_doctor == idDoctorSesion.Value);
                     ViewBag.EsDoctor = esDoctorRol;
 
-                    // Paciente
                     if (idPaciente.HasValue)
                     {
                         historial = historial.Where(h =>
                             h.Expedientes.id_paciente == idPaciente.Value);
                     }
 
-                    // Doctor
                     if (idDoctor.HasValue)
                     {
                         historial = historial.Where(h =>
                             h.id_doctor == idDoctor.Value);
                     }
 
-                    // Especialidad
                     if (idEspecialidad.HasValue)
                     {
                         historial = historial.Where(h =>
                             h.Doctores.id_especialidad == idEspecialidad.Value);
                     }
 
-                    // Fecha desde
                     if (fechaDesde.HasValue)
                     {
                         historial = historial.Where(h =>
@@ -79,7 +72,6 @@ namespace MediCore.Controllers
                             DbFunctions.TruncateTime(fechaDesde.Value));
                     }
 
-                    // Fecha hasta
                     if (fechaHasta.HasValue)
                     {
                         historial = historial.Where(h =>
@@ -87,7 +79,6 @@ namespace MediCore.Controllers
                             DbFunctions.TruncateTime(fechaHasta.Value));
                     }
 
-                    // Combos
                     ViewBag.Pacientes = new SelectList(
                         db.Pacientes
                             .Where(p => p.estado == "ACTIVO")

@@ -7,7 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - MediCore</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    @Styles.Render("~/Content/css-panel")
+    <link rel="stylesheet" href="~/Content/bootstrap.css" />
+    <link rel="stylesheet" href="~/Content/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/Content/app.css?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Content/app.css")).Ticks" />
+    <link rel="stylesheet" href="~/Content/panel.css?v=@System.IO.File.GetLastWriteTime(Server.MapPath("~/Content/panel.css")).Ticks" />
 </head>
 
 <body>

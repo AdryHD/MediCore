@@ -7,7 +7,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
-
 namespace MediCore.Controllers
 {
     [AuthActionFilter]
@@ -35,7 +34,6 @@ namespace MediCore.Controllers
                         .Include(e => e.HistorialMedico)
                         .AsQueryable();
 
-                    // Si el usuario es doctor, ver solo expedientes de sus pacientes asignados
                     var idDoctorSesion = Session["IdDoctor"] as int?;
                     var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
                     if (esDoctorRol && idDoctorSesion.HasValue)
@@ -47,7 +45,6 @@ namespace MediCore.Controllers
                     }
                     ViewBag.EsDoctor = esDoctorRol;
 
-                    // Filtro por nombre o cédula
                     if (!string.IsNullOrWhiteSpace(buscar))
                     {
                         expedientes = expedientes.Where(e =>
@@ -55,7 +52,6 @@ namespace MediCore.Controllers
                             e.Pacientes.cedula.Contains(buscar));
                     }
 
-                    // Filtro por tipo de sangre
                     if (!string.IsNullOrWhiteSpace(tipoSangre))
                     {
                         expedientes = expedientes.Where(e =>

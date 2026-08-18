@@ -9,22 +9,11 @@ using System.Web;
 
 namespace MediCore.Servicios
 {
-    /// <summary>
-    /// Servicio centralizado de envío de correos (RF-15). Reutiliza la configuración SMTP
-    /// de Web.config, las plantillas externas de MediCore/EmailTemplates y registra cada
-    /// intento de envío en dbo.Notificaciones. Los errores de envío nunca se propagan al
-    /// llamador: se registran en la Bitácora (vía UtilitarioService) y en Notificaciones
-    /// como FALLIDO, para que la operación principal (registro, cita, etc.) no se vea afectada.
-    /// </summary>
+
     public class EmailService
     {
         private readonly UtilitarioService _utilitarioService = new UtilitarioService();
 
-        /// <summary>
-        /// Envía un correo genérico de forma asíncrona y registra el resultado en
-        /// dbo.Notificaciones. No lanza excepciones: si algo falla, queda registrado
-        /// como FALLIDO en Notificaciones y como ERROR en la Bitácora.
-        /// </summary>
         public async Task<bool> EnviarCorreoAsync(string correoDestino, string asunto, string cuerpoHtml, string cuerpoTexto, string tipoNotificacion, int? idUsuarioDestino = null)
         {
             if (string.IsNullOrWhiteSpace(correoDestino) || !EsCorreoValido(correoDestino))
@@ -206,10 +195,6 @@ namespace MediCore.Servicios
             }
         }
 
-        /// <summary>
-        /// Carga el contenido de una plantilla de correo desde MediCore/EmailTemplates
-        /// y reemplaza los tokens {{Clave}} por los valores provistos.
-        /// </summary>
         private static string CargarPlantillaCorreo(string nombreArchivo, Dictionary<string, string> valores)
         {
             var ruta = HttpContext.Current.Server.MapPath("~/EmailTemplates/" + nombreArchivo);
@@ -245,7 +230,7 @@ namespace MediCore.Servicios
             }
             catch (Exception ex)
             {
-                // Si ni siquiera se puede dejar constancia en Notificaciones, se registra en Bitácora.
+
                 _utilitarioService.RegistrarErrorBitacora(ex, "EmailService", "RegistrarNotificacion");
             }
         }

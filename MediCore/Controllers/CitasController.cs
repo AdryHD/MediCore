@@ -1,4 +1,4 @@
-﻿using MediCore.EF;
+using MediCore.EF;
 using MediCore.Models;
 using MediCore.Servicios;
 using System;
@@ -33,25 +33,21 @@ namespace MediCore.Controllers
                     .Include(c => c.Doctores)
                     .AsQueryable();
 
-                // Filtro por paciente
                 if (idPaciente.HasValue)
                 {
                     citas = citas.Where(c => c.id_paciente == idPaciente.Value);
                 }
 
-                // Filtro por doctor
                 if (idDoctor.HasValue)
                 {
                     citas = citas.Where(c => c.id_doctor == idDoctor.Value);
                 }
 
-                // Filtro por estado
                 if (!string.IsNullOrWhiteSpace(estado))
                 {
                     citas = citas.Where(c => c.estado == estado);
                 }
 
-                // Filtro por fecha
                 if (fecha.HasValue)
                 {
                     citas = citas.Where(c =>
@@ -59,14 +55,12 @@ namespace MediCore.Controllers
                         DbFunctions.TruncateTime(fecha.Value));
                 }
 
-                // Si el usuario es doctor, ver solo sus propias citas
                 var idDoctorSesion = Session["IdDoctor"] as int?;
                 var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
                 if (esDoctorRol && idDoctorSesion.HasValue)
                     citas = citas.Where(c => c.id_doctor == idDoctorSesion.Value);
                 ViewBag.EsDoctor = esDoctorRol;
 
-                // Combos para los filtros
                 var pacientes = db.Pacientes
     .Where(p => p.estado == "ACTIVO")
     .OrderBy(p => p.nombre_completo)
@@ -227,7 +221,6 @@ namespace MediCore.Controllers
             }
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(CitaFormModel model)
@@ -295,7 +288,6 @@ namespace MediCore.Controllers
 
                     _utilitarioService.RegistrarEvento(NombreControlador, "Edit GET", $"Edición de la cita #{model.IdCita}.");
 
-                    // El envío de la notificación nunca debe revertir la reprogramación (RF-15).
                     bool correoEnviado = await _emailService.EnviarReprogramacion(
                         cita.Pacientes.correo,
                         cita.Pacientes.nombre_completo,
@@ -323,10 +315,6 @@ namespace MediCore.Controllers
             }
         }
 
-
-
-        //esto lo va a usar ajax
-        // Devuelve los próximos 60 días en los que el doctor tiene horario activo
         [HttpGet]
         public JsonResult ObtenerFechasDisponibles(int idDoctor)
         {
@@ -334,7 +322,7 @@ namespace MediCore.Controllers
             {
                 try
                 {
-                    // Días de la semana en que el doctor tiene horario
+
                     var diasConHorario = db.HorariosMedicos
                         .Where(h => h.id_doctor == idDoctor && h.estado == "ACTIVO")
                         .Select(h => h.dia_semana)
@@ -345,7 +333,7 @@ namespace MediCore.Controllers
 
                     var nombresdia = new string[] { "", "Lun", "Mar", "Mi\u00e9", "Jue", "Vie", "S\u00e1b", "Dom" };
                     var fechas = new List<object>();
-                    DateTime hoy = DateTime.Today.AddDays(1); // desde mañana
+                    DateTime hoy = DateTime.Today.AddDays(1); 
 
                     for (int i = 0; i < 60; i++)
                     {
@@ -371,7 +359,6 @@ namespace MediCore.Controllers
             }
         }
 
-        //esto lo va a usar ajax
         [HttpGet]
         public JsonResult ObtenerDoctores(int idEspecialidad)
         {
@@ -409,12 +396,6 @@ namespace MediCore.Controllers
                     int diaSemana = (int)fecha.DayOfWeek;
                     diaSemana = (diaSemana == 0) ? 7 : diaSemana;
 
-                    //System.Diagnostics.Debug.WriteLine("===== HORARIOS =====");------------------------- estos eran pruebas
-                    //System.Diagnostics.Debug.WriteLine("Doctor recibido: " + idDoctor);
-                    //System.Diagnostics.Debug.WriteLine("Fecha recibida: " + fecha.ToString("yyyy-MM-dd"));
-                    //System.Diagnostics.Debug.WriteLine("DayOfWeek: " + fecha.DayOfWeek);
-                    //System.Diagnostics.Debug.WriteLine("DiaSemana calculado: " + diaSemana);
-
                     var horario = db.HorariosMedicos.FirstOrDefault(h =>
                         h.id_doctor == idDoctor &&
                         h.dia_semana == diaSemana &&
@@ -422,7 +403,6 @@ namespace MediCore.Controllers
 
                     if (horario == null)
                     {
-                        //System.Diagnostics.Debug.WriteLine("NO SE ENCONTRÓ HORARIO");
 
                         return Json(new List<object>(),
                             JsonRequestBehavior.AllowGet);
@@ -510,7 +490,6 @@ namespace MediCore.Controllers
 
                     _utilitarioService.RegistrarEvento(NombreControlador, "Create", $"Cita #{cita.id_cita} registrada.");
 
-                    // El envío de la confirmación nunca debe revertir el registro de la cita (RF-15).
                     bool correoEnviado = await _emailService.EnviarConfirmacionCita(
                         cita.Pacientes.correo,
                         cita.Pacientes.nombre_completo,
@@ -543,7 +522,7 @@ namespace MediCore.Controllers
 
         private void CargarCombos(MediCoreEntities db, CitaFormModel model)
         {
-            // Pacientes
+
             model.Pacientes = db.Pacientes
                 .Where(x => x.estado == "ACTIVO")
                 .OrderBy(x => x.nombre_completo)
@@ -554,7 +533,6 @@ namespace MediCore.Controllers
                 })
                 .ToList();
 
-            // Especialidades
             model.Especialidades = db.Especialidades
                 .Where(x => x.estado == "ACTIVO")
                 .OrderBy(x => x.nombre)
@@ -565,7 +543,6 @@ namespace MediCore.Controllers
                 })
                 .ToList();
 
-            // Doctores
             if (model.IdEspecialidad > 0)
             {
                 model.Doctores = db.Doctores
@@ -584,7 +561,6 @@ namespace MediCore.Controllers
                 model.Doctores = new List<SelectListItem>();
             }
 
-            // Horarios disponibles
             if (model.IdDoctor > 0 && model.Fecha != DateTime.MinValue)
             {
                 int diaSemana = (int)model.Fecha.DayOfWeek;
@@ -612,8 +588,7 @@ namespace MediCore.Controllers
 
                     while (hora < horario.hora_fin)
                     {
-                        // En Edit se debe mostrar la hora actual de la cita,
-                        // aunque ya esté ocupada por esa misma cita.
+
                         if (!citasOcupadas.Contains(hora) || hora == model.Hora)
                         {
                             horarios.Add(new SelectListItem
@@ -640,8 +615,6 @@ namespace MediCore.Controllers
             }
         }
 
-
-        //abre la vista para atender la cita, donde se llenan los datos de la atención médica
         [DoctorOAdminActionFilter]
         [HttpGet]
         public ActionResult Atender(int id)
@@ -671,7 +644,6 @@ namespace MediCore.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    // Buscar expediente del paciente
                     var expediente = db.Expedientes
                         .FirstOrDefault(e =>
                             e.id_paciente == cita.id_paciente);
@@ -711,7 +683,6 @@ namespace MediCore.Controllers
             }
         }
 
-        //procesa la atención de la cita, registrando el historial médico y marcando la cita como atendida
         [DoctorOAdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -785,14 +756,13 @@ namespace MediCore.Controllers
                         db.HistorialMedico.Add(historial);
                         cita.estado = "ATENDIDA";
 
-                        // Si el doctor solicita seguimiento, crear cita pendiente de programación
                         if (model.AccionFinal == "NUEVA_CITA")
                         {
                             var citaSeguimiento = new Citas
                             {
                                 id_paciente     = cita.id_paciente,
                                 id_doctor       = cita.id_doctor,
-                                fecha_cita      = DateTime.Now.AddDays(7), // fecha provisional; el recepcionista la asigna
+                                fecha_cita      = DateTime.Now.AddDays(7), 
                                 duracion_min    = cita.duracion_min,
                                 motivo          = "Seguimiento: " + model.Diagnostico.Trim(),
                                 estado          = "SOLICITUD",
@@ -839,7 +809,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Citas/ProgramarSeguimiento/5 — solo recepcionista o admin
         [HttpGet]
         public ActionResult ProgramarSeguimiento(int id)
         {
@@ -860,7 +829,6 @@ namespace MediCore.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    // Obtener diagnóstico de la cita anterior para mostrar contexto
                     string diagnosticoAnterior = null;
                     if (cita.id_cita_anterior.HasValue)
                     {
@@ -893,7 +861,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: Citas/ProgramarSeguimiento
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ProgramarSeguimiento(ProgramarSeguimientoModel model)
@@ -991,7 +958,6 @@ namespace MediCore.Controllers
 
                     _utilitarioService.RegistrarEvento(NombreControlador, "Cancelar", $"La cita #{id} fue cancelada.");
 
-                    // El envío de la notificación nunca debe revertir la cancelación (RF-15).
                     bool correoEnviado = await _emailService.EnviarCancelacion(
                         cita.Pacientes.correo,
                         cita.Pacientes.nombre_completo,

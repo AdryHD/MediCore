@@ -27,7 +27,6 @@ namespace MediCore.Controllers
             { 7, "Domingo" }
         };
 
-        // GET: HorariosMedicos
         public ActionResult Index(int? idDoctor, byte? diaSemana, string estado, int page = 1)
         {
             ViewBag.ActiveMenu = "Horarios";
@@ -38,7 +37,6 @@ namespace MediCore.Controllers
                 {
                     var query = db.HorariosMedicos.AsQueryable();
 
-                    // Si el usuario es doctor, ver solo sus propios horarios
                     var idDoctorSesion = Session["IdDoctor"] as int?;
                     var esDoctorRol = (Session["NombreRol"] as string ?? "").ToUpper() == "DOCTOR";
                     if (esDoctorRol && idDoctorSesion.HasValue)
@@ -108,7 +106,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: HorariosMedicos/Create
         [AdminActionFilter]
         [HttpGet]
         public ActionResult Create()
@@ -123,7 +120,6 @@ namespace MediCore.Controllers
             return View(new HorarioMedicoFormModel());
         }
 
-        // POST: HorariosMedicos/Create
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -173,7 +169,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: HorariosMedicos/Edit/5
         [AdminActionFilter]
         [HttpGet]
         public ActionResult Edit(int id)
@@ -206,7 +201,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: HorariosMedicos/Edit
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -259,7 +253,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: HorariosMedicos/Details/5
         [AdminActionFilter]
         public ActionResult Details(int id)
         {
@@ -284,7 +277,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: HorariosMedicos/Delete/5
         [HttpGet]
         public ActionResult Delete(int id)
         {
@@ -309,7 +301,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: HorariosMedicos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -345,7 +336,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // POST: HorariosMedicos/CambiarEstado
         [AdminActionFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]

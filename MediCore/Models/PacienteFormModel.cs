@@ -3,12 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MediCore.Models
 {
-    /// <summary>
-    /// ViewModel utilizado para los formularios de creación y edición de
-    /// pacientes (RF-04/RF-09). Combina los datos demográficos (tabla
-    /// Pacientes) con los datos clínicos (tabla Expedientes, relación 1 a 1)
-    /// en una sola pantalla, sin exponer las entidades EF directamente.
-    /// </summary>
+
     public class PacienteFormModel
     {
         public int IdPaciente { get; set; }

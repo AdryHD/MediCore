@@ -5,11 +5,7 @@ using System.Web.Mvc;
 
 namespace MediCore.Models
 {
-    /// <summary>
-    /// ViewModel utilizado para registrar y editar citas médicas.
-    /// Se mantiene separado de la entidad EF para aplicar validaciones
-    /// y facilitar la carga de listas desplegables.
-    /// </summary>
+
     public class CitaFormModel
     {
         public int IdCita { get; set; }
@@ -46,8 +42,6 @@ namespace MediCore.Models
         public string Motivo { get; set; }
 
         public string Estado { get; set; }
-
-        // ---------- Combos ----------
 
         public IEnumerable<SelectListItem> Pacientes { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using MediCore.EF;
+using MediCore.EF;
 using MediCore.Models;
 using MediCore.Servicios;
 using System;
@@ -14,7 +14,6 @@ namespace MediCore.Controllers
         private const string NombreControlador = "Home";
         private readonly EmailService _emailService = new EmailService();
 
-        // GET: Login
         public ActionResult Index()
         {
             return View();
@@ -60,7 +59,6 @@ namespace MediCore.Controllers
                     Session["Nombre"] = usuario.Nombre;
                     Session["NombreRol"] = ObtenerNombreRol(db, usuario.id_rol);
 
-                    // Si el usuario es doctor, guardar su id_doctor en sesión
                     var doctor = db.Doctores.FirstOrDefault(d => d.id_usuario == usuario.Consecutivo && d.estado == "ACTIVO");
                     if (doctor != null)
                         Session["IdDoctor"] = doctor.id_doctor;
@@ -114,8 +112,6 @@ namespace MediCore.Controllers
                         return View(model);
                     }
 
-                    // Todo usuario interno debe tener un rol. Quien se registra por este formulario público
-                    // ingresa con el rol de menor privilegio (RECEPCIONISTA); el administrador puede cambiarlo luego.
                     var idRolRecepcionista = db.Database.SqlQuery<int>(
                         "SELECT id_rol FROM dbo.tbRol WHERE nombre_rol = 'RECEPCIONISTA'").FirstOrDefault();
 
@@ -123,7 +119,6 @@ namespace MediCore.Controllers
 
                     RegistrarEvento(db, null, "Registro", string.Format("Usuario registrado con correo '{0}' (Cédula: {1}).", correoLimpio, cedulaLimpia));
 
-                    // El envío del correo de bienvenida nunca debe bloquear ni revertir el registro (RF-15).
                     var usuarioRegistrado = db.tbUsuario.FirstOrDefault(u => u.Correo == correoLimpio);
                     bool correoEnviado = await _emailService.EnviarBienvenida(correoLimpio, model.Nombre, usuarioRegistrado?.Consecutivo);
 
@@ -141,7 +136,6 @@ namespace MediCore.Controllers
             }
         }
 
-        // GET: Recuperar Acceso
         public ActionResult RecuperarAcceso()
         {
             return View();
@@ -191,14 +185,12 @@ namespace MediCore.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // GET: Panel principal (requiere autenticación)
         [AuthActionFilter]
         public ActionResult Principal()
         {
             return View();
         }
 
-        // GET: Indicadores del dashboard (JSON)
         [AuthActionFilter]
         public ActionResult GetIndicadores()
         {
@@ -215,7 +207,7 @@ namespace MediCore.Controllers
 
                     if (esDoctor)
                     {
-                        // Si es doctor pero no tiene id_doctor en sesión, intentar recuperarlo
+
                         if (!idDoctor.HasValue)
                         {
                             int? idUsuario = Session["Consecutivo"] as int?;
@@ -279,7 +271,6 @@ namespace MediCore.Controllers
                     var proximasCitas = db.Citas
                         .Where(c => c.estado == "PENDIENTE" && c.fecha_cita >= hoy)
                         .OrderBy(c => c.fecha_cita)
-                        .Take(10)
                         .Select(c => new
                         {
                             id_cita = c.id_cita,
@@ -322,7 +313,7 @@ namespace MediCore.Controllers
         {
             Session.Clear();
             Session.Abandon();
-            // Cerrar sesión y redirigir al login
+
             return RedirectToAction("Index");
         }
 
@@ -373,7 +364,7 @@ namespace MediCore.Controllers
             }
             catch
             {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
+
             }
         }
 
@@ -385,7 +376,7 @@ namespace MediCore.Controllers
             }
             catch
             {
-                // La bitácora nunca debe interrumpir el flujo principal de la aplicación.
+
             }
         }
 

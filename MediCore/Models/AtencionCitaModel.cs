@@ -10,7 +10,6 @@ namespace MediCore.Models
         public int IdDoctor { get; set; }
         public int IdExpediente { get; set; }
 
-        // Datos solo para mostrar
         public string NombrePaciente { get; set; }
         public string NombreDoctor { get; set; }
         public DateTime FechaCita { get; set; }
@@ -32,9 +31,6 @@ namespace MediCore.Models
         [Display(Name = "Medicamentos recetados")]
         public string Medicamentos { get; set; }
 
-        /// <summary>
-        /// "ALTA" = dar de alta al paciente | "NUEVA_CITA" = solicitar seguimiento al recepcionista
-        /// </summary>
         [Required(ErrorMessage = "Debe seleccionar una acción final.")]
         public string AccionFinal { get; set; }
     }
